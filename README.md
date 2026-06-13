@@ -1,9 +1,10 @@
 # KUJO Workflows Review
 
-This folder contains two related workflow prototypes for the KUJO agency tooling stack:
+This folder contains workflow prototypes for the KUJO agency and AI tooling stack:
 
 1. `agency-runner/` — a local-first CLI prototype for turning a client task into a reusable run packet.
 2. `agency-verified-fix-loop/` — a runnable demo kit that simulates the full fix-and-proof loop against a small storefront fixture.
+3. `ai-sdk-watchdog-showcase/` — a self-contained AI Chat bridge workflow that routes AI SDK calls through Watchdog and exports reviewable telemetry.
 
 ## Quick verdict
 
@@ -11,6 +12,7 @@ Both workflows are real, usable prototypes and they do produce artifacts in this
 
 - `agency-runner/` is working as intended for its current scope: it can initialize profiles, create runs, and generate a handoff packet in dry-run mode.
 - `agency-verified-fix-loop/` is also working as intended for its demo scope: it builds a fixture, runs the spec/scout/scent/eval/lens chain, and writes a proof packet.
+- `ai-sdk-watchdog-showcase/` demonstrates Watchdog against AI Chat-style AI SDK traffic with a fixture OpenAI-compatible upstream, producing a summary plus raw Watchdog exports.
 
 The main caveat is that the demo kit still depends on a few external KUJO tools that are not all present in this local checkout. In the current run, the only reproducible blocker was the missing `changebucket` binary used by the ChangeBucket stages.
 
@@ -130,14 +132,46 @@ This demo is working as intended for the current repo layout and is useful as a 
 
 ---
 
+## 3. AI SDK + Watchdog Showcase
+
+Location: `ai-sdk-watchdog-showcase/`
+
+### What it is
+
+This workflow showcases Watchdog's usefulness for AI app observability. It uses AI Chat's `bridge_chat.kujo` as the example app boundary, routes that bridge through the Kujo AI SDK, and points the SDK at Watchdog's OpenAI-compatible proxy.
+
+### How it works
+
+The main entry point is:
+
+```bash
+bash scripts/run-showcase.sh
+```
+
+The script:
+
+1. starts a local fixture OpenAI-compatible upstream
+2. starts Watchdog with its proxy pointed at that fixture upstream
+3. sends two successful AI Chat bridge calls and one fixture provider-error call through the AI SDK
+4. exports Watchdog stats, requests, tool calls, agent steps, status breakdown, and full JSON telemetry
+5. writes a concise review packet under `.runs/<timestamp>/`
+
+### Current status
+
+This workflow is designed to be self-contained for local demos: no live provider key is required, and the fixture upstream makes the success/error evidence repeatable. It can also opt into live OpenAI traffic with `USE_LIVE_OPENAI=1` and `OPENAI_API_KEY`.
+
+---
+
 ## Recommended next steps
 
 1. Add a small `requirements.txt` or setup note for the `agency-runner` Python dependency (`PyYAML`).
 2. Add the missing `changebucket` tool or update the script to detect and skip it gracefully when unavailable.
-3. Keep the two workflows separate:
+3. Run and publish the Watchdog showcase packet as the canonical local observability demo for AI Chat + AI SDK.
+4. Keep the workflows separate:
    - `agency-runner/` for the reusable CLI prototype
    - `agency-verified-fix-loop/` for the demo / proof-of-concept kit
-4. Publish this README alongside the workflows when the repo is opened on GitHub.
+   - `ai-sdk-watchdog-showcase/` for the AI observability showcase
+5. Publish this README alongside the workflows when the repo is opened on GitHub.
 
 ## Bottom line
 
