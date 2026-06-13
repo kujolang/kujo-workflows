@@ -1,0 +1,121 @@
+from src.providers import openai_provider, openrouter_provider, deepseek_provider
+from src.ai_sdk import create_client, create_message, chat_completion
+
+func choose_provider(name) {
+	if name == "deepseek" {
+		return deepseek_provider()
+	}
+	if name == "openrouter" {
+		return openrouter_provider()
+	}
+	return openai_provider()
+}
+
+func env_text(name, fallback) {
+	value := env(name)
+	if trim(value) == "" {
+		return fallback
+	}
+	return value
+}
+
+func env_int(name, fallback) {
+	raw := env(name)
+	if trim(raw) == "" {
+		return fallback
+	}
+	parsed := parse_int(raw)
+	if type(parsed) == "null" {
+		return fallback
+	}
+	return to_int(parsed)
+}
+
+func env_float(name, fallback) {
+	raw := env(name)
+	if trim(raw) == "" {
+		return fallback
+	}
+	parsed := parse_float(raw)
+	if type(parsed) == "null" {
+		return fallback
+	}
+	return parsed
+}
+
+func dict_value(data, key, fallback) {
+	if type(data) == "dict" && has_key(data, key) == 1 {
+		return data[key]
+	}
+	return fallback
+}
+
+provider_name := env_text("BENCH_PROVIDER", "openai")
+prompt_file := env_text("BENCH_PROMPT_FILE", "")
+result_file := env_text("BENCH_RESULT_FILE", "")
+model_override := env_text("BENCH_MODEL", "")
+max_tokens := env_int("BENCH_MAX_TOKENS", 4000)
+temperature := env_float("BENCH_TEMPERATURE", 0.2)
+
+provider := choose_provider(provider_name)
+client := create_client(provider, env(provider["api_key_env"]))
+prompt_text := read_file(prompt_file)
+
+messages := [
+	create_message("system", "You are a deterministic website-build assistant. Return valid JSON only."),
+	create_message("user", prompt_text)
+]
+
+options := {
+	"temperature": temperature,
+	"max_tokens": max_tokens,
+	"max_retries": 2,
+	"retry_budget": 2,
+	"retry_delay_ms": 250,
+	"max_retry_delay_ms": 1500,
+	"overall_timeout_ms": 60000,
+	"max_prompt_characters": 20000
+}
+
+if trim(model_override) != "" {
+	options["model"] := model_override
+}
+
+if trim(client["api_key"]) == "" {
+	options["offline_fixture"] := true
+}
+
+started_at := now()
+result := chat_completion(client, messages, options)
+finished_at := now()
+
+ack := {
+	"ack": "kujo-ai-sdk-response-ack-v1",
+	"ok": result["ok"],
+	"provider": result["provider"],
+	"requested_provider": provider_name,
+	"model": dict_value(result, "model", model_override),
+	"requested_model": model_override,
+	"offline_fixture": trim(client["api_key"]) == "",
+	"status_code": result["status_code"],
+	"finish_reason": dict_value(result, "finish_reason", ""),
+	"usage": dict_value(result, "usage", {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0}),
+	"started_at": started_at,
+	"finished_at": finished_at,
+	"prompt_file": prompt_file,
+	"output_text": dict_value(result, "output_text", ""),
+	"error": null,
+	"raw_result": result
+}
+
+if result["ok"] == false {
+	ack["error"] := result["error"]
+}
+
+serialized := to_json_pretty(ack)
+
+if trim(result_file) != "" {
+	write_file(result_file, serialized, true)
+}
+
+print(serialized)
