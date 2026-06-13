@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kujo.local/schemas/agency/run-state.schema.json",
+  "title": "Kujo Agency Runner Run State",
+  "type": "object",
+  "required": ["version", "run_id", "site", "recipe", "status", "created_at", "updated_at", "artifact_root", "phases"],
+  "properties": {
+    "version": { "const": 1 },
+    "run_id": { "type": "string" },
+    "site": { "type": "string" },
+    "recipe": { "type": "string" },
+    "status": { "type": "string", "enum": ["running", "pass", "needs-review", "blocked", "failed-verification", "failed-reproduction", "unsafe-to-proceed"] },
+    "created_at": { "type": "string" },
+    "updated_at": { "type": "string" },
+    "artifact_root": { "type": "string" },
+    "dry_run": { "type": "boolean" },
+    "phases": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "enum": ["pending", "pass", "failed", "blocked", "skipped", "dry-run", "needs-review"]
+      }
+    },
+    "errors": { "type": "array" },
+    "artifacts": { "type": "object", "additionalProperties": { "type": "string" } },
+    "next_phase": { "type": ["string", "null"] }
+  },
+  "additionalProperties": true
+}

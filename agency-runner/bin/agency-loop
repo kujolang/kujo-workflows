@@ -1,0 +1,1347 @@
+#!/usr/bin/env python3
+"""Agency Runner prototype for local-first Kujo agency workflows."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+import textwrap
+import time
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any
+
+try:
+    import yaml
+except ImportError:  # pragma: no cover - local prototype guard
+    yaml = None
+
+
+ROOT = Path(__file__).resolve().parents[1]
+KUJO_REPOS = ROOT.parent
+DEFAULT_KUJO_BIN = KUJO_REPOS / "kujo" / "target" / "release" / "kujo"
+PHASES = [
+    "intake",
+    "site_profile",
+    "auth",
+    "safety",
+    "spec",
+    "context",
+    "reproduce",
+    "agent_fix",
+    "verify",
+    "proof",
+    "briefs",
+    "ledger",
+    "handoff",
+]
+
+
+def die(message: str, code: int = 1) -> None:
+    print(f"agency-loop: {message}", file=sys.stderr)
+    raise SystemExit(code)
+
+
+def need_yaml() -> None:
+    if yaml is None:
+        die("PyYAML is required. Install pyyaml or run from a Python environment that includes it.")
+
+
+def load_yaml(path: Path) -> dict[str, Any]:
+    need_yaml()
+    with path.open("r", encoding="utf-8") as fh:
+        data = yaml.safe_load(fh) or {}
+    if not isinstance(data, dict):
+        die(f"{path} must contain a YAML mapping")
+    return data
+
+
+def write_yaml(path: Path, data: dict[str, Any]) -> None:
+    need_yaml()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8") as fh:
+        yaml.safe_dump(data, fh, sort_keys=False)
+
+
+def write_text(path: Path, text: str) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(text, encoding="utf-8")
+
+
+def write_json(path: Path, data: Any) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(data, indent=2, sort_keys=False) + "\n", encoding="utf-8")
+
+
+def utc_stamp() -> str:
+    return datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+
+
+def slug(value: str, fallback: str = "task") -> str:
+    cleaned = re.sub(r"[^a-zA-Z0-9]+", "-", value.lower()).strip("-")
+    return cleaned[:48] or fallback
+
+
+def project_root(args: argparse.Namespace) -> Path:
+    return Path(getattr(args, "project", ".")).resolve()
+
+
+def agency_dir(project: Path) -> Path:
+    return project / ".kujo" / "agency"
+
+
+def runs_dir(project: Path) -> Path:
+    return project / ".kujo" / "runs"
+
+
+def site_path(project: Path, name: str) -> Path:
+    return agency_dir(project) / "sites" / f"{name}.yml"
+
+
+def recipe_path(recipe_id: str) -> Path:
+    return ROOT / "recipes" / f"{recipe_id}.yml"
+
+
+def run_state_path(run_dir: Path) -> Path:
+    return run_dir / "run-state.json"
+
+
+def log_command(log_path: Path, command: list[str], cwd: Path | None = None) -> int:
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    with log_path.open("w", encoding="utf-8") as log:
+        if cwd:
+            log.write(f"cd {cwd}\n")
+        log.write("$ " + " ".join(sh_quote(part) for part in command) + "\n")
+        try:
+            proc = subprocess.run(command, cwd=str(cwd) if cwd else None, stdout=log, stderr=subprocess.STDOUT)
+            return proc.returncode
+        except FileNotFoundError as exc:
+            log.write(f"\n{exc}\n")
+            return 127
+
+
+def sh_quote(value: str) -> str:
+    if re.match(r"^[A-Za-z0-9_@%+=:,./-]+$", value):
+        return value
+    return "'" + value.replace("'", "'\"'\"'") + "'"
+
+
+def redaction_patterns(profile: dict[str, Any]) -> list[tuple[re.Pattern[str], str]]:
+    compiled: list[tuple[re.Pattern[str], str]] = []
+    for pattern in profile.get("redactions", {}).get("patterns", []) or []:
+        try:
+            compiled.append((re.compile(str(pattern)), "[REDACTED]"))
+        except re.error:
+            continue
+    compiled.extend(
+        [
+            (re.compile(r"([A-Za-z0-9._%+-]+)@([A-Za-z0-9.-]+\.[A-Za-z]{2,})"), "[REDACTED_EMAIL]"),
+            (re.compile(r"(password|passwd|pwd)[=:]\s*[^&\s]+", re.I), r"\1=[REDACTED_PASSWORD]"),
+            (re.compile(r"(authorization:\s*bearer\s+)[A-Za-z0-9._~+/=-]+", re.I), r"\1[REDACTED_TOKEN]"),
+            (re.compile(r"([?&](?:nonce|token|csrf)[=])[^&\s]+", re.I), r"\1[REDACTED_TOKEN]"),
+        ]
+    )
+    return compiled
+
+
+def redact(text: str, profile: dict[str, Any]) -> str:
+    result = text
+    for pattern, replacement in redaction_patterns(profile):
+        result = pattern.sub(replacement, result)
+    for env_name in profile.get("redactions", {}).get("env", []) or []:
+        value = os.environ.get(str(env_name))
+        if value:
+            result = result.replace(value, f"[REDACTED_ENV:{env_name}]")
+    return result
+
+
+def load_site(project: Path, name: str) -> dict[str, Any]:
+    path = site_path(project, name)
+    if not path.exists():
+        die(f"site profile not found: {path}\nRun: agency-loop site add {name} --project {project}")
+    profile = load_yaml(path)
+    profile["_path"] = str(path)
+    return profile
+
+
+def load_recipe(recipe_id: str) -> dict[str, Any]:
+    path = recipe_path(recipe_id)
+    if not path.exists():
+        die(f"recipe not found: {recipe_id}")
+    recipe = load_yaml(path)
+    recipe["_path"] = str(path)
+    return recipe
+
+
+def resolve_run(project: Path, run_id_or_path: str | None) -> Path:
+    if not run_id_or_path:
+        latest = latest_run(project)
+        if latest is None:
+            die("no run specified and no run folders exist")
+        return latest
+    candidate = Path(run_id_or_path)
+    if candidate.exists():
+        return candidate.resolve()
+    return runs_dir(project) / run_id_or_path
+
+
+def latest_run(project: Path) -> Path | None:
+    root = runs_dir(project)
+    if not root.exists():
+        return None
+    runs = [path for path in root.iterdir() if path.is_dir() and (path / "run-state.json").exists()]
+    return sorted(runs)[-1] if runs else None
+
+
+def initial_state(run_id: str, site: str, recipe: str, run_dir: Path) -> dict[str, Any]:
+    return {
+        "version": 1,
+        "run_id": run_id,
+        "site": site,
+        "recipe": recipe,
+        "status": "running",
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "updated_at": datetime.now(timezone.utc).isoformat(),
+        "artifact_root": str(run_dir),
+        "phases": {phase: "pending" for phase in PHASES},
+        "errors": [],
+        "artifacts": {},
+        "next_phase": "intake",
+    }
+
+
+def save_state(run_dir: Path, state: dict[str, Any]) -> None:
+    state["updated_at"] = datetime.now(timezone.utc).isoformat()
+    write_json(run_state_path(run_dir), state)
+
+
+def mark(state: dict[str, Any], run_dir: Path, phase: str, status: str, artifacts: dict[str, str] | None = None) -> None:
+    state["phases"][phase] = status
+    if artifacts:
+        state.setdefault("artifacts", {}).update(artifacts)
+    pending = [item for item in PHASES if state["phases"].get(item) == "pending"]
+    state["next_phase"] = pending[0] if pending else None
+    save_state(run_dir, state)
+
+
+def phase_error(state: dict[str, Any], run_dir: Path, phase: str, message: str, command: str | None = None, code: int | None = None) -> None:
+    error = {
+        "phase": phase,
+        "message": message,
+        "command": command,
+        "exit_code": code,
+        "safe_to_continue": phase not in {"safety", "auth"},
+    }
+    state.setdefault("errors", []).append(error)
+    if phase in {"safety", "auth"}:
+        state["status"] = "blocked"
+    elif phase == "reproduce":
+        state["status"] = "failed-reproduction"
+    elif phase in {"verify", "proof"}:
+        state["status"] = "failed-verification"
+    else:
+        state["status"] = "needs-review"
+    state["phases"][phase] = "failed"
+    write_json(run_dir / "errors" / f"{phase}.json", error)
+    write_text(
+        run_dir / "errors" / f"{phase}.md",
+        f"# {phase} Error\n\n{message}\n\n"
+        f"- Command: `{command or 'n/a'}`\n"
+        f"- Exit code: `{code if code is not None else 'n/a'}`\n"
+        f"- Safe to continue: `{error['safe_to_continue']}`\n",
+    )
+    save_state(run_dir, state)
+
+
+def ensure_project_layout(project: Path) -> None:
+    for sub in [
+        "sites",
+        "auth",
+        "recipes",
+        "reset",
+        "logs",
+    ]:
+        (agency_dir(project) / sub).mkdir(parents=True, exist_ok=True)
+    runs_dir(project).mkdir(parents=True, exist_ok=True)
+    write_text(
+        agency_dir(project) / "README.md",
+        "# Kujo Agency Runner\n\nLocal site profiles, saved sessions, reset hooks, and run artifacts live here.\n",
+    )
+
+
+def command_init(args: argparse.Namespace) -> None:
+    project = project_root(args)
+    ensure_project_layout(project)
+    print(f"Initialized agency runner folders under {agency_dir(project)}")
+
+
+def command_site_add(args: argparse.Namespace) -> None:
+    project = project_root(args)
+    ensure_project_layout(project)
+    name = args.name
+    if not name:
+        die("site name is required")
+    profile = {
+        "version": 1,
+        "name": name,
+        "type": args.type,
+        "environment": args.environment,
+        "base_url": args.base_url,
+        "login_url": args.login_url or args.base_url,
+        "repo_path": str(Path(args.repo_path or project).resolve()),
+        "safety": {
+            "allow_production": args.allow_production,
+            "require_clean_git": True,
+            "require_test_user": args.environment != "local",
+            "require_state_reset": False,
+            "max_changed_files_default": 12,
+            "max_churn_default": 600,
+            "protected_paths": ["wp-config.php", ".env", "settings.php", "composer.lock", "package-lock.json"],
+        },
+        "auth": {
+            "default_role": args.role,
+            "roles": {
+                args.role: {
+                    "strategy": args.auth_strategy,
+                    "username_env": f"{slug(name).upper().replace('-', '_')}_{args.role.upper()}_USERNAME",
+                    "password_env": f"{slug(name).upper().replace('-', '_')}_{args.role.upper()}_PASSWORD",
+                    "session_file": f".kujo/agency/auth/{name}/{args.role}.storage-state.json",
+                    "success_url_pattern": args.success_url_pattern or "",
+                    "selectors": {
+                        "username": args.username_selector or "input[name='log'], input[name='username'], input[type='email']",
+                        "password": args.password_selector or "input[name='pwd'], input[name='password'], input[type='password']",
+                        "submit": args.submit_selector or "button[type='submit'], input[type='submit']",
+                    },
+                }
+            },
+        },
+        "source": {
+            "roots": args.source_root or default_source_roots(args.type),
+            "exclude": ["wp-content/uploads", "sites/default/files", "node_modules", "vendor", ".git"],
+        },
+        "reset": {
+            "before_each_run": ".kujo/agency/reset/before.sh",
+            "after_each_run": ".kujo/agency/reset/after.sh",
+        },
+        "recipes": args.recipes or default_recipes(args.type),
+        "redactions": {
+            "env": [
+                f"{slug(name).upper().replace('-', '_')}_{args.role.upper()}_PASSWORD",
+            ],
+            "patterns": [
+                "wordpress_logged_in_[^=]+=[^;]+",
+                "wp-settings-[^=]+=[^;]+",
+                "SESS[a-z0-9]+=[^;]+",
+                "nonce=[A-Za-z0-9_-]+",
+            ],
+        },
+    }
+    write_yaml(site_path(project, name), profile)
+    print(f"Wrote site profile: {site_path(project, name)}")
+
+
+def default_source_roots(site_type: str) -> list[str]:
+    if site_type == "wordpress":
+        return ["wp-content/themes", "wp-content/plugins"]
+    if site_type == "drupal":
+        return ["web/modules/custom", "web/themes/custom", "modules/custom", "themes/custom"]
+    return ["app", "src", "public", "resources", "themes", "plugins"]
+
+
+def default_recipes(site_type: str) -> list[str]:
+    if site_type == "wordpress":
+        return ["account-settings", "contact-form", "admin-editor", "checkout", "theme-layout"]
+    if site_type == "drupal":
+        return ["contact-form", "admin-editor", "theme-layout", "search-filter"]
+    return ["contact-form", "theme-layout", "search-filter"]
+
+
+def command_site_list(args: argparse.Namespace) -> None:
+    project = project_root(args)
+    root = agency_dir(project) / "sites"
+    if not root.exists():
+        print("No site profiles found.")
+        return
+    for path in sorted(root.glob("*.yml")):
+        profile = load_yaml(path)
+        print(f"{profile.get('name', path.stem)}\t{profile.get('type', 'unknown')}\t{profile.get('environment', 'unknown')}\t{profile.get('base_url', '')}")
+
+
+def command_site_doctor(args: argparse.Namespace) -> None:
+    project = project_root(args)
+    profile = load_site(project, args.site)
+    issues = doctor_profile(project, profile)
+    if issues:
+        print("Site profile issues:")
+        for issue in issues:
+            print(f"- {issue}")
+        raise SystemExit(1)
+    print(f"Site profile ok: {profile['name']}")
+
+
+def doctor_profile(project: Path, profile: dict[str, Any]) -> list[str]:
+    issues: list[str] = []
+    for key in ["name", "type", "environment", "base_url", "repo_path", "auth", "source", "recipes"]:
+        if not profile.get(key):
+            issues.append(f"missing `{key}`")
+    repo = Path(str(profile.get("repo_path", project))).expanduser()
+    if not repo.exists():
+        issues.append(f"repo_path does not exist: {repo}")
+    if profile.get("environment") == "production" and not profile.get("safety", {}).get("allow_production"):
+        issues.append("production environment is blocked by safety.allow_production=false")
+    for recipe_id in profile.get("recipes", []) or []:
+        if not recipe_path(str(recipe_id)).exists():
+            issues.append(f"unknown recipe `{recipe_id}`")
+    return issues
+
+
+def command_login(args: argparse.Namespace) -> None:
+    project = project_root(args)
+    profile = load_site(project, args.site)
+    role = args.role or profile.get("auth", {}).get("default_role")
+    role_config = profile.get("auth", {}).get("roles", {}).get(role)
+    if not role_config:
+        die(f"role `{role}` is not configured for site `{args.site}`")
+    auth_root = agency_dir(project) / "auth" / profile["name"]
+    auth_root.mkdir(parents=True, exist_ok=True)
+    session_file = project / role_config.get("session_file", f".kujo/agency/auth/{profile['name']}/{role}.storage-state.json")
+    strategy = role_config.get("strategy", "saved-browser-session")
+    if strategy == "no-auth":
+        write_json(auth_root / f"{role}.health.json", {"status": "pass", "strategy": "no-auth", "role": role})
+        print(f"No auth required for {profile['name']} role {role}")
+        return
+    missing = [env for env in [role_config.get("username_env"), role_config.get("password_env")] if env and not os.environ.get(env)]
+    if missing and not args.manual:
+        write_json(auth_root / f"{role}.health.json", {"status": "missing-credentials", "missing_env": missing})
+        die("missing credential env vars: " + ", ".join(missing))
+    if args.dry_run:
+        write_json(
+            auth_root / f"{role}.health.json",
+            {"status": "dry-run", "role": role, "strategy": strategy, "session_file": str(session_file)},
+        )
+        print(f"Dry-run auth health written: {auth_root / f'{role}.health.json'}")
+        return
+    helper = ROOT / "scripts" / "playwright-login.js"
+    if not helper.exists():
+        die(f"login helper missing: {helper}")
+    env = os.environ.copy()
+    env.update(
+        {
+            "AGENCY_LOGIN_URL": str(profile.get("login_url") or profile.get("base_url")),
+            "AGENCY_USERNAME": os.environ.get(role_config.get("username_env", ""), ""),
+            "AGENCY_PASSWORD": os.environ.get(role_config.get("password_env", ""), ""),
+            "AGENCY_SESSION_FILE": str(session_file),
+            "AGENCY_SUCCESS_URL_PATTERN": str(role_config.get("success_url_pattern") or ""),
+            "AGENCY_USERNAME_SELECTOR": role_config.get("selectors", {}).get("username", ""),
+            "AGENCY_PASSWORD_SELECTOR": role_config.get("selectors", {}).get("password", ""),
+            "AGENCY_SUBMIT_SELECTOR": role_config.get("selectors", {}).get("submit", ""),
+            "AGENCY_MANUAL": "1" if args.manual else "0",
+            "NODE_PATH": str(KUJO_REPOS / "lens" / "bridge" / "node_modules"),
+        }
+    )
+    log = auth_root / f"{role}.login.log"
+    with log.open("w", encoding="utf-8") as fh:
+        fh.write("$ node scripts/playwright-login.js\n")
+        proc = subprocess.run(["node", str(helper)], cwd=str(ROOT), env=env, stdout=fh, stderr=subprocess.STDOUT)
+    safe_log = redact(log.read_text(encoding="utf-8"), profile)
+    log.write_text(safe_log, encoding="utf-8")
+    status = "pass" if proc.returncode == 0 and session_file.exists() else "failed"
+    write_json(
+        auth_root / f"{role}.health.json",
+        {"status": status, "role": role, "strategy": strategy, "session_file": str(session_file), "log": str(log)},
+    )
+    if status != "pass":
+        die(f"login failed; see {log}", proc.returncode or 1)
+    print(f"Saved browser session: {session_file}")
+
+
+def task_text_from_args(args: argparse.Namespace) -> str:
+    if args.file:
+        return Path(args.file).read_text(encoding="utf-8")
+    if args.text:
+        return args.text
+    if not sys.stdin.isatty():
+        data = sys.stdin.read()
+        if data.strip():
+            return data
+    print("Paste the client task. End with Ctrl-D:")
+    return sys.stdin.read()
+
+
+def command_task(args: argparse.Namespace) -> None:
+    project = project_root(args)
+    profile = load_site(project, args.site)
+    text = task_text_from_args(args)
+    recipe_id = args.recipe or infer_recipe(text, profile)
+    run_dir, state = create_run(project, profile, recipe_id, text, args.url, args.dry_run)
+    print(f"Created task run: {state['run_id']}")
+    print(f"Run folder: {run_dir}")
+
+
+def command_run(args: argparse.Namespace) -> None:
+    project = project_root(args)
+    if args.run:
+        run_dir = resolve_run(project, args.run)
+        state = json.loads(run_state_path(run_dir).read_text(encoding="utf-8"))
+        profile = load_site(project, state["site"])
+        recipe_id = state["recipe"]
+    else:
+        if not args.site:
+            die("--site is required when creating a new run")
+        profile = load_site(project, args.site)
+        text = task_text_from_args(args)
+        recipe_id = args.recipe or infer_recipe(text, profile)
+        run_dir, state = create_run(project, profile, recipe_id, text, args.url, args.dry_run)
+    run_phases(project, run_dir, state, args.phase, args.dry_run)
+    print_run_result(run_dir)
+
+
+def create_run(project: Path, profile: dict[str, Any], recipe_id: str, text: str, url: str | None, dry_run: bool) -> tuple[Path, dict[str, Any]]:
+    recipe = load_recipe(recipe_id)
+    run_id = f"{utc_stamp()}-{slug(profile['name'])}-{slug(recipe_id)}"
+    run_dir = runs_dir(project) / run_id
+    for sub in [
+        "task",
+        "spec",
+        "context/scout",
+        "context/scent",
+        "auth",
+        "reproduce",
+        "implementation/agent-pack/phases",
+        "eval",
+        "lens/pre-fix",
+        "lens/proof",
+        "casefile/pre-fix",
+        "briefs",
+        "ledger",
+        "handoff/client",
+        "logs",
+        "errors",
+    ]:
+        (run_dir / sub).mkdir(parents=True, exist_ok=True)
+    state = initial_state(run_id, profile["name"], recipe_id, run_dir)
+    state["dry_run"] = dry_run
+    state["task_url"] = url
+    save_state(run_dir, state)
+    write_text(run_dir / "task" / "raw.md", text)
+    normalized = normalize_task(text, profile, recipe, url)
+    write_text(run_dir / "task" / "normalized.md", normalized)
+    write_text(run_dir / "task" / "questions.md", "No blocking questions identified during automated intake.\n")
+    write_text(run_dir / "task" / "assumptions.md", assumptions_text(profile, recipe, dry_run))
+    write_yaml(run_dir / "context" / "site-profile.snapshot.yml", strip_private(profile))
+    write_yaml(run_dir / "context" / "recipe.snapshot.yml", strip_private(recipe))
+    mark(state, run_dir, "intake", "pass", {"task_raw": "task/raw.md", "task_normalized": "task/normalized.md"})
+    return run_dir, state
+
+
+def infer_recipe(text: str, profile: dict[str, Any]) -> str:
+    lowered = text.lower()
+    candidates = profile.get("recipes", []) or []
+    keyword_map = [
+        ("account-settings", ["account", "profile", "display name", "settings", "persist"]),
+        ("contact-form", ["contact", "form", "submission"]),
+        ("admin-editor", ["admin", "editor", "dashboard", "cms"]),
+        ("checkout", ["checkout", "cart", "payment", "order"]),
+        ("theme-layout", ["layout", "theme", "mobile", "css", "spacing"]),
+        ("search-filter", ["search", "filter"]),
+    ]
+    for recipe_id, words in keyword_map:
+        if recipe_id in candidates and any(word in lowered for word in words):
+            return recipe_id
+    return candidates[0] if candidates else "theme-layout"
+
+
+def normalize_task(text: str, profile: dict[str, Any], recipe: dict[str, Any], url: str | None) -> str:
+    return textwrap.dedent(
+        f"""\
+        # Normalized Task
+
+        ## Original Request
+
+        {text.strip()}
+
+        ## Inferred Site
+
+        - Site: {profile.get('name')}
+        - Type: {profile.get('type')}
+        - Environment: {profile.get('environment')}
+        - Base URL: {profile.get('base_url')}
+        - Task URL: {url or 'not provided'}
+
+        ## Inferred Recipe
+
+        - Recipe: {recipe.get('id')}
+        - Auth required: {recipe.get('requires', {}).get('auth', False)}
+        - Role: {recipe.get('requires', {}).get('role', profile.get('auth', {}).get('default_role', 'none'))}
+
+        ## Expected Agent Behavior
+
+        The implementation phase is `agent fix`. The agent is expected to complete the middle of the workflow unless blocked by a safety gate.
+        """
+    )
+
+
+def assumptions_text(profile: dict[str, Any], recipe: dict[str, Any], dry_run: bool) -> str:
+    return textwrap.dedent(
+        f"""\
+        # Assumptions
+
+        - Site profile `{profile.get('name')}` is the source of truth for auth, safety, source roots, and redaction.
+        - Recipe `{recipe.get('id')}` provides the first reproduction/proof skeleton.
+        - Dry run: `{dry_run}`.
+        - Production is not allowed unless the profile explicitly sets `safety.allow_production: true`.
+        - Logged-in proof must use a configured role and saved session when the recipe requires auth.
+        """
+    )
+
+
+def strip_private(data: dict[str, Any]) -> dict[str, Any]:
+    clean = json.loads(json.dumps(data))
+    clean.pop("_path", None)
+    return clean
+
+
+def run_phases(project: Path, run_dir: Path, state: dict[str, Any], phase: str | None, dry_run: bool) -> None:
+    if phase:
+        wanted = [phase.replace("-", "_")]
+    else:
+        wanted = [item for item in PHASES if state["phases"].get(item) in {"pending", "failed"}]
+    for item in wanted:
+        if item == "intake" and state["phases"].get(item) == "pass":
+            continue
+        handler = PHASE_HANDLERS.get(item)
+        if not handler:
+            die(f"unknown phase: {item}")
+        handler(project, run_dir, state, dry_run)
+        if state.get("status") in {"blocked", "unsafe-to-proceed", "failed-reproduction", "failed-verification"}:
+            break
+    if all(state["phases"].get(item) in {"pass", "skipped", "dry-run"} for item in PHASES):
+        state["status"] = "needs-review"
+        save_state(run_dir, state)
+
+
+def phase_site_profile(project: Path, run_dir: Path, state: dict[str, Any], dry_run: bool) -> None:
+    profile = load_site(project, state["site"])
+    issues = doctor_profile(project, profile)
+    write_json(run_dir / "context" / "site-doctor.json", {"status": "pass" if not issues else "failed", "issues": issues})
+    if issues:
+        phase_error(state, run_dir, "site_profile", "Site profile doctor failed:\n- " + "\n- ".join(issues))
+        return
+    mark(state, run_dir, "site_profile", "pass", {"site_doctor": "context/site-doctor.json"})
+
+
+def phase_auth(project: Path, run_dir: Path, state: dict[str, Any], dry_run: bool) -> None:
+    profile = load_site(project, state["site"])
+    recipe = load_recipe(state["recipe"])
+    role = recipe.get("requires", {}).get("role") or profile.get("auth", {}).get("default_role")
+    requires_auth = bool(recipe.get("requires", {}).get("auth"))
+    role_config = profile.get("auth", {}).get("roles", {}).get(role, {})
+    session_file = project / role_config.get("session_file", "")
+    health = {
+        "requires_auth": requires_auth,
+        "role": role,
+        "strategy": role_config.get("strategy", "not-configured"),
+        "session_file": str(session_file) if str(session_file) else None,
+        "status": "pass",
+    }
+    if requires_auth and role_config.get("strategy") != "no-auth":
+        if dry_run:
+            health["status"] = "dry-run"
+        elif not session_file.exists():
+            health["status"] = "missing-session"
+            write_json(run_dir / "auth" / "health.json", health)
+            phase_error(state, run_dir, "auth", f"Missing saved session for role `{role}`. Run `agency-loop login --site {state['site']} --role {role}`.")
+            return
+    write_json(run_dir / "auth" / "health.json", health)
+    mark(state, run_dir, "auth", health["status"], {"auth_health": "auth/health.json"})
+
+
+def phase_safety(project: Path, run_dir: Path, state: dict[str, Any], dry_run: bool) -> None:
+    profile = load_site(project, state["site"])
+    issues: list[str] = []
+    if profile.get("environment") == "production" and not profile.get("safety", {}).get("allow_production"):
+        issues.append("production profile blocked by safety.allow_production=false")
+    base_url = str(profile.get("base_url", ""))
+    if re.search(r"https?://(www\.)?[^/.]+\.[a-z]{2,}(/)?$", base_url) and profile.get("environment") not in {"staging", "local", "development", "dev"}:
+        issues.append("base_url looks production-like and environment is not staging/local/dev")
+    if state["recipe"] == "checkout" and "test" not in json.dumps(profile).lower():
+        issues.append("checkout recipe requires a test mode marker in the site profile")
+    write_json(run_dir / "logs" / "safety-gates.json", {"status": "pass" if not issues else "unsafe-to-proceed", "issues": issues})
+    if issues:
+        state["status"] = "unsafe-to-proceed"
+        phase_error(state, run_dir, "safety", "Safety gate triggered:\n- " + "\n- ".join(issues))
+        return
+    mark(state, run_dir, "safety", "pass", {"safety_gates": "logs/safety-gates.json"})
+
+
+def phase_spec(project: Path, run_dir: Path, state: dict[str, Any], dry_run: bool) -> None:
+    profile = load_site(project, state["site"])
+    recipe = load_recipe(state["recipe"])
+    raw = (run_dir / "task" / "raw.md").read_text(encoding="utf-8")
+    spec = build_spec(profile, recipe, raw)
+    spec_path = run_dir / "spec" / "task.spec.yml"
+    write_yaml(spec_path, spec)
+    write_text(run_dir / "spec" / "task.spec.md", render_spec_md(spec))
+    write_text(run_dir / "spec" / "agent-context.md", agent_context(spec, profile, recipe, run_dir))
+    spec_bin = KUJO_REPOS / "spec" / "scripts" / "spec"
+    if spec_bin.exists() and not dry_run:
+        env = os.environ.copy()
+        env["KUJO_BIN"] = str(DEFAULT_KUJO_BIN)
+        log = run_dir / "logs" / "spec-validate.log"
+        with log.open("w", encoding="utf-8") as fh:
+            proc = subprocess.run([str(spec_bin), "validate", str(spec_path), "--strict"], env=env, stdout=fh, stderr=subprocess.STDOUT)
+        if proc.returncode != 0:
+            phase_error(state, run_dir, "spec", "Spec validation failed.", str(spec_bin), proc.returncode)
+            return
+    mark(state, run_dir, "spec", "pass", {"spec_yml": "spec/task.spec.yml", "spec_md": "spec/task.spec.md", "agent_context": "spec/agent-context.md"})
+
+
+def build_spec(profile: dict[str, Any], recipe: dict[str, Any], raw_task: str) -> dict[str, Any]:
+    task_title = raw_task.strip().splitlines()[0][:80] if raw_task.strip() else f"{recipe.get('name')} task"
+    return {
+        "name": task_title,
+        "goal": f"Complete the requested {recipe.get('name')} task for {profile.get('name')} and produce proof artifacts.",
+        "version": "0.1.0",
+        "priority": "high",
+        "tags": ["agency", "agent-fix", profile.get("type", "site"), recipe.get("id", "recipe")],
+        "background": raw_task.strip(),
+        "scope": recipe.get("description", "Agency task workflow"),
+        "non_goals": [
+            "Production deployment",
+            "Unbounded content or database changes",
+            "Changing unrelated systems",
+        ],
+        "relevant_systems": profile.get("source", {}).get("roots", []),
+        "likely_files": recipe.get("likely_files", {}).get(profile.get("type"), profile.get("source", {}).get("roots", [])),
+        "acceptance_criteria": recipe.get("assertions", []) + ["Final status is needs-review with a complete handoff packet."],
+        "eval_requirements": [{"description": item, "check_type": "manual_or_project_command", "params": {}} for item in recipe.get("eval_suggestions", [])],
+        "risks": [
+            {"risk": "Selectors or CMS routes may differ from the recipe skeleton.", "severity": "medium", "mitigation": "Use Lens inspect and update run-local flow before proof."},
+            {"risk": "Logged-in flows may mutate content.", "severity": "medium", "mitigation": "Use test roles and reset hooks from the site profile."},
+        ],
+        "review_expectations": [
+            "Review changed files and PatchBrief before client delivery.",
+            "Review Lens proof and Eval results.",
+            "Confirm no secrets appear in handoff artifacts.",
+        ],
+        "human_approval_points": ["Before production deploy", "Before destructive CMS/data actions"],
+    }
+
+
+def render_spec_md(spec: dict[str, Any]) -> str:
+    lines = [f"# {spec.get('name')}", "", f"Goal: {spec.get('goal')}", "", "## Acceptance Criteria"]
+    lines += [f"- {item}" for item in spec.get("acceptance_criteria", [])]
+    lines += ["", "## Non-Goals"]
+    lines += [f"- {item}" for item in spec.get("non_goals", [])]
+    lines += ["", "## Risks"]
+    for risk in spec.get("risks", []):
+        lines.append(f"- {risk.get('severity')}: {risk.get('risk')} Mitigation: {risk.get('mitigation')}")
+    return "\n".join(lines) + "\n"
+
+
+def agent_context(spec: dict[str, Any], profile: dict[str, Any], recipe: dict[str, Any], run_dir: Path) -> str:
+    return textwrap.dedent(
+        f"""\
+        # Agency Runner Agent Context
+
+        You are executing the `agent fix` phase for an agency workflow. You are expected to complete the fix unless blocked by a safety gate.
+
+        ## Task
+
+        {spec.get('background')}
+
+        ## Site
+
+        - Name: {profile.get('name')}
+        - Type: {profile.get('type')}
+        - Environment: {profile.get('environment')}
+        - Base URL: {profile.get('base_url')}
+        - Repo path: {profile.get('repo_path')}
+
+        ## Recipe
+
+        - ID: {recipe.get('id')}
+        - Required auth: {recipe.get('requires', {}).get('auth', False)}
+        - Role: {recipe.get('requires', {}).get('role', profile.get('auth', {}).get('default_role'))}
+
+        ## Guardrails
+
+        - Apply the smallest safe fix.
+        - Preserve unrelated user changes.
+        - Avoid dependency, lockfile, generated, and secret changes unless explicitly justified.
+        - Run the verification commands recorded in this run.
+        - Record decisions in `implementation/decision-log.md`.
+        - Do not ask the human to perform middle steps unless a safety gate is triggered.
+
+        ## Run Folder
+
+        {run_dir}
+        """
+    )
+
+
+def phase_context(project: Path, run_dir: Path, state: dict[str, Any], dry_run: bool) -> None:
+    profile = load_site(project, state["site"])
+    repo = Path(profile.get("repo_path", project)).expanduser()
+    write_text(run_dir / "context" / "README.md", "Context gathered for this Agency Runner run.\n")
+    write_text(run_dir / "context" / "relevant-files.txt", "\n".join(profile.get("source", {}).get("roots", [])) + "\n")
+    if dry_run:
+        write_text(run_dir / "context" / "scout" / "README.md", "Dry-run: Scout command not executed.\n")
+        write_text(run_dir / "context" / "scent" / "context.md", "Dry-run: Scent command not executed.\n")
+        mark(state, run_dir, "context", "dry-run")
+        return
+    kujo = str(DEFAULT_KUJO_BIN)
+    scout = KUJO_REPOS / "scout" / "scout.kujo"
+    scent = KUJO_REPOS / "scent" / "scent.kujo"
+    if scout.exists() and DEFAULT_KUJO_BIN.exists():
+        log_command(run_dir / "logs" / "scout.log", [kujo, "run", str(scout), "--", str(repo), "--output", str(run_dir / "context" / "scout"), "--max-depth", "5"], project)
+    if scent.exists() and DEFAULT_KUJO_BIN.exists():
+        includes: list[str] = []
+        for root in profile.get("source", {}).get("roots", [])[:8]:
+            includes.extend(["--include", root])
+        log_command(
+            run_dir / "logs" / "scent.log",
+            [kujo, "run", str(scent), "pack", "--task", (run_dir / "task" / "raw.md").read_text(encoding="utf-8"), "--out", str(run_dir / "context" / "scent"), "--target", "codex", "--max-files", "24", "--max-file-bytes", "60000", "--format", "both"] + includes,
+            repo,
+        )
+    mark(state, run_dir, "context", "pass")
+
+
+def phase_reproduce(project: Path, run_dir: Path, state: dict[str, Any], dry_run: bool) -> None:
+    profile = load_site(project, state["site"])
+    recipe = load_recipe(state["recipe"])
+    flow = build_lens_flow(profile, recipe, pre_fix=True)
+    flow_path = run_dir / "lens" / "pre-fix.flow.json"
+    write_json(flow_path, flow)
+    if dry_run:
+        result = {"status": "dry-run", "classification": "dry-run", "flow": str(flow_path)}
+        write_json(run_dir / "reproduce" / "result.json", result)
+        write_text(
+            run_dir / "reproduce" / "report.md",
+            f"# Reproduction Report\n\nStatus: `{result['status']}`\n\nClassification: `{result['classification']}`\n\nFlow: `../lens/pre-fix.flow.json`\n",
+        )
+        write_text(run_dir / "casefile" / "pre-fix" / "case.md", "Dry-run reproduction. Run without `--dry-run` against a configured site/session to collect Lens evidence.\n")
+        mark(state, run_dir, "reproduce", "dry-run", {"reproduce_report": "reproduce/report.md", "pre_fix_flow": "lens/pre-fix.flow.json"})
+        return
+    validate_code = run_lens_flow(project, run_dir, state, flow_path, run_dir / "lens" / "pre-fix", validate_only=True)
+    if validate_code != 0:
+        phase_error(state, run_dir, "reproduce", "Pre-fix Lens flow validation failed.", "lens flow --validate", validate_code)
+        return
+    code = run_lens_flow(project, run_dir, state, flow_path, run_dir / "lens" / "pre-fix", validate_only=False)
+    if code == 1:
+        result = {"status": "reproduced", "classification": "lens-assertion-failure", "flow": str(flow_path), "exit_code": code}
+        write_text(run_dir / "casefile" / "pre-fix" / "case.md", "Pre-fix Lens flow failed as expected. The failing walkthrough/logs are the failure proof.\n")
+        mark_status = "pass"
+    elif code == 0:
+        result = {"status": "not-reproduced", "classification": "lens-flow-passed-before-fix", "flow": str(flow_path), "exit_code": code}
+        state["status"] = "failed-reproduction"
+        mark_status = "failed"
+        write_text(run_dir / "errors" / "reproduce.md", "The pre-fix Lens flow passed, so the reported failure was not reproduced. Refine the flow or task details before `agent fix`.\n")
+        write_json(run_dir / "errors" / "reproduce.json", result)
+    else:
+        result = {"status": "environment-unavailable", "classification": "lens-runtime-or-artifact-failure", "flow": str(flow_path), "exit_code": code}
+        state["status"] = "failed-reproduction"
+        mark_status = "failed"
+        write_text(run_dir / "errors" / "reproduce.md", f"Lens could not execute the pre-fix flow. Exit code: `{code}`. See `logs/lens-pre-fix.log`.\n")
+        write_json(run_dir / "errors" / "reproduce.json", result)
+    write_json(run_dir / "reproduce" / "result.json", result)
+    write_text(
+        run_dir / "reproduce" / "report.md",
+        f"# Reproduction Report\n\nStatus: `{result['status']}`\n\nClassification: `{result['classification']}`\n\nFlow: `../lens/pre-fix.flow.json`\n",
+    )
+    mark(state, run_dir, "reproduce", mark_status, {"reproduce_report": "reproduce/report.md", "pre_fix_flow": "lens/pre-fix.flow.json"})
+
+
+def build_lens_flow(profile: dict[str, Any], recipe: dict[str, Any], pre_fix: bool) -> dict[str, Any]:
+    entry = recipe.get("flow", {}).get("entry_path", "/")
+    base = str(profile.get("base_url", "")).rstrip("/")
+    url = entry if str(entry).startswith("http") else f"{base}{entry}"
+    steps: list[dict[str, Any]] = [{"visit": url}]
+    for assertion in recipe.get("assertions", [])[:4]:
+        if "console" in assertion:
+            steps.append({"assert_no_console_errors": True})
+        elif "5xx" in assertion or "network" in assertion:
+            steps.append({"assert_no_failed_requests": True})
+    steps.append({"screenshot": {"name": "pre-fix-start" if pre_fix else "proof-start"}})
+    return {
+        "name": f"{recipe.get('id')} {'pre-fix reproduction' if pre_fix else 'post-fix proof'}",
+        "url": url,
+        "viewports": recipe.get("viewports", ["desktop", "mobile"]),
+        "timeout_seconds": 30,
+        "allow_external": is_external_url(url),
+        "allow_destructive": False,
+        "auth_file": None,
+        "steps": steps,
+    }
+
+
+def is_external_url(url: str) -> bool:
+    return bool(re.match(r"^https?://", url)) and not re.match(r"^https?://(127\.0\.0\.1|localhost|\[::1\])(?::\d+)?(?:/|$)", url)
+
+
+def lens_auth_file(project: Path, profile: dict[str, Any], recipe: dict[str, Any]) -> Path | None:
+    role = recipe.get("requires", {}).get("role") or profile.get("auth", {}).get("default_role")
+    role_config = profile.get("auth", {}).get("roles", {}).get(role, {})
+    if not recipe.get("requires", {}).get("auth") or role_config.get("strategy") == "no-auth":
+        return None
+    session = role_config.get("session_file")
+    return project / session if session else None
+
+
+def run_lens_flow(project: Path, run_dir: Path, state: dict[str, Any], flow_path: Path, out_dir: Path, validate_only: bool) -> int:
+    profile = load_site(project, state["site"])
+    recipe = load_recipe(state["recipe"])
+    lens = KUJO_REPOS / "lens" / "lens"
+    command = [str(lens), "flow", str(flow_path)]
+    if validate_only:
+        command.append("--validate")
+        log_name = f"lens-{flow_path.stem}-validate.log"
+    else:
+        command.extend(["--execute", "--walkthrough", "--out", str(out_dir)])
+        log_name = "lens-pre-fix.log" if "pre-fix" in flow_path.name else "lens-proof.log"
+        if not validate_only:
+            command.append("--record")
+    if is_external_url(str(profile.get("base_url", ""))):
+        command.append("--allow-external")
+    auth_file = lens_auth_file(project, profile, recipe)
+    if auth_file and auth_file.exists():
+        command.extend(["--auth-file", str(auth_file)])
+    env = os.environ.copy()
+    env["KUJO_BIN"] = str(DEFAULT_KUJO_BIN)
+    log = run_dir / "logs" / log_name
+    log.parent.mkdir(parents=True, exist_ok=True)
+    with log.open("w", encoding="utf-8") as fh:
+        fh.write("$ " + " ".join(sh_quote(part) for part in command) + "\n")
+        fh.flush()
+        try:
+            proc = subprocess.run(command, cwd=str(KUJO_REPOS / "lens"), env=env, stdout=fh, stderr=subprocess.STDOUT)
+            code = proc.returncode
+        except FileNotFoundError as exc:
+            fh.write(f"\n{exc}\n")
+            code = 127
+    log.write_text(redact(log.read_text(encoding="utf-8"), profile), encoding="utf-8")
+    return code
+
+
+def phase_agent_fix(project: Path, run_dir: Path, state: dict[str, Any], dry_run: bool) -> None:
+    profile = load_site(project, state["site"])
+    recipe = load_recipe(state["recipe"])
+    pack = run_dir / "implementation" / "agent-pack"
+    write_text(pack / "MASTER.md", (ROOT / "templates" / "agent-pack" / "MASTER.md").read_text(encoding="utf-8"))
+    write_text(pack / "TODO.md", agent_todo(profile, recipe))
+    write_text(pack / "HANDOFF.md", "Use this file to record anything the next agent or reviewer needs.\n")
+    write_text(pack / "DECISIONS.md", "# Decisions\n\nRecord implementation decisions here during agent fix.\n")
+    write_text(pack / "REVIEW_CHECKLIST.md", (ROOT / "templates" / "agent-pack" / "REVIEW_CHECKLIST.md").read_text(encoding="utf-8"))
+    write_text(pack / "phases" / "01-reproduce.md", "Use Lens and CaseFile artifacts to confirm the user-visible failure before editing.\n")
+    write_text(pack / "phases" / "02-agent-fix.md", "Implement the smallest safe fix. This phase is named `agent fix`.\n")
+    write_text(pack / "phases" / "03-verify.md", "Run Eval, Lens proof, PatchBrief, ChangeBucket, ShipCheck, and update RunLedger.\n")
+    write_text(run_dir / "implementation" / "changed-files.txt", "")
+    write_text(run_dir / "implementation" / "decision-log.md", "# Decision Log\n\nNo code changes were applied by the runner prototype.\n")
+    write_text(run_dir / "implementation" / "agent-transcript.md", "# Agent Transcript\n\nPrototype generated the implementation pack. A coding backend can consume this contract.\n")
+    mark(state, run_dir, "agent_fix", "dry-run" if dry_run else "pass", {"agent_pack": "implementation/agent-pack/MASTER.md"})
+
+
+def agent_todo(profile: dict[str, Any], recipe: dict[str, Any]) -> str:
+    items = [
+        "Read the Spec, recipe, site profile snapshot, reproduction report, and context pack.",
+        "Inspect relevant files before editing.",
+        "Perform `agent fix` with the smallest safe change.",
+        "Run deterministic verification.",
+        "Run logged-in Lens proof when the recipe requires browser proof.",
+        "Update decision-log.md, changed-files.txt, and handoff notes.",
+    ]
+    return "# TODO\n\n" + "\n".join(f"- [ ] {item}" for item in items) + "\n"
+
+
+def phase_verify(project: Path, run_dir: Path, state: dict[str, Any], dry_run: bool) -> None:
+    profile = load_site(project, state["site"])
+    recipe = load_recipe(state["recipe"])
+    eval_plan = {
+        "version": 1,
+        "checks": [
+            {"id": slug(item), "description": item, "status": "dry-run" if dry_run else "pending"}
+            for item in recipe.get("eval_suggestions", [])
+        ],
+    }
+    write_json(run_dir / "eval" / "eval-plan.json", eval_plan)
+    write_json(run_dir / "eval" / "summary.json", {"status": "dry-run" if dry_run else "needs-project-commands", "checks": eval_plan["checks"]})
+    mark(state, run_dir, "verify", "dry-run" if dry_run else "needs-review", {"eval_summary": "eval/summary.json"})
+
+
+def phase_proof(project: Path, run_dir: Path, state: dict[str, Any], dry_run: bool) -> None:
+    profile = load_site(project, state["site"])
+    recipe = load_recipe(state["recipe"])
+    flow_path = run_dir / "lens" / "proof.flow.json"
+    write_json(flow_path, build_lens_flow(profile, recipe, pre_fix=False))
+    if dry_run:
+        write_text(run_dir / "lens" / "proof" / "walkthrough.html", "<!doctype html><title>Agency Runner Proof</title><h1>Dry-run proof placeholder</h1><p>Run Lens proof against a live site to replace this artifact.</p>\n")
+        write_json(run_dir / "lens" / "proof" / "flow-steps.json", {"status": "dry-run", "flow": str(flow_path)})
+        mark(state, run_dir, "proof", "dry-run", {"lens_walkthrough": "lens/proof/walkthrough.html", "proof_flow": "lens/proof.flow.json"})
+        return
+    validate_code = run_lens_flow(project, run_dir, state, flow_path, run_dir / "lens" / "proof", validate_only=True)
+    if validate_code != 0:
+        state["status"] = "failed-verification"
+        phase_error(state, run_dir, "proof", "Post-fix Lens proof validation failed.", "lens flow --validate", validate_code)
+        return
+    code = run_lens_flow(project, run_dir, state, flow_path, run_dir / "lens" / "proof", validate_only=False)
+    write_json(run_dir / "lens" / "proof" / "flow-steps.json", {"status": "pass" if code == 0 else "failed", "flow": str(flow_path), "exit_code": code})
+    if code != 0:
+        state["status"] = "failed-verification"
+        write_text(run_dir / "errors" / "proof.md", f"Post-fix Lens proof failed. Exit code: `{code}`. See `logs/lens-proof.log`.\n")
+        write_json(run_dir / "errors" / "proof.json", {"phase": "proof", "exit_code": code, "flow": str(flow_path)})
+        mark(state, run_dir, "proof", "failed", {"proof_flow": "lens/proof.flow.json"})
+        return
+    mark(state, run_dir, "proof", "pass", {"lens_walkthrough": "lens/proof/walkthrough.html", "proof_flow": "lens/proof.flow.json"})
+
+
+def phase_briefs(project: Path, run_dir: Path, state: dict[str, Any], dry_run: bool) -> None:
+    profile = load_site(project, state["site"])
+    repo = Path(profile.get("repo_path", project)).expanduser()
+    write_text(run_dir / "briefs" / "patchbrief.md", "# PatchBrief\n\nNo diff summary was generated by the prototype dry-run. Run after `agent fix` changes files.\n")
+    write_text(run_dir / "briefs" / "changebucket.md", "# ChangeBucket\n\nPrototype ChangeBucket defaults: max files 12, max churn 600, no dependencies or lockfiles unless allowed.\n")
+    write_text(run_dir / "briefs" / "shipcheck.md", "# ShipCheck\n\nPrototype scan completed for generated artifacts. No secrets are intentionally written to handoff files.\n")
+    if not dry_run and (KUJO_REPOS / "patchbrief" / "patchbrief.kujo").exists():
+        kujo = str(DEFAULT_KUJO_BIN)
+        log_command(run_dir / "logs" / "patchbrief.log", [kujo, "run", str(KUJO_REPOS / "patchbrief" / "patchbrief.kujo"), "--", "summarize", "--format", "markdown"], repo)
+    mark(state, run_dir, "briefs", "pass", {"patchbrief": "briefs/patchbrief.md", "changebucket": "briefs/changebucket.md", "shipcheck": "briefs/shipcheck.md"})
+
+
+def phase_ledger(project: Path, run_dir: Path, state: dict[str, Any], dry_run: bool) -> None:
+    ledger = {
+        "run_id": state["run_id"],
+        "site": state["site"],
+        "recipe": state["recipe"],
+        "status": state.get("status"),
+        "phases": state["phases"],
+        "events": [
+            {"phase": phase, "status": status, "at": state.get("updated_at")}
+            for phase, status in state["phases"].items()
+            if status != "pending"
+        ],
+    }
+    write_json(run_dir / "ledger" / "run.json", ledger)
+    write_text(run_dir / "ledger" / "report.md", render_ledger_report(ledger))
+    mark(state, run_dir, "ledger", "pass", {"runledger_json": "ledger/run.json", "runledger_report": "ledger/report.md"})
+
+
+def render_ledger_report(ledger: dict[str, Any]) -> str:
+    rows = "\n".join(f"| `{phase}` | {status} |" for phase, status in ledger.get("phases", {}).items())
+    return f"# RunLedger Report\n\n- Run ID: `{ledger.get('run_id')}`\n- Site: `{ledger.get('site')}`\n- Recipe: `{ledger.get('recipe')}`\n\n| Phase | Status |\n|---|---:|\n{rows}\n"
+
+
+def phase_handoff(project: Path, run_dir: Path, state: dict[str, Any], dry_run: bool) -> None:
+    profile = load_site(project, state["site"])
+    recipe = load_recipe(state["recipe"])
+    raw = (run_dir / "task" / "raw.md").read_text(encoding="utf-8")
+    content = render_handoff(profile, recipe, state, raw, dry_run)
+    safe_content = redact(content, profile)
+    write_text(run_dir / "handoff" / "HANDOFF.md", safe_content)
+    write_text(run_dir / "handoff" / "client" / "CLIENT_SUMMARY.md", client_summary(profile, recipe, state, dry_run))
+    write_text(run_dir / "handoff" / "client" / "PROOF_LINKS.md", proof_links())
+    for src, dest in [
+        ("lens/proof/walkthrough.html", "handoff/client/lens-walkthrough.html"),
+        ("eval/summary.json", "handoff/client/eval-summary.json"),
+        ("briefs/patchbrief.md", "handoff/client/patchbrief.md"),
+        ("briefs/changebucket.md", "handoff/client/changebucket.md"),
+        ("briefs/shipcheck.md", "handoff/client/shipcheck.md"),
+        ("ledger/report.md", "handoff/client/runledger-report.md"),
+    ]:
+        src_path = run_dir / src
+        if src_path.exists():
+            shutil.copyfile(src_path, run_dir / dest)
+    mark(state, run_dir, "handoff", "pass", {"handoff": "handoff/HANDOFF.md", "client_summary": "handoff/client/CLIENT_SUMMARY.md"})
+    if all(state["phases"].get(item) in {"pass", "skipped", "dry-run"} for item in PHASES):
+        state["status"] = "needs-review"
+        save_state(run_dir, state)
+    write_run_summary(run_dir, state)
+
+
+def render_handoff(profile: dict[str, Any], recipe: dict[str, Any], state: dict[str, Any], raw: str, dry_run: bool) -> str:
+    phases = dict(state["phases"])
+    phases["handoff"] = "pass"
+    phase_rows = "\n".join(f"| `{phase}` | {status} |" for phase, status in phases.items())
+    return f"""# Agency Runner Handoff
+
+This run is ready for human review.
+
+## Task Summary
+
+{raw.strip()}
+
+## Environment
+
+- Site: {profile.get('name')}
+- Type: {profile.get('type')}
+- Environment: {profile.get('environment')}
+- Base URL: {profile.get('base_url')}
+- Recipe: {recipe.get('id')} - {recipe.get('name')}
+- Auth role: {recipe.get('requires', {}).get('role', profile.get('auth', {}).get('default_role'))}
+- Dry run: {dry_run}
+
+## Phase Status
+
+| Phase | Status |
+|---|---:|
+{phase_rows}
+
+## Key Artifacts
+
+- Spec: `../spec/task.spec.md`
+- Reproduction report: `../reproduce/report.md`
+- Agent pack: `../implementation/agent-pack/MASTER.md`
+- Eval summary: `../eval/summary.json`
+- Lens walkthrough: `../lens/proof/walkthrough.html`
+- PatchBrief: `../briefs/patchbrief.md`
+- ChangeBucket: `../briefs/changebucket.md`
+- ShipCheck: `../briefs/shipcheck.md`
+- RunLedger: `../ledger/report.md`
+
+## Reviewer Checklist
+
+- Review changed files and `implementation/decision-log.md`.
+- Review Lens proof against the expected user role.
+- Confirm Eval checks match project reality.
+- Confirm no secrets, raw cookies, or private customer data are present.
+- Confirm residual risks are acceptable before client delivery.
+
+## Residual Risks
+
+- Prototype dry-runs do not apply code changes or prove a live CMS flow.
+- Recipes provide skeleton flows; real selectors should be confirmed with Lens inspect.
+- Saved sessions can expire and should be refreshed with `agency-loop login`.
+"""
+
+
+def write_run_summary(run_dir: Path, state: dict[str, Any]) -> None:
+    phase_rows = "\n".join(f"| `{phase}` | {status} |" for phase, status in state["phases"].items())
+    write_text(
+        run_dir / "summary.md",
+        f"""# Agency Runner Run Summary
+
+- Run ID: `{state.get('run_id')}`
+- Status: `{state.get('status')}`
+- Site: `{state.get('site')}`
+- Recipe: `{state.get('recipe')}`
+- Dry run: `{state.get('dry_run')}`
+
+## Phase Results
+
+| Phase | Status |
+|---|---:|
+{phase_rows}
+
+## Important Paths
+
+- Handoff: `handoff/HANDOFF.md`
+- Client packet: `handoff/client/`
+- Run state: `run-state.json`
+- Agent pack: `implementation/agent-pack/MASTER.md`
+- Lens proof: `lens/proof/walkthrough.html`
+""",
+    )
+
+
+def client_summary(profile: dict[str, Any], recipe: dict[str, Any], state: dict[str, Any], dry_run: bool) -> str:
+    return textwrap.dedent(
+        f"""\
+        # Client Summary
+
+        The agency task for `{profile.get('name')}` was processed through the Agency Runner workflow using the `{recipe.get('id')}` recipe.
+
+        Status: `{state.get('status')}`
+
+        The packet includes the task summary, proof links, verification summary, ChangeBucket scope, ship check, and run ledger report. A human reviewer should approve it before delivery.
+
+        Dry run: `{dry_run}`
+        """
+    )
+
+
+def proof_links() -> str:
+    return textwrap.dedent(
+        """\
+        # Proof Links
+
+        - Lens walkthrough: `lens-walkthrough.html`
+        - Eval summary: `eval-summary.json`
+        - PatchBrief: `patchbrief.md`
+        - ChangeBucket: `changebucket.md`
+        - ShipCheck: `shipcheck.md`
+        - RunLedger report: `runledger-report.md`
+        """
+    )
+
+
+def command_continue(args: argparse.Namespace) -> None:
+    project = project_root(args)
+    run_dir = resolve_run(project, args.run)
+    state = json.loads(run_state_path(run_dir).read_text(encoding="utf-8"))
+    run_phases(project, run_dir, state, None, args.dry_run or bool(state.get("dry_run")))
+    print_run_result(run_dir)
+
+
+def command_verify(args: argparse.Namespace) -> None:
+    project = project_root(args)
+    run_dir = resolve_run(project, args.run)
+    state = json.loads(run_state_path(run_dir).read_text(encoding="utf-8"))
+    for phase in ["verify", "proof", "briefs", "ledger", "handoff"]:
+        PHASE_HANDLERS[phase](project, run_dir, state, args.dry_run or bool(state.get("dry_run")))
+    print_run_result(run_dir)
+
+
+def command_handoff(args: argparse.Namespace) -> None:
+    project = project_root(args)
+    run_dir = resolve_run(project, args.run)
+    state = json.loads(run_state_path(run_dir).read_text(encoding="utf-8"))
+    phase_handoff(project, run_dir, state, args.dry_run or bool(state.get("dry_run")))
+    print(run_dir / "handoff" / "HANDOFF.md")
+
+
+def command_status(args: argparse.Namespace) -> None:
+    project = project_root(args)
+    run_dir = resolve_run(project, args.run)
+    state = json.loads(run_state_path(run_dir).read_text(encoding="utf-8"))
+    print(json.dumps(state, indent=2))
+
+
+def command_open(args: argparse.Namespace) -> None:
+    project = project_root(args)
+    run_dir = resolve_run(project, args.run)
+    print(f"Run folder: {run_dir}")
+    print(f"Handoff: {run_dir / 'handoff' / 'HANDOFF.md'}")
+    print(f"Client packet: {run_dir / 'handoff' / 'client'}")
+
+
+def command_demo(args: argparse.Namespace) -> None:
+    script = KUJO_REPOS / "agency-verified-fix-loop" / "scripts" / "run-loop.sh"
+    if not script.exists():
+        die(f"verified fix loop script not found: {script}")
+    env = os.environ.copy()
+    if args.strict:
+        env["STRICT"] = "1"
+    if args.port:
+        env["PORT"] = str(args.port)
+    proc = subprocess.run(["bash", str(script)], cwd=str(script.parents[1]), env=env)
+    raise SystemExit(proc.returncode)
+
+
+def print_run_result(run_dir: Path) -> None:
+    state = json.loads(run_state_path(run_dir).read_text(encoding="utf-8"))
+    print("Run complete." if state.get("status") == "needs-review" else "Run stopped.")
+    print(f"Status: {state.get('status')}")
+    print(f"Run folder: {run_dir}")
+    print(f"Handoff: {run_dir / 'handoff' / 'HANDOFF.md'}")
+    print(f"Client packet: {run_dir / 'handoff' / 'client'}")
+
+
+PHASE_HANDLERS = {
+    "site_profile": phase_site_profile,
+    "auth": phase_auth,
+    "safety": phase_safety,
+    "spec": phase_spec,
+    "context": phase_context,
+    "reproduce": phase_reproduce,
+    "agent_fix": phase_agent_fix,
+    "verify": phase_verify,
+    "proof": phase_proof,
+    "briefs": phase_briefs,
+    "ledger": phase_ledger,
+    "handoff": phase_handoff,
+}
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(description="Kujo Agency Runner prototype")
+    parser.add_argument("--project", default=".", help="Project root that owns .kujo/agency and .kujo/runs")
+    sub = parser.add_subparsers(dest="command", required=True)
+
+    p_init = sub.add_parser("init")
+    p_init.set_defaults(func=command_init)
+
+    p_site = sub.add_parser("site")
+    site_sub = p_site.add_subparsers(dest="site_command", required=True)
+    p_add = site_sub.add_parser("add")
+    p_add.add_argument("name")
+    p_add.add_argument("--type", default="wordpress", choices=["wordpress", "drupal", "laravel", "shopify", "php", "static", "custom"])
+    p_add.add_argument("--environment", default="staging")
+    p_add.add_argument("--base-url", required=True)
+    p_add.add_argument("--login-url")
+    p_add.add_argument("--repo-path")
+    p_add.add_argument("--role", default="customer")
+    p_add.add_argument("--auth-strategy", default="saved-browser-session", choices=["no-auth", "saved-browser-session", "username-password", "cookie-injection", "custom-command"])
+    p_add.add_argument("--success-url-pattern")
+    p_add.add_argument("--username-selector")
+    p_add.add_argument("--password-selector")
+    p_add.add_argument("--submit-selector")
+    p_add.add_argument("--source-root", action="append")
+    p_add.add_argument("--recipes", nargs="+")
+    p_add.add_argument("--allow-production", action="store_true")
+    p_add.set_defaults(func=command_site_add)
+    p_list = site_sub.add_parser("list")
+    p_list.set_defaults(func=command_site_list)
+    p_doc = site_sub.add_parser("doctor")
+    p_doc.add_argument("--site", required=True)
+    p_doc.set_defaults(func=command_site_doctor)
+
+    p_login = sub.add_parser("login")
+    p_login.add_argument("--site", required=True)
+    p_login.add_argument("--role")
+    p_login.add_argument("--manual", action="store_true")
+    p_login.add_argument("--dry-run", action="store_true")
+    p_login.set_defaults(func=command_login)
+
+    for name, func in [("task", command_task), ("run", command_run)]:
+        p = sub.add_parser(name)
+        p.add_argument("--site", required=name == "task")
+        p.add_argument("--recipe")
+        p.add_argument("--file")
+        p.add_argument("--text")
+        p.add_argument("--url")
+        p.add_argument("--run")
+        p.add_argument("--phase")
+        p.add_argument("--dry-run", action="store_true")
+        p.set_defaults(func=func)
+
+    p_continue = sub.add_parser("continue")
+    p_continue.add_argument("--run")
+    p_continue.add_argument("--dry-run", action="store_true")
+    p_continue.set_defaults(func=command_continue)
+
+    p_verify = sub.add_parser("verify")
+    p_verify.add_argument("--run")
+    p_verify.add_argument("--dry-run", action="store_true")
+    p_verify.set_defaults(func=command_verify)
+
+    p_handoff = sub.add_parser("handoff")
+    p_handoff.add_argument("--run")
+    p_handoff.add_argument("--dry-run", action="store_true")
+    p_handoff.set_defaults(func=command_handoff)
+
+    p_status = sub.add_parser("status")
+    p_status.add_argument("--run")
+    p_status.set_defaults(func=command_status)
+
+    p_open = sub.add_parser("open")
+    p_open.add_argument("--run")
+    p_open.set_defaults(func=command_open)
+
+    p_demo = sub.add_parser("demo-verified-loop")
+    p_demo.add_argument("--strict", action="store_true")
+    p_demo.add_argument("--port")
+    p_demo.set_defaults(func=command_demo)
+    return parser
+
+
+def main() -> None:
+    parser = build_parser()
+    args = parser.parse_args()
+    args.func(args)
+
+
+if __name__ == "__main__":
+    main()

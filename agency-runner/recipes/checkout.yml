@@ -1,0 +1,37 @@
+version: 1
+id: checkout
+name: Checkout Flow
+description: Verify cart, checkout, payment-mode, and order-adjacent behavior without capturing real payment.
+requires:
+  auth: false
+  test_payment_mode: true
+flow:
+  entry_path: /checkout/
+  actions:
+    - verify test payment marker
+    - add or confirm test cart state
+    - perform checkout steps up to configured safe boundary
+    - verify expected totals and messages
+viewports:
+  - desktop
+  - mobile
+assertions:
+  - no real payment capture
+  - test payment mode marker is present
+  - no browser console errors
+  - no 5xx network responses
+likely_files:
+  wordpress:
+    - wp-content/themes/*
+    - wp-content/plugins/*commerce*
+    - wp-content/plugins/*checkout*
+  drupal:
+    - web/modules/custom
+    - web/themes/custom
+eval_suggestions:
+  - syntax checks
+  - checkout route HTTP status check
+  - changed-file grep for live payment keys
+safety:
+  require_test_payment_marker: true
+  destructive_requires_approval: true

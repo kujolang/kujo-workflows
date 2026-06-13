@@ -1,0 +1,33 @@
+version: 1
+id: contact-form
+name: Contact Form Submission
+description: Verify public or logged-in form submission, validation, and success/error handling.
+requires:
+  auth: false
+flow:
+  entry_path: /contact/
+  actions:
+    - open contact form
+    - fill required fields with test data
+    - submit form
+    - verify success or expected validation state
+viewports:
+  - desktop
+  - mobile
+assertions:
+  - no browser console errors
+  - no 5xx network responses
+  - required fields are visible
+  - submission returns expected confirmation
+likely_files:
+  wordpress:
+    - wp-content/themes/*
+    - wp-content/plugins/*form*
+    - wp-content/plugins/*contact*
+  drupal:
+    - web/modules/custom
+    - web/themes/custom
+eval_suggestions:
+  - syntax checks for changed PHP files
+  - form route HTTP status check
+  - changed-file grep for real email or SMS sends

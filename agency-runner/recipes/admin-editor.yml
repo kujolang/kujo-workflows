@@ -1,0 +1,36 @@
+version: 1
+id: admin-editor
+name: CMS Admin Editor Flow
+description: Verify an authenticated editor or admin can update CMS content in a controlled test scope.
+requires:
+  auth: true
+  role: admin
+  explicit_recipe: true
+flow:
+  entry_path: /wp-admin/
+  actions:
+    - confirm admin dashboard access
+    - open configured test content
+    - make a scoped content or settings change
+    - save
+    - verify front-end or admin-visible result
+viewports:
+  - desktop
+assertions:
+  - logged in as expected admin role
+  - no browser console errors
+  - no 5xx network responses
+  - saved value is visible after refresh
+likely_files:
+  wordpress:
+    - wp-content/themes/*
+    - wp-content/plugins/*
+  drupal:
+    - web/modules/custom
+    - web/themes/custom
+eval_suggestions:
+  - syntax checks for changed PHP files
+  - CMS cache status check when configured
+  - changed-file grep for unsafe debug output
+safety:
+  destructive_requires_approval: true

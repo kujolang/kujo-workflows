@@ -1,0 +1,44 @@
+version: 1
+name: civic-drupal
+type: drupal
+environment: staging
+base_url: "https://staging.civic.example"
+login_url: "https://staging.civic.example/user/login"
+repo_path: "/Users/robertdevore/Sites/civic-drupal"
+safety:
+  allow_production: false
+  require_clean_git: true
+  require_test_user: false
+  require_state_reset: false
+  max_changed_files_default: 10
+  max_churn_default: 500
+  protected_paths:
+    - web/sites/default/settings.php
+    - .env
+    - composer.lock
+auth:
+  default_role: anonymous
+  roles:
+    anonymous:
+      strategy: no-auth
+source:
+  roots:
+    - web/modules/custom
+    - web/themes/custom
+  exclude:
+    - web/sites/default/files
+    - node_modules
+    - vendor
+    - .git
+reset:
+  before_each_run: ".kujo/agency/reset/before.sh"
+  after_each_run: ".kujo/agency/reset/after.sh"
+recipes:
+  - contact-form
+  - admin-editor
+  - theme-layout
+redactions:
+  env: []
+  patterns:
+    - "SESS[a-z0-9]+=[^;]+"
+    - "form_token=[A-Za-z0-9_-]+"

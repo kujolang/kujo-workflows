@@ -1,0 +1,9 @@
+{
+  "name": "northstar/storefront-demo",
+  "description": "Fictional PHP storefront fixture for the Agency Verified Fix Loop.",
+  "type": "project",
+  "license": "MIT",
+  "scripts": {
+    "test": "php tests/promo_code_test.php"
+  }
+}

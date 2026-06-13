@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kujo.local/schemas/agency/site-profile.schema.json",
+  "title": "Kujo Agency Runner Site Profile",
+  "type": "object",
+  "required": ["version", "name", "type", "environment", "base_url", "repo_path", "safety", "auth", "source", "recipes", "redactions"],
+  "properties": {
+    "version": { "const": 1 },
+    "name": { "type": "string", "minLength": 1 },
+    "type": { "type": "string", "enum": ["wordpress", "drupal", "laravel", "shopify", "php", "static", "custom"] },
+    "environment": { "type": "string", "enum": ["local", "development", "dev", "staging", "qa", "production"] },
+    "base_url": { "type": "string", "minLength": 1 },
+    "login_url": { "type": "string" },
+    "repo_path": { "type": "string", "minLength": 1 },
+    "safety": {
+      "type": "object",
+      "required": ["allow_production", "require_clean_git", "require_test_user", "max_changed_files_default", "max_churn_default", "protected_paths"],
+      "properties": {
+        "allow_production": { "type": "boolean" },
+        "require_clean_git": { "type": "boolean" },
+        "require_test_user": { "type": "boolean" },
+        "require_state_reset": { "type": "boolean" },
+        "max_changed_files_default": { "type": "integer", "minimum": 1 },
+        "max_churn_default": { "type": "integer", "minimum": 1 },
+        "protected_paths": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    },
+    "auth": {
+      "type": "object",
+      "required": ["default_role", "roles"],
+      "properties": {
+        "default_role": { "type": "string" },
+        "roles": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "required": ["strategy"],
+            "properties": {
+              "strategy": { "type": "string", "enum": ["no-auth", "saved-browser-session", "username-password", "cookie-injection", "custom-command"] },
+              "username_env": { "type": "string" },
+              "password_env": { "type": "string" },
+              "session_file": { "type": "string" },
+              "success_url_pattern": { "type": "string" },
+              "selectors": {
+                "type": "object",
+                "properties": {
+                  "username": { "type": "string" },
+                  "password": { "type": "string" },
+                  "submit": { "type": "string" }
+                },
+                "additionalProperties": true
+              }
+            },
+            "additionalProperties": true
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "source": {
+      "type": "object",
+      "required": ["roots", "exclude"],
+      "properties": {
+        "roots": { "type": "array", "items": { "type": "string" } },
+        "exclude": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    },
+    "reset": {
+      "type": "object",
+      "properties": {
+        "before_each_run": { "type": "string" },
+        "after_each_run": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "recipes": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "redactions": {
+      "type": "object",
+      "properties": {
+        "env": { "type": "array", "items": { "type": "string" } },
+        "patterns": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

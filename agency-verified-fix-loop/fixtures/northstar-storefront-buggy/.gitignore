@@ -1,0 +1,8 @@
+.DS_Store
+node_modules/
+vendor/
+coverage/
+tmp/
+*.log
+.casefile-agency-loop/
+.agency-pack/

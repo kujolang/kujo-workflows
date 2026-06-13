@@ -1,0 +1,39 @@
+version: 1
+id: account-settings
+name: Account Settings Persistence
+description: Verify logged-in users can update and persist account or profile fields.
+requires:
+  auth: true
+  role: customer
+flow:
+  entry_path: /my-account/
+  actions:
+    - locate account settings page
+    - capture current value
+    - change value to a run-specific test value
+    - save
+    - verify success message
+    - refresh
+    - verify changed value persisted
+viewports:
+  - desktop
+  - mobile
+assertions:
+  - no browser console errors
+  - no 5xx network responses
+  - success message appears
+  - updated value persists after refresh
+likely_files:
+  wordpress:
+    - wp-content/themes/*
+    - wp-content/plugins/*account*
+    - wp-content/plugins/*member*
+    - wp-content/plugins/*profile*
+  drupal:
+    - web/modules/custom
+    - web/themes/custom
+eval_suggestions:
+  - php syntax checks
+  - unit tests when present
+  - changed-file grep for unsafe debug output
+  - HTTP status check for account page

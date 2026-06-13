@@ -1,0 +1,28 @@
+version: 1
+id: search-filter
+name: Search and Filter
+description: Verify search, filters, facets, sorting, and result persistence.
+requires:
+  auth: false
+flow:
+  entry_path: /search/
+  actions:
+    - open search or listing page
+    - apply configured filter or query
+    - verify expected result state
+    - refresh and verify state when applicable
+assertions:
+  - no browser console errors
+  - no 5xx network responses
+  - expected result text appears
+likely_files:
+  wordpress:
+    - wp-content/themes/*
+    - wp-content/plugins/*search*
+    - wp-content/plugins/*filter*
+  drupal:
+    - web/modules/custom
+    - web/themes/custom
+eval_suggestions:
+  - syntax checks
+  - search route HTTP status check

@@ -1,0 +1,26 @@
+version: 1
+id: email-notification
+name: Email Notification
+description: Verify notification generation while preventing accidental real email delivery.
+requires:
+  auth: false
+flow:
+  entry_path: /
+  actions:
+    - trigger configured notification in test mode
+    - verify capture sink or log entry
+assertions:
+  - no real external email send unless explicitly allowed
+  - no browser console errors
+  - expected notification artifact exists
+likely_files:
+  wordpress:
+    - wp-content/plugins/*
+    - wp-content/themes/*
+  drupal:
+    - web/modules/custom
+eval_suggestions:
+  - changed-file grep for live SMTP credentials
+  - mail sink or log assertion when configured
+safety:
+  external_email_requires_approval: true

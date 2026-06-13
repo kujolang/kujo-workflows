@@ -1,0 +1,27 @@
+version: 1
+id: performance-regression
+name: Performance Regression
+description: Verify a reported performance issue with deterministic checks and browser timing evidence.
+requires:
+  auth: false
+flow:
+  entry_path: /
+  actions:
+    - open affected page
+    - capture timing and network evidence
+    - compare expected target behavior
+assertions:
+  - no 5xx network responses
+  - no unexpected heavy failed resources
+  - performance metrics are recorded
+likely_files:
+  wordpress:
+    - wp-content/themes/*
+    - wp-content/plugins/*
+  drupal:
+    - web/modules/custom
+    - web/themes/custom
+eval_suggestions:
+  - build check when present
+  - Lens perf check
+  - changed-file grep for accidental debug output

@@ -1,0 +1,1 @@
+Users can update their display name in My Account, but after clicking Save the success message appears and the value does not persist after refresh. Please fix this on staging and provide proof using the test customer account.

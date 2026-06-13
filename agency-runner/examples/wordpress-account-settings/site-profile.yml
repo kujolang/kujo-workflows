@@ -1,0 +1,68 @@
+version: 1
+name: acme-wp
+type: wordpress
+environment: staging
+base_url: "https://staging.acme.example"
+login_url: "https://staging.acme.example/wp-login.php"
+repo_path: "/Users/robertdevore/Sites/acme-wordpress"
+safety:
+  allow_production: false
+  require_clean_git: true
+  require_test_user: true
+  require_state_reset: false
+  max_changed_files_default: 12
+  max_churn_default: 600
+  protected_paths:
+    - wp-config.php
+    - .env
+    - composer.lock
+    - package-lock.json
+auth:
+  default_role: customer
+  roles:
+    customer:
+      strategy: saved-browser-session
+      username_env: ACME_CUSTOMER_USERNAME
+      password_env: ACME_CUSTOMER_PASSWORD
+      session_file: ".kujo/agency/auth/acme-wp/customer.storage-state.json"
+      success_url_pattern: "/my-account"
+      selectors:
+        username: "input[name='log'], input[type='email']"
+        password: "input[name='pwd'], input[type='password']"
+        submit: "button[type='submit'], input[type='submit']"
+    admin:
+      strategy: saved-browser-session
+      username_env: ACME_ADMIN_USERNAME
+      password_env: ACME_ADMIN_PASSWORD
+      session_file: ".kujo/agency/auth/acme-wp/admin.storage-state.json"
+      success_url_pattern: "/wp-admin"
+      selectors:
+        username: "input[name='log']"
+        password: "input[name='pwd']"
+        submit: "input[type='submit']"
+source:
+  roots:
+    - wp-content/themes/acme
+    - wp-content/plugins/acme-membership
+  exclude:
+    - wp-content/uploads
+    - node_modules
+    - vendor
+    - .git
+reset:
+  before_each_run: ".kujo/agency/reset/before.sh"
+  after_each_run: ".kujo/agency/reset/after.sh"
+recipes:
+  - account-settings
+  - contact-form
+  - admin-editor
+  - checkout
+  - theme-layout
+redactions:
+  env:
+    - ACME_CUSTOMER_PASSWORD
+    - ACME_ADMIN_PASSWORD
+  patterns:
+    - "wordpress_logged_in_[^=]+=[^;]+"
+    - "wp-settings-[^=]+=[^;]+"
+    - "nonce=[A-Za-z0-9_-]+"

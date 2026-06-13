@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kujo.local/schemas/agency/recipe.schema.json",
+  "title": "Kujo Agency Runner Recipe",
+  "type": "object",
+  "required": ["version", "id", "name", "description", "requires", "flow", "assertions", "likely_files", "eval_suggestions"],
+  "properties": {
+    "version": { "const": 1 },
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "name": { "type": "string", "minLength": 1 },
+    "description": { "type": "string", "minLength": 1 },
+    "requires": {
+      "type": "object",
+      "properties": {
+        "auth": { "type": "boolean" },
+        "role": { "type": "string" },
+        "explicit_recipe": { "type": "boolean" },
+        "test_payment_mode": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "flow": {
+      "type": "object",
+      "required": ["entry_path", "actions"],
+      "properties": {
+        "entry_path": { "type": "string" },
+        "actions": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    },
+    "viewports": { "type": "array", "items": { "type": "string" } },
+    "assertions": { "type": "array", "items": { "type": "string" } },
+    "likely_files": {
+      "type": "object",
+      "additionalProperties": { "type": "array", "items": { "type": "string" } }
+    },
+    "eval_suggestions": { "type": "array", "items": { "type": "string" } },
+    "safety": { "type": "object", "additionalProperties": true }
+  },
+  "additionalProperties": true
+}

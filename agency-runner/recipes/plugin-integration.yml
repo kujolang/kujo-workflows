@@ -1,0 +1,28 @@
+version: 1
+id: plugin-integration
+name: Plugin Integration
+description: Verify plugin/module integration behavior and compatibility in a scoped task area.
+requires:
+  auth: true
+  role: admin
+flow:
+  entry_path: /wp-admin/plugins.php
+  actions:
+    - verify plugin or module state
+    - perform configured safe integration workflow
+    - verify user-visible behavior
+assertions:
+  - no browser console errors
+  - no 5xx network responses
+  - plugin state remains expected
+likely_files:
+  wordpress:
+    - wp-content/plugins/*
+    - wp-content/themes/*
+  drupal:
+    - web/modules/custom
+eval_suggestions:
+  - syntax checks
+  - plugin/module status command when configured
+safety:
+  destructive_requires_approval: true

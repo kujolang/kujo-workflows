@@ -1,0 +1,11 @@
+{
+  "name": "northstar-storefront-demo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Fictional storefront fixture for the Agency Verified Fix Loop.",
+  "scripts": {
+    "lint": "node --check public/assets/js/cart.js",
+    "format": "node -e \"console.log('format check placeholder')\"",
+    "test": "php tests/promo_code_test.php"
+  }
+}

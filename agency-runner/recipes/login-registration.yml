@@ -1,0 +1,26 @@
+version: 1
+id: login-registration
+name: Login and Registration
+description: Verify authentication, registration, password, or gated access flows using test accounts only.
+requires:
+  auth: false
+flow:
+  entry_path: /login/
+  actions:
+    - open login or registration entry point
+    - complete configured test flow
+    - verify expected authenticated or validation state
+assertions:
+  - no browser console errors
+  - no 5xx network responses
+  - authentication state matches expectation
+likely_files:
+  wordpress:
+    - wp-content/plugins/*login*
+    - wp-content/plugins/*member*
+    - wp-content/themes/*
+  drupal:
+    - web/modules/custom
+eval_suggestions:
+  - syntax checks
+  - auth route HTTP status check

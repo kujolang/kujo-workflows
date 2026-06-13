@@ -1,0 +1,32 @@
+version: 1
+id: theme-layout
+name: Theme Layout Regression
+description: Verify visual layout, responsive behavior, and template changes across target viewports.
+requires:
+  auth: false
+flow:
+  entry_path: /
+  actions:
+    - open affected page
+    - capture desktop and mobile screenshots
+    - verify target content is visible and unobstructed
+    - compare behavior after refresh
+viewports:
+  - desktop
+  - mobile
+assertions:
+  - no browser console errors
+  - no 5xx network responses
+  - target content is visible
+  - layout does not overlap incoherently
+likely_files:
+  wordpress:
+    - wp-content/themes/*
+    - wp-content/plugins/*block*
+  drupal:
+    - web/themes/custom
+    - web/modules/custom
+eval_suggestions:
+  - build or asset pipeline check when present
+  - CSS/JS lint when present
+  - Lens desktop and mobile check
