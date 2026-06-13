@@ -1,0 +1,25 @@
+{
+  "name": "feature-card-start",
+  "summary": "Create a repo-local Kujo feature card run folder from a task card.",
+  "runner": "bash",
+  "script": "workflows/feature-card-start.sh",
+  "args": [
+    {
+      "name": "card_id",
+      "required": true,
+      "description": "Card identifier, for example CARD-123."
+    },
+    {
+      "name": "task_file",
+      "required": false,
+      "description": "Optional markdown task file to copy into the run folder."
+    }
+  ],
+  "quiet_by_default": true,
+  "safety": {
+    "require_git_repo": true,
+    "allow_dirty_tree": true,
+    "requires_network": false,
+    "human_approval_recommended": false
+  }
+}
