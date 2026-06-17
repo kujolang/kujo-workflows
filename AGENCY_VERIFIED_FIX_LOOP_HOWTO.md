@@ -970,13 +970,19 @@ cp .kujo-agency-loop/eval/results/summary.json \
 cp .kujo-agency-loop/lens/proof/walkthrough.html \
   .kujo-agency-loop/client/lens-walkthrough.html
 
+mkdir -p .kujo-agency-loop/client/video
+
 if [ -f .kujo-agency-loop/lens/proof/video/walkthrough.webm ]; then
   cp .kujo-agency-loop/lens/proof/video/walkthrough.webm \
+    .kujo-agency-loop/client/video/walkthrough.webm
+  cp .kujo-agency-loop/client/video/walkthrough.webm \
     .kujo-agency-loop/client/lens-recording.webm
 fi
 
 if [ -f .kujo-agency-loop/lens/proof/video/walkthrough.mp4 ]; then
   cp .kujo-agency-loop/lens/proof/video/walkthrough.mp4 \
+    .kujo-agency-loop/client/video/walkthrough.mp4
+  cp .kujo-agency-loop/client/video/walkthrough.mp4 \
     .kujo-agency-loop/client/lens-recording.mp4
 fi
 

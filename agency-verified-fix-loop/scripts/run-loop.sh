@@ -353,8 +353,11 @@ EOF
   [ -f "$RUN_DIR/briefs/changebucket.md" ] && cp "$RUN_DIR/briefs/changebucket.md" "$RUN_DIR/client/changebucket.md"
   [ -f "$RUN_DIR/eval/results/summary.json" ] && cp "$RUN_DIR/eval/results/summary.json" "$RUN_DIR/client/eval-summary.json"
   [ -f "$RUN_DIR/lens/proof/walkthrough.html" ] && cp "$RUN_DIR/lens/proof/walkthrough.html" "$RUN_DIR/client/lens-walkthrough.html"
-  [ -f "$RUN_DIR/lens/proof/video/walkthrough.webm" ] && cp "$RUN_DIR/lens/proof/video/walkthrough.webm" "$RUN_DIR/client/lens-recording.webm"
-  [ -f "$RUN_DIR/lens/proof/video/walkthrough.mp4" ] && cp "$RUN_DIR/lens/proof/video/walkthrough.mp4" "$RUN_DIR/client/lens-recording.mp4"
+  mkdir -p "$RUN_DIR/client/video"
+  [ -f "$RUN_DIR/lens/proof/video/walkthrough.webm" ] && cp "$RUN_DIR/lens/proof/video/walkthrough.webm" "$RUN_DIR/client/video/walkthrough.webm"
+  [ -f "$RUN_DIR/lens/proof/video/walkthrough.mp4" ] && cp "$RUN_DIR/lens/proof/video/walkthrough.mp4" "$RUN_DIR/client/video/walkthrough.mp4"
+  [ -f "$RUN_DIR/client/video/walkthrough.webm" ] && cp "$RUN_DIR/client/video/walkthrough.webm" "$RUN_DIR/client/lens-recording.webm"
+  [ -f "$RUN_DIR/client/video/walkthrough.mp4" ] && cp "$RUN_DIR/client/video/walkthrough.mp4" "$RUN_DIR/client/lens-recording.mp4"
   [ -f "$RUN_DIR/briefs/shipcheck.md" ] && cp "$RUN_DIR/briefs/shipcheck.md" "$RUN_DIR/client/shipcheck.md"
   [ -f "$RUN_DIR/briefs/runledger-report.md" ] && cp "$RUN_DIR/briefs/runledger-report.md" "$RUN_DIR/client/runledger-report.md"
 }
