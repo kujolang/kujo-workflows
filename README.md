@@ -1,180 +1,72 @@
-# KUJO Workflows Review
+# Kujo Workflows
 
-This folder contains workflow prototypes for the KUJO agency and AI tooling stack:
+This repo collects runnable workflow kits for the Kujo agency and AI tooling stack. Each workflow is meant to be a content pillar: it demonstrates a concrete developer, agency, or enterprise outcome and leaves behind reviewable local artifacts.
 
-1. `agency-runner/` — a local-first CLI prototype for turning a client task into a reusable run packet.
-2. `agency-verified-fix-loop/` — a runnable demo kit that simulates the full fix-and-proof loop against a small storefront fixture.
-3. `ai-sdk-watchdog-showcase/` — a self-contained AI Chat bridge workflow that routes AI SDK calls through Watchdog and exports reviewable telemetry.
+## Workflow Catalog
 
-## Quick verdict
+| Workflow | Audience | What it proves | Run command |
+| --- | --- | --- | --- |
+| `agency-runner/` | Agency owners | Client tasks can become reusable local run packets. | `python3 bin/agency-loop ...` |
+| `agency-verified-fix-loop/` | Agencies, developers | A bug fix can move through spec, context, proof, brief, and handoff artifacts. | `bash scripts/run-loop.sh` |
+| `feature-card-workflow/` | Developers | A task card can drive implementation, verification, proof, and reviewer handoff. | `bash muzzle-template/workflows/feature-card-full.sh ...` |
+| `ai-sdk-watchdog-showcase/` | AI app developers | AI SDK calls can be routed through Watchdog and exported as telemetry. | `bash scripts/run-showcase.sh` |
+| `ai-sdk-muzzle-benchmark/` | AI app teams | Repeated AI SDK app generations can be benchmarked and reviewed. | `bash scripts/run-suite.sh` |
+| `enterprise-dispatch-approval-router/` | Enterprise platform teams | Dispatch creates auditable workflow state, trace, report, and diagnostics. | `bash scripts/run-workflow.sh` |
+| `mcp-agent-gateway-review/` | Developers, enterprise AI teams | `mcp make` generates a guarded MCP server scaffold and safety packet. | `bash scripts/run-workflow.sh` |
+| `rag-enterprise-knowledge-gate/` | Enterprise knowledge teams | RAG ingests local docs, isolates a namespace, and answers with citations. | `bash scripts/run-workflow.sh` |
+| `casefile-incident-evidence-packet/` | Developers, support teams | CaseFile captures a failing command as a reproducible evidence bundle. | `bash scripts/run-workflow.sh` |
+| `howl-content-factory/` | Developers, agency owners | Howl turns real Kujo examples into Markdown, HTML, SVG, gallery, and captions. | `bash scripts/run-workflow.sh` |
 
-Both workflows are real, usable prototypes and they do produce artifacts in this checkout.
+## New Content Pillars
 
-- `agency-runner/` is working as intended for its current scope: it can initialize profiles, create runs, and generate a handoff packet in dry-run mode.
-- `agency-verified-fix-loop/` is also working as intended for its demo scope: it builds a fixture, runs the spec/scout/scent/eval/lens chain, and writes a proof packet.
-- `ai-sdk-watchdog-showcase/` demonstrates Watchdog against AI Chat-style AI SDK traffic with a fixture OpenAI-compatible upstream, producing a summary plus raw Watchdog exports.
+The newest five workflows were selected to cover a broad buyer story without duplicating the existing agency fix-loop examples.
 
-The main caveat is that the demo kit still depends on a few external KUJO tools that are not all present in this local checkout. In the current run, the only reproducible blocker was the missing `changebucket` binary used by the ChangeBucket stages.
+1. `enterprise-dispatch-approval-router/` - governed AI workflow orchestration for enterprise review and approval.
+2. `mcp-agent-gateway-review/` - safe agent tool gateways for codebases and internal platforms.
+3. `rag-enterprise-knowledge-gate/` - grounded local knowledge retrieval with namespace isolation and citations.
+4. `casefile-incident-evidence-packet/` - incident and failed-run evidence that another human or agent can act on.
+5. `howl-content-factory/` - deterministic content asset generation from real examples.
 
----
+Each new workflow includes:
 
-## 1. Agency Runner
+- `README.md`
+- `HOWTO.md`
+- `TODO.md`
+- `scripts/run-workflow.sh`
+- a verified `.runs/<timestamp>/SUMMARY.md` packet from this checkout
 
-Location: `agency-runner/`
+## Verification Snapshot
 
-### What it is
-
-`agency-runner` is the more general workflow wrapper. It is designed to turn a human task description and a site profile into an agency-style artifact bundle under `.kujo/runs/<run-id>/`.
-
-### How it works
-
-The main entry point is:
-
-```bash
-python3 bin/agency-loop
-```
-
-The core flow is:
-
-1. `init` — create `.kujo/agency/` and `.kujo/runs/` folders.
-2. `site add` — store a site profile with auth, safety, repo, and recipe settings.
-3. `run` — create a run packet from a task file or text input.
-4. `verify` / `handoff` — generate review and handoff artifacts.
-
-The prototype writes a portable packet with:
-
-- task intake and normalization
-- spec and agent context
-- context/scout and scent snapshots
-- reproduction and proof placeholders
-- eval summary and handoff files
-- run-state.json for resumable execution
-
-### What we verified
-
-We verified the documented path with a real dry-run:
-
-```bash
-python3 bin/agency-loop --project /tmp/kujo-agency-run-test init
-python3 bin/agency-loop --project /tmp/kujo-agency-run-test site add ...
-python3 bin/agency-loop --project /tmp/kujo-agency-run-test run --site acme ... --dry-run
-```
-
-Result:
-
-- the CLI executed successfully
-- the run completed with status `needs-review`
-- the output folder contained the expected artifact bundle under `.kujo/runs/...`
-
-### Important note
-
-The prototype currently depends on `PyYAML` in the runtime environment. In this checkout, that dependency was missing and had to be installed before the CLI could run.
-
-### Current status
-
-This workflow is working as a prototype and is suitable for local demos, dry-runs, and future integration into a native `kujo agency` command.
-
----
-
-## 2. Agency Verified Fix Loop Demo Kit
-
-Location: `agency-verified-fix-loop/`
-
-### What it is
-
-This folder turns the documented fix loop into a runnable demo using a small fixture storefront. It simulates a realistic bug-fix workflow: spec, scout, scent, eval, Lens proof, PatchBrief, ChangeBucket, ShipCheck, and RunLedger.
-
-### How it works
-
-The main entry point is:
-
-```bash
-STRICT=1 bash scripts/run-loop.sh
-```
-
-The script:
-
-1. builds a temporary buggy fixture under `.work/<timestamp>/northstar-storefront/`
-2. renders spec/eval/lens templates
-3. runs spec validation, Scout, Scent, and PackWrite prep
-4. starts a PHP dev server and records Lens pre-fix failure
-5. applies a deterministic fix
-6. runs Eval, Lens proof, PatchBrief, ChangeBucket, ShipCheck, and RunLedger
-7. writes a client handoff packet under `.runs/<timestamp>/client/`
-
-### What we verified
-
-We ran the demo with:
-
-```bash
-KUJO_REPOS=/Users/robertdevore/2026/Kujolang/kujo-repos STRICT=1 bash scripts/run-loop.sh
-```
-
-Result:
-
-- the demo completed and wrote a full artifact bundle under `.runs/20260612T154650Z/`
-- the summary reported 32 passed stages, 1 warning, and 3 failed stages
-- the 3 failures were tied to the missing `changebucket` binary path used by the ChangeBucket stages
-
-### Why the failures happened
-
-The log output showed:
+The five new workflows were run successfully in this workspace:
 
 ```text
-env: /Users/robertdevore/2026/Kujolang/kujo-repos/changebucket/bin/changebucket: No such file or directory
+enterprise-dispatch-approval-router/.runs/20260613T150711Z/SUMMARY.md
+mcp-agent-gateway-review/.runs/20260613T150737Z/SUMMARY.md
+rag-enterprise-knowledge-gate/.runs/20260613T150746Z/SUMMARY.md
+casefile-incident-evidence-packet/.runs/20260613T150757Z/SUMMARY.md
+howl-content-factory/.runs/20260613T150812Z/SUMMARY.md
 ```
 
-That means the demo itself is functioning, but the current checkout does not contain the `changebucket` executable that the script expects.
-
-### Current status
-
-This demo is working as intended for the current repo layout and is useful as a proof-of-concept / demonstration bundle. It is not yet a fully self-contained end-to-end release package because some optional KUJO tooling is missing from this workspace snapshot.
-
----
-
-## 3. AI SDK + Watchdog Showcase
-
-Location: `ai-sdk-watchdog-showcase/`
-
-### What it is
-
-This workflow showcases Watchdog's usefulness for AI app observability. It uses AI Chat's `bridge_chat.kujo` as the example app boundary, routes that bridge through the Kujo AI SDK, and points the SDK at Watchdog's OpenAI-compatible proxy.
-
-### How it works
-
-The main entry point is:
+Useful verification command:
 
 ```bash
-bash scripts/run-showcase.sh
+for d in enterprise-dispatch-approval-router mcp-agent-gateway-review rag-enterprise-knowledge-gate casefile-incident-evidence-packet howl-content-factory; do
+  (cd "$d" && bash scripts/run-workflow.sh)
+done
 ```
 
-The script:
+## Current Caveats
 
-1. starts a local fixture OpenAI-compatible upstream
-2. starts Watchdog with its proxy pointed at that fixture upstream
-3. sends two successful AI Chat bridge calls and one fixture provider-error call through the AI SDK
-4. exports Watchdog stats, requests, tool calls, agent steps, status breakdown, and full JSON telemetry
-5. writes a concise review packet under `.runs/<timestamp>/`
+- Some Kujo interpreter runs emit type-checking warnings before successful output. For these workflow demos, exit status and generated artifacts are the verification source.
+- `agency-verified-fix-loop/` can still expose missing optional tool binaries in this checkout, especially the historical `changebucket` path. The new five workflows were chosen to run with the tools available locally.
+- Generated `.runs/` folders are proof artifacts. Keep or clean them based on whether you want verified packets committed.
 
-### Current status
+## Content Positioning
 
-This workflow is designed to be self-contained for local demos: no live provider key is required, and the fixture upstream makes the success/error evidence repeatable. It can also opt into live OpenAI traffic with `USE_LIVE_OPENAI=1` and `OPENAI_API_KEY`.
+Use the workflows as a sequence:
 
----
+1. Developers: start with `feature-card-workflow/`, `casefile-incident-evidence-packet/`, and `mcp-agent-gateway-review/`.
+2. Agency owners: show `agency-verified-fix-loop/`, `agency-runner/`, and `howl-content-factory/`.
+3. Enterprise: lead with `enterprise-dispatch-approval-router/`, `rag-enterprise-knowledge-gate/`, and `ai-sdk-watchdog-showcase/`.
 
-## Recommended next steps
-
-1. Add a small `requirements.txt` or setup note for the `agency-runner` Python dependency (`PyYAML`).
-2. Add the missing `changebucket` tool or update the script to detect and skip it gracefully when unavailable.
-3. Run and publish the Watchdog showcase packet as the canonical local observability demo for AI Chat + AI SDK.
-4. Keep the workflows separate:
-   - `agency-runner/` for the reusable CLI prototype
-   - `agency-verified-fix-loop/` for the demo / proof-of-concept kit
-   - `ai-sdk-watchdog-showcase/` for the AI observability showcase
-5. Publish this README alongside the workflows when the repo is opened on GitHub.
-
-## Bottom line
-
-- Yes, both workflows are real and runnable.
-- Yes, they are working as intended for their current prototype/demo scope.
-- The remaining gaps are environment/tooling dependencies, not a fundamental design failure.
+The common message is simple: Kujo turns AI-assisted work into local, inspectable, repeatable artifacts.
