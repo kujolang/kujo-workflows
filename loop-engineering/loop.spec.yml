@@ -1,0 +1,177 @@
+# Loop Engineering — machine-readable loop contract
+#
+# Portable across local CLI harnesses, repo bots, CI, scheduled jobs, and future
+# Kujo/BZBY orchestration layers. Modeled on the Kujo Spec contract shape so an
+# agent that already understands `.spec.yml` can consume the GOAL block directly.
+#
+# Every adapter is a capability, not a hard dependency. The `kujo` binding is the
+# recommended implementation; `fallback` keeps the loop running anywhere.
+
+name: "loop-engineering"
+version: "0.1.0"
+kind: "agent-loop"
+description: >
+  Bounded Goal -> Context -> Agent -> Evaluation -> Stop loop. Edit the GOAL block
+  per task; the rest is reusable. This file is the contract; WORKFLOW.md is the
+  human/agent-readable spec.
+
+# ---------------------------------------------------------------------------
+# 1. GOAL  (Spec / RunLedger / Watchdog)
+# ---------------------------------------------------------------------------
+goal:
+  objective: "REPLACE ME: one sentence describing what done means."
+  success_criteria:
+    - "REPLACE ME: a verifiable condition that maps to an eval gate."
+  constraints:
+    off_limits_paths: []          # paths the loop must not touch
+    disallowed_actions: []        # actions never permitted
+    style_rules: []               # repo rules to honor
+  allowed_actions:                # the only actions the agent may take
+    - "read_files"
+    - "edit_files"
+    - "run_tests"
+    - "run_lint_typecheck"
+    - "query_context"
+    - "delegate_subtask"
+    - "open_change_request"       # PR/MR on any host (adapter-defined)
+  # Anything not listed in allowed_actions is disallowed and triggers a scope stop.
+
+# ---------------------------------------------------------------------------
+# 2. CONTEXT  (Scout / Scent / PackWrite / Muzzle / CaseFile / MCP+RAG)
+# ---------------------------------------------------------------------------
+context:
+  strategy: "fetch_on_demand"     # never dump everything upfront
+  compress_noisy_output: true     # muzzle / summarization
+  refresh_each_iteration: true    # re-read after every change; distrust stale context
+  sources:
+    - id: "codebase"
+      adapter: "scout"
+      fallback: "git+grep"
+    - id: "task_context"
+      adapter: "scent"
+      fallback: "file_reads"
+    - id: "issue_pr"
+      adapter: "tracker"          # any issue/PR system
+      fallback: "none"
+    - id: "logs_failures"
+      adapter: "casefile"
+      fallback: "log_files"
+    - id: "metrics"
+      adapter: "watchdog"
+      fallback: "none"
+    - id: "knowledge"
+      adapter: "mcp_rag"          # MCP / RAG servers
+      fallback: "none"
+
+# ---------------------------------------------------------------------------
+# 3. AGENT  (Agents SDK / Dispatch / RunLedger / Watchdog)
+# ---------------------------------------------------------------------------
+agent:
+  runtime_adapter: "agents-sdk"   # any agent runner satisfies the contract
+  orchestrator_adapter: "dispatch"
+  roles:
+    driver:        { delegates: true }
+    context_builder: {}
+    worker:        { delegatable: true }
+    evaluator:     { independent: true }   # prefer separate from worker
+    reviewer:      { human_or_agent: true }
+  delegation_rule: >
+    Only delegate a subtask that fits allowed_actions, has its own verifiable
+    check, and returns a structured result. Delegated work shares the budget.
+  scoped_change_rule: "smallest reviewable diff per iteration; no unrelated edits"
+
+# ---------------------------------------------------------------------------
+# 4. EVALUATION  (Eval / ShipCheck / ChangeBucket / Lens / tests+CI)
+# ---------------------------------------------------------------------------
+evaluation:
+  require_before_continue: true
+  require_before_ship: true
+  deterministic_precedes_judge: true
+  gates:
+    - id: "tests"
+      adapter: "eval"
+      fallback: "test_runner"
+      required: true
+    - id: "lint_typecheck"
+      adapter: "project"
+      required: true
+    - id: "ci"
+      adapter: "ci_provider"      # any CI; read exit status
+      required: false
+    - id: "visual_qa"
+      adapter: "lens"
+      when: "ui_changed"
+      required: false
+    - id: "blast_radius"
+      adapter: "changebucket"
+      required: true
+    - id: "release_readiness"
+      adapter: "shipcheck"
+      when: "before_ship"
+      required: false
+    - id: "llm_judge"
+      adapter: "eval"             # judge mode
+      when: "subjective_criteria_only"
+      required: false
+      never_sole_ship_gate: true
+
+# ---------------------------------------------------------------------------
+# 5. STOP  (bounds + approval gates)
+# ---------------------------------------------------------------------------
+stop_conditions:
+  on_success: true
+  max_iterations: 8
+  max_no_progress: 2
+  max_consecutive_failures: 3
+  stop_on_scope_expansion: true
+  stop_on_external_error: true
+  budget:
+    wall_clock_seconds: null      # null = unset
+    max_tokens: null
+    max_cost_usd: null
+
+human_approval_gates:
+  - id: "risky_action"
+    triggers:
+      - "deploy"
+      - "data_migration"
+      - "delete_external_data"
+      - "send_external_message"
+      - "spend_money"
+      - "change_production_config"
+    decision: ["approved", "rejected", "request_changes"]
+  - id: "scope_expansion"
+    triggers: ["widen_allowed_actions", "touch_off_limits_path"]
+  - id: "before_ship"
+    triggers: ["merge_to_default_branch", "release"]
+  # add custom gates here, e.g. "after design doc"
+
+# ---------------------------------------------------------------------------
+# Outputs & record  (RunLedger / Watchdog)
+# ---------------------------------------------------------------------------
+record:
+  adapter: "runledger"
+  fallback: "append_log"
+  telemetry_adapter: "watchdog"
+outputs:
+  summary: "SUMMARY.md"
+  ledger: "ledger.tsv"
+  per_iteration_dir: "iterations/"
+  evidence: "attach eval reports, lens proof, changebucket report, casefile bundles"
+  stop_reason_required: true
+  on_non_success_emit: "blocking statement + recommended next action"
+
+# ---------------------------------------------------------------------------
+# Portability
+# ---------------------------------------------------------------------------
+portability:
+  no_platform_lock_in: true       # not GitHub/GitLab/one provider/one CI specific
+  adapters_are_contracts: true
+  runs_in:
+    - "local_cli_harness"
+    - "repo_agent_system"
+    - "ci_pipeline"
+    - "scheduled_job"
+    - "kujo_bzby_orchestration"
+    - "human_in_the_loop_review"
+  graceful_degradation: "missing optional tool -> fallback or warning, never disables a stop condition"

@@ -16,6 +16,18 @@ This repo collects runnable workflow kits for the Kujo agency and AI tooling sta
 | `rag-enterprise-knowledge-gate/` | Enterprise knowledge teams | RAG ingests local docs, isolates a namespace, and answers with citations. | `bash scripts/run-workflow.sh` |
 | `casefile-incident-evidence-packet/` | Developers, support teams | CaseFile captures a failing command as a reproducible evidence bundle. | `bash scripts/run-workflow.sh` |
 | `howl-content-factory/` | Developers, agency owners | Howl turns real Kujo examples into Markdown, HTML, SVG, gallery, and captions. | `bash scripts/run-workflow.sh` |
+| `loop-engineering/` | Anyone building agents | A bounded Goal→Context→Agent→Evaluation→Stop loop runs portably and stops safely. | `bash scripts/run-workflow.sh` |
+
+## Portable Pattern: Loop Engineering
+
+`loop-engineering/` is different from the other kits: it is not bound to a single
+fixture or local path. It is a decentralized, system-agnostic implementation of the
+agent-loop pattern (Goal → Context → Agent → Evaluation → Stop) that maps onto real
+Kujo tooling through adapters while running anywhere — local CLI harnesses, repo
+bots, CI, scheduled jobs, human-in-the-loop review, and future Kujo/BZBY
+orchestration. The reference driver runs with zero dependencies and enforces the
+stop conditions; see [`loop-engineering/WORKFLOW.md`](loop-engineering/WORKFLOW.md)
+and [`loop-engineering/loop.spec.yml`](loop-engineering/loop.spec.yml).
 
 ## New Content Pillars
 
