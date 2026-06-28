@@ -17,6 +17,7 @@ This repo collects runnable workflow kits for the Kujo agency and AI tooling sta
 | `casefile-incident-evidence-packet/` | Developers, support teams | CaseFile captures a failing command as a reproducible evidence bundle. | `bash scripts/run-workflow.sh` |
 | `howl-content-factory/` | Developers, agency owners | Howl turns real Kujo examples into Markdown, HTML, SVG, gallery, and captions. | `bash scripts/run-workflow.sh` |
 | `loop-engineering/` | Anyone building agents | A bounded Goal→Context→Agent→Evaluation→Stop loop runs portably and stops safely. | `bash scripts/run-workflow.sh` |
+| `docsgen-repo-contract-runner/` | Developers, agent operators | DocsGen scans a user-chosen repo and writes an auditable docs contract packet. | `TARGET_REPO=/path/to/repo bash scripts/run-workflow.sh` |
 
 ## Portable Pattern: Loop Engineering
 
@@ -31,25 +32,27 @@ and [`loop-engineering/loop.spec.yml`](loop-engineering/loop.spec.yml).
 
 ## New Content Pillars
 
-The newest five workflows were selected to cover a broad buyer story without duplicating the existing agency fix-loop examples.
+The newer workflow kits cover a broad buyer story without duplicating the existing agency fix-loop examples.
 
 1. `enterprise-dispatch-approval-router/` - governed AI workflow orchestration for enterprise review and approval.
 2. `mcp-agent-gateway-review/` - safe agent tool gateways for codebases and internal platforms.
 3. `rag-enterprise-knowledge-gate/` - grounded local knowledge retrieval with namespace isolation and citations.
 4. `casefile-incident-evidence-packet/` - incident and failed-run evidence that another human or agent can act on.
 5. `howl-content-factory/` - deterministic content asset generation from real examples.
+6. `docsgen-repo-contract-runner/` - user-chosen repo documentation generation with JSON, gap files, and agent handoff artifacts.
 
-Each new workflow includes:
+Each newer workflow includes:
 
 - `README.md`
 - `HOWTO.md`
 - `TODO.md`
 - `scripts/run-workflow.sh`
-- a verified `.runs/<timestamp>/SUMMARY.md` packet from this checkout
+
+Generated `.runs/<timestamp>/SUMMARY.md` packets are local proof artifacts and are ignored in most workflow directories.
 
 ## Verification Snapshot
 
-The five new workflows were run successfully in this workspace:
+The newer workflow demos were run successfully in this workspace:
 
 ```text
 enterprise-dispatch-approval-router/.runs/20260613T150711Z/SUMMARY.md
@@ -57,12 +60,13 @@ mcp-agent-gateway-review/.runs/20260613T150737Z/SUMMARY.md
 rag-enterprise-knowledge-gate/.runs/20260613T150746Z/SUMMARY.md
 casefile-incident-evidence-packet/.runs/20260613T150757Z/SUMMARY.md
 howl-content-factory/.runs/20260613T150812Z/SUMMARY.md
+docsgen-repo-contract-runner/.runs/20260628T015632Z/SUMMARY.md
 ```
 
 Useful verification command:
 
 ```bash
-for d in enterprise-dispatch-approval-router mcp-agent-gateway-review rag-enterprise-knowledge-gate casefile-incident-evidence-packet howl-content-factory; do
+for d in enterprise-dispatch-approval-router mcp-agent-gateway-review rag-enterprise-knowledge-gate casefile-incident-evidence-packet howl-content-factory docsgen-repo-contract-runner; do
   (cd "$d" && bash scripts/run-workflow.sh)
 done
 ```
@@ -70,7 +74,7 @@ done
 ## Current Caveats
 
 - Some Kujo interpreter runs emit type-checking warnings before successful output. For these workflow demos, exit status and generated artifacts are the verification source.
-- `agency-verified-fix-loop/` can still expose missing optional tool binaries in this checkout, especially the historical `changebucket` path. The new five workflows were chosen to run with the tools available locally.
+- `agency-verified-fix-loop/` can still expose missing optional tool binaries in this checkout, especially the historical `changebucket` path. The newer workflows were chosen to run with the tools available locally.
 - Generated `.runs/` folders are proof artifacts. Keep or clean them based on whether you want verified packets committed.
 
 ## Content Positioning
