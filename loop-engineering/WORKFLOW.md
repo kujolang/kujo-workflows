@@ -186,11 +186,49 @@ Approval is recorded in the ledger with who/what approved and the decision
 
 Every run produces a reviewable packet:
 
-- `SUMMARY.md` — verdict, goal, iterations used, gates run, stop reason, next steps.
+- `.loop-engineering/SUMMARY.md` — final report in the fixed contract below.
 - `ledger.tsv` (and/or `runledger` record) — per-iteration action, verdict, evidence, justification.
-- `iterations/<n>/` — per-iteration artifacts: chosen action, diff/blast-radius, eval output, context snapshot.
+- `iterations/<nnn>/` — per-iteration artifacts: `context.md`, `action.md`, `diff.patch`, `eval.log`, `verdict.yml`, and per-gate logs.
+- `blockers.md` — structured external blockers with command, evidence, status, and next action.
+- `checklist.tsv` — Markdown checklist classification when checklist mode is used.
 - Evidence artifacts from the bound tools (eval reports, `lens` proof, `changebucket` report, `casefile` bundles on failure).
 - An explicit **stop reason** and, on non-success, a blocking statement and recommended next action.
+
+Final report contract:
+
+```markdown
+# Loop Engineering Summary
+
+## Verdict
+
+success | partial | blocked | failed
+
+## Completed
+
+- ...
+
+## Verification
+
+- passed: ...
+- blocked: ...
+- failed: ...
+
+## Commits
+
+- ...
+
+## Remaining
+
+- ...
+
+## External Blockers
+
+- ...
+
+## Next Start
+
+- ...
+```
 
 ## Failure Modes
 

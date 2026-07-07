@@ -48,26 +48,35 @@ Unlike the other kits in this repo, Loop Engineering is not a single concrete de
 | [`WORKFLOW.md`](WORKFLOW.md) | The full portable workflow definition (the canonical, agent-readable spec). |
 | [`loop.spec.yml`](loop.spec.yml) | Machine-readable loop contract: goal, context sources, eval gates, stop conditions, approval gates, adapters. |
 | [`HOWTO.md`](HOWTO.md) | How to adopt and run the loop in your own system. |
-| [`scripts/run-workflow.sh`](scripts/run-workflow.sh) | A portable reference loop driver that runs the bounded control flow and emits a reviewable run packet. |
+| [`scripts/init-repo-loop.sh`](scripts/init-repo-loop.sh) | Repo-local initializer that creates `.loop-engineering/` state, config, ledger, evidence, blockers, and summary files. |
+| [`scripts/run-workflow.sh`](scripts/run-workflow.sh) | A portable loop driver with explicit demo, config, and Markdown checklist modes. |
 | [`TODO.md`](TODO.md) | Status and future seams. |
 
 ## Quick Start
 
-From this directory:
+Initialize any target repo:
 
 ```bash
-bash scripts/run-workflow.sh
+/path/to/loop-engineering/scripts/init-repo-loop.sh
 ```
 
-The reference driver runs with safe, no-op default adapters so it executes anywhere `bash` is available — no Kujo runtime, model key, or network required. Artifacts are written to:
+Then edit `.loop-engineering/loop.yml` and run the configured gates:
 
-```text
-.runs/<timestamp>/SUMMARY.md
-.runs/<timestamp>/ledger.tsv
-.runs/<timestamp>/iterations/
+```bash
+/path/to/loop-engineering/scripts/run-workflow.sh --config .loop-engineering/loop.yml
 ```
 
-To wire it to real Kujo tooling, point the adapter environment variables at your local tools (see [`HOWTO.md`](HOWTO.md)). To embed the loop in another agent system, treat [`loop.spec.yml`](loop.spec.yml) and [`WORKFLOW.md`](WORKFLOW.md) as the contract and implement the five adapter hooks however your runtime prefers.
+Checklist mode classifies Markdown tasks before any local work:
+
+```bash
+/path/to/loop-engineering/scripts/run-workflow.sh --checklist docs/checklist.md
+```
+
+Artifacts are written to `.loop-engineering/SUMMARY.md`, `ledger.tsv`, `blockers.md`, and `iterations/001/`. The old placeholder loop is still available, but only by request:
+
+```bash
+bash scripts/run-workflow.sh --demo
+```
 
 ## Why This Matters
 
