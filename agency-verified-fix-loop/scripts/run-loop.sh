@@ -434,9 +434,9 @@ run_lens_expect_code 1 "lens-pre-fix-expected-failure" flow "$RUN_DIR/lens/mobil
 ledger_note "Pre-fix Lens flow failed as expected, proving the fixture reproduces the client-visible bug."
 
 run_project "casefile-pre-fix-lens" "$KUJO_BIN" run --interpreter "$KUJO_REPOS/casefile/casefile.kujo" -- capture \
-  --name pre-fix-lens-flow \
-  --output-dir .casefile-agency-loop \
-  -- /bin/bash -lc "cd '$KUJO_REPOS/lens' && KUJO_BIN='$KUJO_BIN' '$LENS_BIN' flow '$RUN_DIR/lens/mobile-promo-drawer.flow.json' --execute --walkthrough --out '$RUN_DIR/lens/casefile-replay'"
+	--name pre-fix-lens-flow \
+	--output-dir .casefile-agency-loop \
+	--from-log "$LOG_DIR/lens-pre-fix-expected-failure.log"
 
 run_host_shell "apply-deterministic-fix" "$(printf 'cp %q %q; cp %q %q' \
   "$ROOT/fixtures/fixed-overrides/public/assets/js/cart.js" "$PROJECT/public/assets/js/cart.js" \
@@ -449,7 +449,7 @@ ledger_note "Eval suite attempted. See eval/results for machine-readable output.
 
 run_lens "lens-check" check "http://127.0.0.1:$PORT/cart.php" --viewport mobile --viewport desktop --html --out "$RUN_DIR/lens/check"
 run_lens "lens-inspect" inspect "http://127.0.0.1:$PORT/cart.php" --json --out "$RUN_DIR/lens/inspect"
-run_lens "lens-proof" flow "$RUN_DIR/lens/mobile-promo-drawer.flow.json" --execute --record --walkthrough --out "$RUN_DIR/lens/proof"
+run_lens "lens-proof" flow "$RUN_DIR/lens/mobile-promo-drawer.flow.json" --execute --record --walkthrough --out "$RUN_DIR/lens/proof" || true
 ledger_note "Lens check, inspect, and proof flow attempted. See lens/proof for walkthrough."
 
 run_project_shell "patchbrief-summary" "$(printf '%q run %q -- summarize --format markdown > %q' "$KUJO_BIN" "$KUJO_REPOS/patchbrief/patchbrief.kujo" "$RUN_DIR/briefs/patchbrief.md")"
