@@ -19,30 +19,6 @@ func env_text(name, fallback) {
 	return value
 }
 
-func env_int_default(name, fallback) {
-	raw := env(name)
-	if trim(raw) == "" {
-		return fallback
-	}
-	try {
-		return env_int(name)
-	} except err {
-		return fallback
-	}
-}
-
-func env_float_default(name, fallback) {
-	raw := env(name)
-	if trim(raw) == "" {
-		return fallback
-	}
-	try {
-		return env_float(name)
-	} except err {
-		return fallback
-	}
-}
-
 func dict_value(data, key, fallback) {
 	if type(data) == "dict" && has_key(data, key) == 1 {
 		return data[key]
@@ -54,8 +30,8 @@ provider_name := env_text("BENCH_PROVIDER", "openai")
 prompt_file := env_text("BENCH_PROMPT_FILE", "")
 result_file := env_text("BENCH_RESULT_FILE", "")
 model_override := env_text("BENCH_MODEL", "")
-max_tokens := env_int_default("BENCH_MAX_TOKENS", 4000)
-temperature := env_float_default("BENCH_TEMPERATURE", 0.2)
+max_tokens := env_int("BENCH_MAX_TOKENS", 4000)
+temperature := env_float("BENCH_TEMPERATURE", 0.2)
 
 provider := choose_provider(provider_name)
 client := create_client(provider, env(provider["api_key_env"]))
