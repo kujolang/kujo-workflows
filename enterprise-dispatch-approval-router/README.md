@@ -74,6 +74,12 @@ See [`dispatch/docs/chatops-integration.md`](../../dispatch/docs/chatops-integra
 and the Leash checkout's `docs/chatops.md` for the contracts, provider setup,
 failure model, and real-workspace limitations.
 
+For bidirectional conversations and backend routing, use the Leash gateway
+contracts documented in `ruff-leash/docs/gateway.md`. The local fixture path
+supports durable conversations, primary-agent discovery, structured control
+classification, subscriptions, proactive events, and a restart-safe Dispatch
+resume outbox without requiring live provider credentials.
+
 ## Why This Matters
 
 Developers get a repeatable local workflow instead of a one-off prompt. Agency owners can show clients a clean run packet. Enterprise teams get the evidence they need for approval workflows, policy review, and audit trails.
