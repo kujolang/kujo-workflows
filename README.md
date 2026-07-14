@@ -86,3 +86,14 @@ Use the workflows as a sequence:
 3. Enterprise: lead with `enterprise-dispatch-approval-router/`, `rag-enterprise-knowledge-gate/`, and `ai-sdk-watchdog-showcase/`.
 
 The common message is simple: Kujo turns AI-assisted work into local, inspectable, repeatable artifacts.
+
+## Dependency audit contract
+
+The active catalog and its dependency checks live under [`docs/audit/`](docs/audit/). Each catalog entry uses the canonical `kujo-skills` name and relative path, records its tool repositories and evidence boundaries, and is checked before the workflow catalog is treated as current.
+
+```bash
+python3 scripts/validate_catalog.py --json
+python3 -m unittest discover -s tests -p 'test_*.py'
+```
+
+The audit found the current execution sandbox under the canonical name `workcell`; no repository or skill named `Workso` exists in the inspected Kujo checkout. Tribunal, Relay, and Workcell remain documented integration opportunities rather than silently-added best-effort stages because their shared decision, mission, workspace, and resume contracts are not yet present in this catalog.
