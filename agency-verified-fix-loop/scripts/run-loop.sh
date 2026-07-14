@@ -27,6 +27,48 @@ WARN_COUNT=0
 RUN_ID=""
 PHP_PID=""
 
+port_available() {
+  python3 - "$1" <<'PY'
+import socket
+import sys
+
+port = int(sys.argv[1])
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+try:
+    sock.bind(("127.0.0.1", port))
+except OSError:
+    raise SystemExit(1)
+finally:
+    sock.close()
+PY
+}
+
+if [ "$PORT" = "0" ]; then
+  PORT="$(python3 - <<'PY'
+import socket
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.bind(("127.0.0.1", 0))
+print(sock.getsockname()[1])
+sock.close()
+PY
+)"
+elif ! port_available "$PORT"; then
+  if [ "${PORT_STRICT:-0}" = "1" ]; then
+    echo "Configured PORT=$PORT is already in use; set PORT=0 or choose a free port." >&2
+    exit 2
+  fi
+  PORT="$(python3 - <<'PY'
+import socket
+
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.bind(("127.0.0.1", 0))
+print(sock.getsockname()[1])
+sock.close()
+PY
+)"
+fi
+
 mkdir -p "$RUN_DIR" "$WORK_DIR" "$LOG_DIR"
 
 cat > "$SUMMARY" <<EOF
@@ -222,10 +264,11 @@ run_lens_expect_code() {
   local code=$?
   if [ "$code" -eq "$expected" ]; then
     record_stage "$stage" expected-fail "$code" "$log"
+    return 0
   else
     record_stage "$stage" fail "$code" "$log"
+    return 1
   fi
-  return 0
 }
 
 ledger_note() {
@@ -430,8 +473,13 @@ ledger_note "Started from client request. Spec, Scout, Scent, and static agent-p
 
 start_php_server
 
-run_lens_expect_code 1 "lens-pre-fix-expected-failure" flow "$RUN_DIR/lens/mobile-promo-drawer.flow.json" --execute --walkthrough --out "$RUN_DIR/lens/pre-fix"
-ledger_note "Pre-fix Lens flow failed as expected, proving the fixture reproduces the client-visible bug."
+if run_lens_expect_code 1 "lens-pre-fix-expected-failure" flow "$RUN_DIR/lens/mobile-promo-drawer.flow.json" --execute --walkthrough --out "$RUN_DIR/lens/pre-fix"; then
+  ledger_note "Pre-fix Lens flow failed as expected, proving the fixture reproduces the client-visible bug."
+else
+  ledger_note "Pre-fix Lens flow did not fail as expected; the loop stopped before applying a fix."
+  echo "Pre-fix Lens flow did not reproduce the expected failure; refusing to claim a verified fix." >&2
+  exit 1
+fi
 
 run_project "casefile-pre-fix-lens" "$KUJO_BIN" run --interpreter "$KUJO_REPOS/casefile/casefile.kujo" -- capture \
 	--name pre-fix-lens-flow \
@@ -449,8 +497,8 @@ ledger_note "Eval suite attempted. See eval/results for machine-readable output.
 
 run_lens "lens-check" check "http://127.0.0.1:$PORT/cart.php" --viewport mobile --viewport desktop --html --out "$RUN_DIR/lens/check"
 run_lens "lens-inspect" inspect "http://127.0.0.1:$PORT/cart.php" --json --out "$RUN_DIR/lens/inspect"
-run_lens "lens-proof" flow "$RUN_DIR/lens/mobile-promo-drawer.flow.json" --execute --record --walkthrough --out "$RUN_DIR/lens/proof" || true
-ledger_note "Lens check, inspect, and proof flow attempted. See lens/proof for walkthrough."
+run_lens "lens-proof" flow "$RUN_DIR/lens/mobile-promo-drawer.flow.json" --execute --record --walkthrough --out "$RUN_DIR/lens/proof"
+ledger_note "Lens check, inspect, and proof flow completed. See lens/proof for walkthrough."
 
 run_project_shell "patchbrief-summary" "$(printf '%q run %q -- summarize --format markdown > %q' "$KUJO_BIN" "$KUJO_REPOS/patchbrief/patchbrief.kujo" "$RUN_DIR/briefs/patchbrief.md")"
 run_project_shell "patchbrief-tests" "$(printf '%q run %q -- suggest-tests > %q' "$KUJO_BIN" "$KUJO_REPOS/patchbrief/patchbrief.kujo" "$RUN_DIR/briefs/test-suggestions.md")"
