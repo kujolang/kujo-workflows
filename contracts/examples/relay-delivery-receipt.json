@@ -1,0 +1,13 @@
+{
+  "contract": "kujo.relay.delivery-receipt",
+  "contract_version": "1.0",
+  "message_id": "msg-relay-feature-card-001",
+  "correlation_id": "run-feature-card-001",
+  "status": "acknowledged",
+  "attempts": 1,
+  "transport": "local_store",
+  "acknowledged_at": "2026-07-14T02:21:02Z",
+  "next_action": "resume_workflow",
+  "provenance": {"source_tool": "relay", "source_version": "0.1.0", "artifact_refs": ["receipts.json"]},
+  "redaction": {"policy": "relay-default-redaction-v1", "redacted_fields": []}
+}

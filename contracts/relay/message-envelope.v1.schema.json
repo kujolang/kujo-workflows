@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kujo.dev/contracts/relay/message-envelope/v1",
+  "title": "Kujo Relay message envelope v1",
+  "type": "object",
+  "required": ["contract", "contract_version", "message_id", "message_type", "sender", "recipient", "correlation_id", "causation_id", "sequence", "attempt", "idempotency_key", "created_at", "delivery", "payload", "provenance", "redaction"],
+  "properties": {
+    "contract": {"const": "kujo.relay.message-envelope"},
+    "contract_version": {"const": "1.0"},
+    "message_id": {"type": "string", "minLength": 1},
+    "message_type": {"type": "string", "minLength": 1},
+    "sender": {"type": "string", "minLength": 1},
+    "recipient": {"type": "string", "minLength": 1},
+    "correlation_id": {"type": "string", "minLength": 1},
+    "causation_id": {"type": "string", "minLength": 1},
+    "sequence": {"type": "integer", "minimum": 0},
+    "attempt": {"type": "integer", "minimum": 1},
+    "idempotency_key": {"type": "string", "minLength": 1},
+    "created_at": {"type": "string", "minLength": 1},
+    "delivery": {"type": "object", "required": ["guarantee", "ack_required", "max_attempts"], "properties": {"guarantee": {"enum": ["local_persisted", "at_least_once", "operator_retried"]}, "ack_required": {"type": "boolean"}, "max_attempts": {"type": "integer", "minimum": 1}, "dead_letter_ref": {"type": "string"}}},
+    "payload": {"type": "object"},
+    "provenance": {"type": "object", "required": ["source_tool", "source_version", "artifact_refs"], "properties": {"source_tool": {"type": "string", "minLength": 1}, "source_version": {"type": "string", "minLength": 1}, "source_commit": {"type": "string"}, "artifact_refs": {"type": "array", "items": {"type": "string"}}}},
+    "redaction": {"type": "object", "required": ["policy", "redacted_fields"], "properties": {"policy": {"type": "string", "minLength": 1}, "redacted_fields": {"type": "array", "items": {"type": "string"}}}},
+    "error": {"type": "object", "required": ["code", "message", "retryable"], "properties": {"code": {"type": "string", "minLength": 1}, "message": {"type": "string", "minLength": 1}, "retryable": {"type": "boolean"}}}
+  }
+}

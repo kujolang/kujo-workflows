@@ -1,0 +1,15 @@
+{
+  "contract": "kujo.tribunal.decision-receipt",
+  "contract_version": "1.0",
+  "decision_id": "decision-feature-card-001",
+  "workflow_ref": {"id": "feature-card-workflow", "version": "1"},
+  "run_ref": {"id": "2026-07-14-feature-card-001", "attempt": 1},
+  "step_ref": {"id": "tribunal-gate", "sequence": 4},
+  "decision": {"status": "approved", "binding": false, "confidence": 0.86, "rationale": "The evidence packet satisfies the fixture acceptance criteria.", "quorum": {"required": 2, "achieved": 2}, "dissent": [], "escalation": {"required": false}},
+  "participants": [{"id": "reviewer-architecture", "role": "architecture", "outcome": "agree"}, {"id": "reviewer-security", "role": "security", "outcome": "agree"}],
+  "evidence": [{"id": "eval-summary", "kind": "evaluation", "uri": "runs/feature-card-001/eval/summary.json", "sha256": "sha256:fixture"}],
+  "tool_receipt": {"tool": "tribunal", "run_id": "2026-07-14-product-decision-md-5416", "integrity_status": "verified", "signature_status": "absent"},
+  "provenance": {"source_tool": "tribunal", "source_version": "0.7.0", "artifact_refs": ["record.json", "receipt.json"]},
+  "redaction": {"policy": "workflow-default-redaction-v1", "redacted_fields": []},
+  "idempotency_key": "feature-card-001:tribunal-gate:1"
+}

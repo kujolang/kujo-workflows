@@ -1,0 +1,13 @@
+{
+  "contract": "kujo.workcell.completion-receipt",
+  "contract_version": "1.0",
+  "package_id": "pkg-workcell-hello-001",
+  "run_id": "wc-f98c3b405a324e4ebd5147e1981b76c7",
+  "status": "blocked",
+  "lifecycle": ["created", "validated", "preparing", "prepared", "starting", "running", "collecting", "verifying", "exporting", "failed", "cleaning", "cleaned"],
+  "execution": {"runtime_backend": "docker", "cleanup_status": "complete", "receipt_path": "receipt.json", "manifest_path": "manifest.json", "source_commit": "e6a34b7bd3015a950bbb220f04bbb2c7d92940a5", "definition_hash": "sha256:fixture"},
+  "artifacts": [{"path": "hello.txt", "status": "missing"}],
+  "errors": [{"code": "WORKCELL_RUNTIME_WRITE_PERMISSION", "message": "The local Docker backend could not write the declared artifact as the mapped non-root user.", "retryable": false}],
+  "provenance": {"source_tool": "workcell", "source_version": "0.1.0", "artifact_refs": ["receipt.json", "manifest.json", "stderr.log"]},
+  "redaction": {"policy": "workcell-default-redaction-v1", "redacted_fields": []}
+}
