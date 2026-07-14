@@ -98,6 +98,12 @@ agency-loop demo-verified-loop --strict
 
 This is a working prototype, not yet a first-class `kujo agency` subcommand.
 
+The delegated context phase resolves sibling Kujo tools from `KUJO_REPOS` or
+the repository layout, runs Spec from the target project for safe-write
+compatibility, excludes generated `.kujo` output from Scent, applies bounded
+tool timeouts, and fails the phase when Scout or Scent cannot run or produce
+their expected artifacts.
+
 Implemented:
 
 - Site profile onboarding.
@@ -111,6 +117,7 @@ Implemented:
 - Resumable phase state in `run-state.json`.
 - Integration command for the existing Agency Verified Fix Loop demo.
 - Non-dry Lens pre-fix reproduction and post-fix proof execution when a live site and required saved session are available.
+- Scout and Scent context invocations resolve sibling repositories portably, exclude the run packet from Scent selection, enforce bounded tool timeouts, and fail the context phase when required tools are missing or return non-zero.
 
 Still early:
 

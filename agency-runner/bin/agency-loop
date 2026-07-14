@@ -23,7 +23,14 @@ except ImportError:  # pragma: no cover - local prototype guard
 
 
 ROOT = Path(__file__).resolve().parents[1]
-KUJO_REPOS = ROOT.parent
+_repo_candidates = []
+if os.environ.get("KUJO_REPOS"):
+    _repo_candidates.append(Path(os.environ["KUJO_REPOS"]).expanduser().resolve())
+_repo_candidates.extend([ROOT.parent, ROOT.parent.parent])
+KUJO_REPOS = next(
+    (candidate for candidate in _repo_candidates if (candidate / "kujo").exists()),
+    ROOT.parent.parent,
+)
 DEFAULT_KUJO_BIN = KUJO_REPOS / "kujo" / "target" / "release" / "kujo"
 PHASES = [
     "intake",
@@ -118,8 +125,21 @@ def log_command(log_path: Path, command: list[str], cwd: Path | None = None) -> 
             log.write(f"cd {cwd}\n")
         log.write("$ " + " ".join(sh_quote(part) for part in command) + "\n")
         try:
-            proc = subprocess.run(command, cwd=str(cwd) if cwd else None, stdout=log, stderr=subprocess.STDOUT)
+            try:
+                timeout_seconds = max(1, int(os.environ.get("AGENCY_TOOL_TIMEOUT_SECONDS", "120")))
+            except ValueError:
+                timeout_seconds = 120
+            proc = subprocess.run(
+                command,
+                cwd=str(cwd) if cwd else None,
+                stdout=log,
+                stderr=subprocess.STDOUT,
+                timeout=timeout_seconds,
+            )
             return proc.returncode
+        except subprocess.TimeoutExpired:
+            log.write(f"\nTimed out after {timeout_seconds} seconds.\n")
+            return 124
         except FileNotFoundError as exc:
             log.write(f"\n{exc}\n")
             return 127
@@ -694,7 +714,13 @@ def phase_spec(project: Path, run_dir: Path, state: dict[str, Any], dry_run: boo
         env["KUJO_BIN"] = str(DEFAULT_KUJO_BIN)
         log = run_dir / "logs" / "spec-validate.log"
         with log.open("w", encoding="utf-8") as fh:
-            proc = subprocess.run([str(spec_bin), "validate", str(spec_path), "--strict"], env=env, stdout=fh, stderr=subprocess.STDOUT)
+            proc = subprocess.run(
+                [str(spec_bin), "validate", str(spec_path), "--strict"],
+                cwd=str(project),
+                env=env,
+                stdout=fh,
+                stderr=subprocess.STDOUT,
+            )
         if proc.returncode != 0:
             phase_error(state, run_dir, "spec", "Spec validation failed.", str(spec_bin), proc.returncode)
             return
@@ -798,18 +824,28 @@ def phase_context(project: Path, run_dir: Path, state: dict[str, Any], dry_run: 
     kujo = str(DEFAULT_KUJO_BIN)
     scout = KUJO_REPOS / "scout" / "scout.kujo"
     scent = KUJO_REPOS / "scent" / "scent.kujo"
-    if scout.exists() and DEFAULT_KUJO_BIN.exists():
-        log_command(run_dir / "logs" / "scout.log", [kujo, "run", str(scout), "--", str(repo), "--output", str(run_dir / "context" / "scout"), "--max-depth", "5"], project)
-    if scent.exists() and DEFAULT_KUJO_BIN.exists():
-        includes: list[str] = []
-        for root in profile.get("source", {}).get("roots", [])[:8]:
-            includes.extend(["--include", root])
-        log_command(
-            run_dir / "logs" / "scent.log",
-            [kujo, "run", str(scent), "pack", "--task", (run_dir / "task" / "raw.md").read_text(encoding="utf-8"), "--out", str(run_dir / "context" / "scent"), "--target", "codex", "--max-files", "24", "--max-file-bytes", "60000", "--format", "both"] + includes,
-            repo,
+    missing = [str(path) for path in (DEFAULT_KUJO_BIN, scout, scent) if not path.exists()]
+    if missing:
+        phase_error(state, run_dir, "context", "Required context tool is missing: " + ", ".join(missing))
+        return
+    scout_code = log_command(run_dir / "logs" / "scout.log", [kujo, "run", str(scout), "--", str(repo), "--output", str(run_dir / "context" / "scout"), "--max-depth", "5"], project)
+    includes: list[str] = []
+    for root in profile.get("source", {}).get("roots", [])[:8]:
+        includes.extend(["--include", root])
+    scent_code = log_command(
+        run_dir / "logs" / "scent.log",
+        [kujo, "run", str(scent), "pack", "--task", (run_dir / "task" / "raw.md").read_text(encoding="utf-8"), "--out", str(run_dir / "context" / "scent"), "--target", "codex", "--exclude", ".kujo", "--max-files", "24", "--max-file-bytes", "60000", "--format", "both"] + includes,
+        repo,
+    )
+    if scout_code != 0 or scent_code != 0:
+        phase_error(
+            state,
+            run_dir,
+            "context",
+            f"Context tools failed: Scout exit {scout_code}, Scent exit {scent_code}.",
         )
-    mark(state, run_dir, "context", "pass")
+        return
+    mark(state, run_dir, "context", "pass", {"scout": "context/scout", "scent": "context/scent"})
 
 
 def phase_reproduce(project: Path, run_dir: Path, state: dict[str, Any], dry_run: bool) -> None:
@@ -1218,9 +1254,16 @@ def command_open(args: argparse.Namespace) -> None:
 
 
 def command_demo(args: argparse.Namespace) -> None:
-    script = KUJO_REPOS / "agency-verified-fix-loop" / "scripts" / "run-loop.sh"
-    if not script.exists():
-        die(f"verified fix loop script not found: {script}")
+    candidates = [
+        Path(os.environ["AGENCY_VERIFIED_LOOP"]).expanduser()
+        if os.environ.get("AGENCY_VERIFIED_LOOP")
+        else None,
+        ROOT.parent / "agency-verified-fix-loop" / "scripts" / "run-loop.sh",
+        KUJO_REPOS / "agency-verified-fix-loop" / "scripts" / "run-loop.sh",
+    ]
+    script = next((candidate.resolve() for candidate in candidates if candidate and candidate.exists()), None)
+    if script is None:
+        die("verified fix loop script not found; set AGENCY_VERIFIED_LOOP or keep the workflow checkout beside agency-runner")
     env = os.environ.copy()
     if args.strict:
         env["STRICT"] = "1"
