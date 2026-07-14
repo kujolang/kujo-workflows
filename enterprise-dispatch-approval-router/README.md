@@ -46,7 +46,34 @@ The script:
 
 The default path uses `DISPATCH_OFFLINE_FIXTURE=true`; no provider key or network service is required.
 
+## Leash ChatOps contract path
+
+The approval checkpoint now emits the versioned `human_intervention_required`
+event used by Leash. Dispatch persists `state.json` before delivery, then
+returns with no further model work while the run is paused. Configure a Leash
+ingress URL with the additive `--leash-url` flag:
+
+```bash
+kujo run dispatch.kujo demo "Release readiness review" \
+  --non-interactive --output-root .runs/chatops \
+  --leash-url http://127.0.0.1:9191/v1/intervention-events
+```
+
+Leash redacts and routes the same event to Slack and Discord, verifies an
+authorized provider action, atomically claims the decision, and submits the
+normalized decision to the configured Dispatch callback. The local deterministic
+resume proof remains:
+
+```bash
+RID=$(kujo run dispatch.kujo runs --output-root .runs/chatops --status paused --json \
+  | python3 -c 'import json,sys; print(json.load(sys.stdin)["runs"][0]["run_id"])')
+kujo run dispatch.kujo resume "$RID" --yes --non-interactive --output-root .runs/chatops
+```
+
+See [`dispatch/docs/chatops-integration.md`](../../dispatch/docs/chatops-integration.md)
+and the Leash checkout's `docs/chatops.md` for the contracts, provider setup,
+failure model, and real-workspace limitations.
+
 ## Why This Matters
 
 Developers get a repeatable local workflow instead of a one-off prompt. Agency owners can show clients a clean run packet. Enterprise teams get the evidence they need for approval workflows, policy review, and audit trails.
-
