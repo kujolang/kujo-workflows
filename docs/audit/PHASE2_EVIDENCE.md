@@ -36,31 +36,40 @@ run packet `.runs/20260714T023325Z` with:
   `Circular import detected: cli -> cli`). The loop records these as failures;
   it does not convert them to warnings or claim a complete tool packet.
 
-The agency runner strict demo repeated the browser result in
-`.runs/20260714T023639Z/summary.md`.
+The corrected agency runner strict demo resolved the delegated loop from the
+sibling repositories root and produced the same explicit stage table in
+`.runs/20260714T122849Z/summary.md`: 27 passed, one expected failure, one
+warning, and seven failed external-tool stages. The command returned non-zero
+under `--strict` because those seven failures remain unresolved; the browser
+proof stages still passed and the PHP fixture process was cleaned up after
+completion.
 
 ## Under-tested skill relationships
 
-The following nine relationships received stronger fixture evidence while
-remaining under-tested rather than being promoted without independent
-negative coverage:
+The following nine relationships received positive and negative boundary
+fixtures while remaining under-tested rather than being promoted without
+provider, consumer, or fully authenticated browser evidence:
 
 - Agency Runner → Spec, Scout, Scent, Lens, CaseFile, PackWrite, RunLedger:
-  strict demo packet `.runs/20260714T023639Z/summary.md`, with CaseFile and
-  RunLedger receipts preserved. PackWrite remains a warning; the optional
-  external tool failures are recorded.
+  `bash tests/skill_relationship_contracts.sh` executes real positive
+  boundaries and malformed or missing-input failures. The strict demo packet
+  `.runs/20260714T122849Z/summary.md` adds delegated Spec, Scout, Scent,
+  CaseFile, RunLedger, and browser receipts; PackWrite remains a
+  credential-gated warning.
 - DocsGen → `kujo-docgen-agent-readable`: successful packet
-  `.runs/20260714T023826Z/SUMMARY.md`.
+  `.runs/20260714T023826Z/SUMMARY.md` plus missing-target failure coverage in
+  `tests/skill_relationship_contracts.sh`.
 - RAG gate → `kujo-rag-workflows`: successful packet
-  `.runs/20260714T023826Z/SUMMARY.md`.
+  `.runs/20260714T023826Z/SUMMARY.md` plus missing-repository failure coverage
+  in `tests/skill_relationship_contracts.sh`.
 
 ## Contract and integration evidence
 
 `python3 scripts/validate_contracts.py` validates five schemas and five
-examples, including required-field negative checks and additive-field
-forward-compatibility checks. The three new gates validate their generated
-instances against those schemas. Tribunal, Relay, and Workcell all have a
-dedicated, non-placeholder integration workflow.
+examples, including 157 top-level/nested required-field negative checks and
+additive-field forward-compatibility checks. The three new gates validate their
+generated instances against those schemas. Tribunal, Relay, and Workcell all
+have a dedicated, non-placeholder integration workflow.
 
 Workcell executed successfully in the local Docker backend during this phase;
 the earlier mapped-user permission failure was reproduced during diagnosis,

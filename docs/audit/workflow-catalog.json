@@ -33,7 +33,7 @@
       "approval_boundaries": ["site credentials", "live-site mutation", "handoff acceptance"],
       "state_and_recovery": "run-state.json phase tracking; continue resumes pending phases",
       "evidence": "local run packet with redacted logs",
-      "tests": ["agency-runner demo-verified-loop", "manual dry-run"],
+      "tests": ["agency-runner demo-verified-loop", "manual dry-run", "tests/skill_relationship_contracts.sh"],
       "documentation": ["agency-runner/README.md", "agency-runner/docs/KNOWN_LIMITATIONS.md"],
       "production_readiness": "experimental"
     },
@@ -121,7 +121,7 @@
       "approval_boundaries": ["capture of environment and repository metadata"],
       "state_and_recovery": "single capture run; cleanup is local",
       "evidence": "CaseFile bundle and rendered views",
-      "tests": ["bash scripts/run-workflow.sh"],
+      "tests": ["bash scripts/run-workflow.sh", "tests/skill_relationship_contracts.sh"],
       "documentation": ["casefile-incident-evidence-packet/README.md"],
       "production_readiness": "production-capable-with-limitations"
     },
@@ -138,7 +138,7 @@
       "approval_boundaries": ["publication and source-repository writes are outside scope"],
       "state_and_recovery": "timestamped output packet; rerun creates a new packet",
       "evidence": "CLI JSON, gap files, logs, handoff",
-      "tests": ["bash scripts/run-workflow.sh", "strict fixture run"],
+      "tests": ["bash scripts/run-workflow.sh", "strict fixture run", "tests/skill_relationship_contracts.sh"],
       "documentation": ["docsgen-repo-contract-runner/README.md"],
       "production_readiness": "production-capable-with-limitations"
     },
@@ -201,7 +201,7 @@
       "approval_boundaries": ["publication is outside scope"],
       "state_and_recovery": "timestamped generated packet",
       "evidence": "manifest, render outputs and status.tsv",
-      "tests": ["bash scripts/run-workflow.sh"],
+      "tests": ["bash scripts/run-workflow.sh", "tests/skill_relationship_contracts.sh"],
       "documentation": ["howl-content-factory/README.md"],
       "production_readiness": "production-capable-with-limitations"
     },
@@ -252,7 +252,7 @@
       "approval_boundaries": ["corpus selection and namespace ownership"],
       "state_and_recovery": "local index in run packet; rerun required after failure",
       "evidence": "index and citation-bearing query output",
-      "tests": ["bash scripts/run-workflow.sh"],
+      "tests": ["bash scripts/run-workflow.sh", "tests/skill_relationship_contracts.sh"],
       "documentation": ["rag-enterprise-knowledge-gate/README.md"],
       "production_readiness": "production-capable-with-limitations"
     },

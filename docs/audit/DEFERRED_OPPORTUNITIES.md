@@ -36,12 +36,13 @@
   implementation is `workcell`, with skill `kujo-workcell-workflows`.
 - Do not create an alias without product confirmation.
 
-## Independent negative fixtures for nine under-tested relationships — P2
+## Promotion of nine under-tested relationships — P2
 
-- The strict Agency packet, DocsGen packet, and RAG packet now provide stronger
-  positive/operational evidence, but Agency's optional phases still share one
-  composite runner and its PatchBrief/ChangeBucket/ShipCheck calls are blocked
-  by the current Kujo `cli` module-resolution issue.
-- Next action: add per-skill missing-binary, malformed-output, absent-artifact,
-  and redaction-leak fixtures before promoting any of the nine relationships to
-  fully compatible.
+- Positive and negative boundary fixtures now cover Spec, Scout, Scent, Lens,
+  CaseFile, PackWrite, RunLedger, DocsGen, and RAG in
+  `tests/skill_relationship_contracts.sh`. The relationships remain
+  under-tested because the fixture suite does not prove live provider behavior,
+  authenticated browser execution through every Agency Runner phase, or
+  production artifact consumers.
+- Next action: add provider-backed, authenticated-browser, and consumer-level
+  receipts before promoting any relationship to fully compatible.

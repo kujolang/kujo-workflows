@@ -30,10 +30,16 @@
    - After: the browser loop selects a free port, stops on an unexpected pre-fix result, and records a real expected failure. Relay's full 25-script aggregate passes with an explicit absolute runtime.
    - Evidence: agency packet `.runs/20260714T023325Z`; Relay acceptance log and pushed commit `7ead89a`.
 
-6. Added stronger evidence for the nine previously under-tested skill relationships.
-   - Files: `docs/audit/skill-compatibility-matrix.json`, `docs/audit/PHASE2_EVIDENCE.md`.
+6. Added positive and negative boundary fixtures for the nine previously under-tested skill relationships.
+   - Files: `tests/skill_relationship_contracts.sh`, `tests/test_skill_relationships.py`, `docs/audit/skill-compatibility-matrix.json`, `docs/audit/PHASE2_EVIDENCE.md`.
    - Before: relationships were only supported by source inspection and composite documentation.
-   - After: strict Agency, DocsGen, and RAG packets are recorded with exact artifact paths; relationships remain under-tested where independent negative fixtures are still missing.
+   - After: Spec, Scout, Scent, Lens, CaseFile, PackWrite, RunLedger, DocsGen, and RAG each have a real positive invocation plus a malformed or missing-input failure assertion. Relationships remain under-tested because this boundary suite does not establish live providers, browser execution for the Agency Runner phases, or production consumers.
+   - Evidence: `bash tests/skill_relationship_contracts.sh` and `python3 tests/test_skill_relationships.py`.
+
+7. Hardened Agency Runner tool-root, safe-write, output-exclusion, timeout, and fail-closed context behavior.
+   - Files: `agency-runner/bin/agency-loop`.
+   - Before: the embedded runner resolved sibling tools one directory too shallow, Spec validation rejected temp-project paths, Scent could scan its own `.kujo` output, and context commands could fail silently.
+   - After: roots auto-detect from `KUJO_REPOS` or repository layout, Spec runs in the target project, `.kujo` is excluded from Scent, tool timeouts are bounded, and missing or failed Scout or Scent invocations stop the context phase.
 
 ## Intentionally not changed
 
