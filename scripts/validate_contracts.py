@@ -7,10 +7,27 @@ import copy
 import json
 import sys
 from pathlib import Path
+from typing import Any
 
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT_ROOT = ROOT / "contracts"
+
+
+def required_paths(schema: dict[str, Any], value: Any, prefix: tuple[str, ...] = ()) -> list[tuple[str, ...]]:
+    paths: list[tuple[str, ...]] = []
+    if schema.get("type") != "object" or not isinstance(value, dict):
+        return paths
+    properties = schema.get("properties", {})
+    for name in schema.get("required", []):
+        if name not in value:
+            continue
+        path = prefix + (name,)
+        paths.append(path)
+        child_schema = properties.get(name)
+        if isinstance(child_schema, dict):
+            paths.extend(required_paths(child_schema, value[name], path))
+    return paths
 
 
 def main() -> int:
@@ -47,15 +64,21 @@ def main() -> int:
 
     # A required-field negative test protects against accidentally weakening a
     # contract while still allowing additive forward-compatible properties.
+    required_negative_count = 0
     for contract, (schema, validator) in by_contract.items():
         example = next((json.loads(path.read_text()) for path in examples if json.loads(path.read_text()).get("contract") == contract), None)
         if example is None:
             failures.append(f"{contract}: no checked-in example")
             continue
-        missing = copy.deepcopy(example)
-        missing.pop(schema["required"][0], None)
-        if not list(validator.iter_errors(missing)):
-            failures.append(f"{contract}: removing required field {schema['required'][0]!r} did not fail")
+        for path in required_paths(schema, example):
+            missing = copy.deepcopy(example)
+            cursor: Any = missing
+            for part in path[:-1]:
+                cursor = cursor[part]
+            cursor.pop(path[-1], None)
+            required_negative_count += 1
+            if not list(validator.iter_errors(missing)):
+                failures.append(f"{contract}: removing required field {'.'.join(path)!r} did not fail")
         additive = copy.deepcopy(example)
         additive["future_additive_field"] = {"preserved": True}
         if list(validator.iter_errors(additive)):
@@ -66,7 +89,7 @@ def main() -> int:
             print(failure, file=sys.stderr)
         return 1
 
-    print(f"PASS contract schemas={len(schemas)} examples={len(examples)}")
+    print(f"PASS contract schemas={len(schemas)} examples={len(examples)} required-field-negatives={required_negative_count}")
     return 0
 
 

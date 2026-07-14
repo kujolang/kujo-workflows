@@ -3,7 +3,7 @@
   "$id": "https://kujo.dev/contracts/relay/message-envelope/v1",
   "title": "Kujo Relay message envelope v1",
   "type": "object",
-  "required": ["contract", "contract_version", "message_id", "message_type", "sender", "recipient", "correlation_id", "causation_id", "sequence", "attempt", "idempotency_key", "created_at", "delivery", "payload", "provenance", "redaction"],
+  "required": ["contract", "contract_version", "message_id", "message_type", "sender", "recipient", "workflow_ref", "run_ref", "step_ref", "correlation_id", "causation_id", "sequence", "attempt", "idempotency_key", "created_at", "delivery", "payload", "provenance", "redaction"],
   "properties": {
     "contract": {"const": "kujo.relay.message-envelope"},
     "contract_version": {"const": "1.0"},
@@ -11,6 +11,9 @@
     "message_type": {"type": "string", "minLength": 1},
     "sender": {"type": "string", "minLength": 1},
     "recipient": {"type": "string", "minLength": 1},
+    "workflow_ref": {"type": "object", "required": ["id", "version"], "properties": {"id": {"type": "string", "minLength": 1}, "version": {"type": "string", "minLength": 1}}},
+    "run_ref": {"type": "object", "required": ["id", "attempt"], "properties": {"id": {"type": "string", "minLength": 1}, "attempt": {"type": "integer", "minimum": 0}}},
+    "step_ref": {"type": "object", "required": ["id", "sequence"], "properties": {"id": {"type": "string", "minLength": 1}, "sequence": {"type": "integer", "minimum": 0}}},
     "correlation_id": {"type": "string", "minLength": 1},
     "causation_id": {"type": "string", "minLength": 1},
     "sequence": {"type": "integer", "minimum": 0},

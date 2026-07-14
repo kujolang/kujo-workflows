@@ -2,7 +2,8 @@
 
 These JSON contracts are the workflow-facing boundary for Tribunal, Relay, and
 Workcell. They are intentionally additive: consumers must ignore unknown
-properties, while producers must preserve the required identifiers,
+properties, while producers must preserve the required timestamps,
+workflow/run/step references, correlation and causation identifiers,
 provenance, redaction, idempotency, and error fields.
 
 The contracts describe the evidence exchanged by the workflows. They do not
@@ -14,6 +15,11 @@ upgrade a tool's operational guarantees. In particular:
   remote exactly-once delivery.
 - Workcell receipts describe a bounded Docker/Podman attempt; they do not imply
   microVM or hosted isolation.
+
+Relay delivery receipts require an explicit acknowledgment object, and all
+receipt families carry a creation timestamp. Tribunal receipts also model
+human override and suspension-resume metadata; Workcell completion receipts
+retain the workflow, run, and step binding from the package.
 
 Validate the schemas and examples with:
 

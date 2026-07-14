@@ -2,6 +2,7 @@
   "contract": "kujo.tribunal.decision-receipt",
   "contract_version": "1.0",
   "decision_id": "decision-feature-card-001",
+  "created_at": "2026-07-14T02:21:04Z",
   "workflow_ref": {"id": "feature-card-workflow", "version": "1"},
   "run_ref": {"id": "2026-07-14-feature-card-001", "attempt": 1},
   "step_ref": {"id": "tribunal-gate", "sequence": 4},

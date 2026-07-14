@@ -2,6 +2,19 @@
   "contract": "kujo.workcell.completion-receipt",
   "contract_version": "1.0",
   "package_id": "pkg-workcell-hello-001",
+  "created_at": "2026-07-14T02:21:06Z",
+  "workflow_ref": {
+    "id": "workcell-execution-gate",
+    "version": "1"
+  },
+  "run_ref": {
+    "id": "wc-f98c3b405a324e4ebd5147e1981b76c7",
+    "attempt": 1
+  },
+  "step_ref": {
+    "id": "bounded-execution",
+    "sequence": 1
+  },
   "run_id": "wc-f98c3b405a324e4ebd5147e1981b76c7",
   "status": "blocked",
   "lifecycle": ["created", "validated", "preparing", "prepared", "starting", "running", "collecting", "verifying", "exporting", "failed", "cleaning", "cleaned"],

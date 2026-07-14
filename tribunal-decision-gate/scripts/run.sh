@@ -34,6 +34,7 @@ export = json.load(open(sys.argv[1]))
 run_id = sys.argv[3]
 json.dump({
     "contract": "kujo.tribunal.decision-receipt", "contract_version": "1.0", "decision_id": f"{run_id}:decision",
+    "created_at": "2026-07-14T00:00:00Z",
     "workflow_ref": {"id": "tribunal-decision-gate", "version": "1"}, "run_ref": {"id": run_id, "attempt": 1}, "step_ref": {"id": "mock-review", "sequence": 1},
     "decision": {"status": "approved", "binding": False, "confidence": 0.5, "rationale": "Tribunal mock review completed; caller must apply its own binding policy.", "quorum": {"required": 1, "achieved": 1}, "dissent": [], "escalation": {"required": False}},
     "participants": [{"id": "tribunal-mock-panel", "role": "mock-panel", "outcome": "agree"}],

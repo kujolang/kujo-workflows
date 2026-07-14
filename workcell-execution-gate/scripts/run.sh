@@ -42,6 +42,7 @@ receipt = result.get("receipt", {})
 package_id = f"{run_id}:package"
 package = {
     "contract": "kujo.workcell.work-package", "contract_version": "1.0", "package_id": package_id,
+    "created_at": "2026-07-14T00:00:00Z",
     "workflow_ref": {"id": "workcell-execution-gate", "version": "1"}, "run_ref": {"id": run_id, "attempt": 1},
     "step_ref": {"id": "bounded-docker-execution", "sequence": 1},
     "source": {"repository": receipt.get("source_repository", "fixture"), "commit": receipt.get("source_commit", "unknown"), "dirty_allowed": False},
@@ -51,7 +52,8 @@ package = {
     "redaction": {"policy": "workflow-default-redaction-v1", "redacted_fields": []}, "idempotency_key": f"{run_id}:bounded-docker-execution:1"
 }
 completion = {
-    "contract": "kujo.workcell.completion-receipt", "contract_version": "1.0", "package_id": package_id, "run_id": run_id,
+    "contract": "kujo.workcell.completion-receipt", "contract_version": "1.0", "package_id": package_id, "created_at": "2026-07-14T00:00:01Z",
+    "workflow_ref": {"id": "workcell-execution-gate", "version": "1"}, "run_ref": {"id": run_id, "attempt": 1}, "step_ref": {"id": "bounded-docker-execution", "sequence": 1}, "run_id": run_id,
     "status": status, "lifecycle": receipt.get("lifecycle", ["created", "failed"]),
     "execution": {"runtime_backend": result.get("runtime_backend", inspect_result["runtime_backend"]), "cleanup_status": receipt.get("cleanup_status", "not_run"), "receipt_path": result.get("receipt_path", "receipt.json"), "manifest_path": receipt.get("manifest_path", "manifest.json"), "source_commit": receipt.get("source_commit", ""), "definition_hash": receipt.get("workcell_definition_hash", "")},
     "artifacts": [{"path": "hello.txt", "status": "exported" if ok else "missing"}],

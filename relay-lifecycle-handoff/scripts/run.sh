@@ -48,6 +48,7 @@ common = {"source_tool": "relay", "source_version": "0.1.0", "artifact_refs": ["
 json.dump({
     "contract": "kujo.relay.message-envelope", "contract_version": "1.0", "message_id": message_id,
     "message_type": "workflow.handoff.completed", "sender": "relay-lifecycle-handoff", "recipient": "workflow-resumer",
+    "workflow_ref": {"id": "relay-lifecycle-handoff", "version": "1"}, "run_ref": {"id": run_id, "attempt": 1}, "step_ref": {"id": "resume-callback", "sequence": 1},
     "correlation_id": run_id, "causation_id": run_id, "sequence": 1, "attempt": 1,
     "idempotency_key": f"{run_id}:handoff:1", "created_at": "2026-07-14T00:00:00Z",
     "delivery": {"guarantee": "local_persisted", "ack_required": True, "max_attempts": 1},
@@ -56,7 +57,8 @@ json.dump({
 }, open(sys.argv[2], "w"), indent=2)
 json.dump({
     "contract": "kujo.relay.delivery-receipt", "contract_version": "1.0", "message_id": message_id,
-    "correlation_id": run_id, "status": "acknowledged", "attempts": 1, "transport": "local_store",
+    "created_at": "2026-07-14T00:00:01Z", "workflow_ref": {"id": "relay-lifecycle-handoff", "version": "1"}, "run_ref": {"id": run_id, "attempt": 1}, "step_ref": {"id": "resume-callback", "sequence": 1},
+    "correlation_id": run_id, "status": "acknowledged", "attempts": 1, "transport": "local_store", "acknowledgment": {"required": True, "status": "received", "received_at": "2026-07-14T00:00:01Z", "actor": "workflow-resumer"},
     "next_action": "resume_workflow", "provenance": common,
     "redaction": {"policy": "workflow-default-redaction-v1", "redacted_fields": []}
 }, open(sys.argv[3], "w"), indent=2)

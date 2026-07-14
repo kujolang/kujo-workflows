@@ -5,6 +5,18 @@
   "message_type": "workflow.handoff.requested",
   "sender": "feature-card-workflow",
   "recipient": "relay.local",
+  "workflow_ref": {
+    "id": "feature-card-workflow",
+    "version": "1"
+  },
+  "run_ref": {
+    "id": "run-feature-card-001",
+    "attempt": 1
+  },
+  "step_ref": {
+    "id": "relay-handoff",
+    "sequence": 1
+  },
   "correlation_id": "run-feature-card-001",
   "causation_id": "step-change-applied",
   "sequence": 1,

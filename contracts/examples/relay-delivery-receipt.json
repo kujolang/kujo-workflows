@@ -2,10 +2,29 @@
   "contract": "kujo.relay.delivery-receipt",
   "contract_version": "1.0",
   "message_id": "msg-relay-feature-card-001",
+  "created_at": "2026-07-14T02:21:03Z",
+  "workflow_ref": {
+    "id": "feature-card-workflow",
+    "version": "1"
+  },
+  "run_ref": {
+    "id": "run-feature-card-001",
+    "attempt": 1
+  },
+  "step_ref": {
+    "id": "relay-handoff",
+    "sequence": 1
+  },
   "correlation_id": "run-feature-card-001",
   "status": "acknowledged",
   "attempts": 1,
   "transport": "local_store",
+  "acknowledgment": {
+    "required": true,
+    "status": "received",
+    "received_at": "2026-07-14T02:21:02Z",
+    "actor": "workflow-resumer"
+  },
   "acknowledged_at": "2026-07-14T02:21:02Z",
   "next_action": "resume_workflow",
   "provenance": {"source_tool": "relay", "source_version": "0.1.0", "artifact_refs": ["receipts.json"]},
