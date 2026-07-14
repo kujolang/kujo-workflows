@@ -3,7 +3,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 WORKFLOW_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-KUJO_REPOS="${KUJO_REPOS:-/Users/robertdevore/2026/Kujolang/kujo-repos}"
+KUJO_REPOS="${KUJO_REPOS:-$(cd "$WORKFLOW_DIR/../.." && pwd)}"
 KUJO_BIN="${KUJO_BIN:-$KUJO_REPOS/kujo/target/release/kujo}"
 HOWL_REPO="${HOWL_REPO:-$KUJO_REPOS/howl}"
 STAMP="$(date -u +%Y%m%dT%H%M%SZ)"

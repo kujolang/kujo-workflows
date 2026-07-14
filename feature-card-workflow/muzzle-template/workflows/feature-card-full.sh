@@ -71,7 +71,8 @@ fi
 repo_root="$(git rev-parse --show-toplevel)"
 cd "$repo_root"
 
-KUJO_REPOS="${KUJO_REPOS:-/Users/robertdevore/2026/Kujolang/kujo-repos}"
+FEATURE_WORKFLOW_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+KUJO_REPOS="${KUJO_REPOS:-$(cd "$FEATURE_WORKFLOW_ROOT/../.." && pwd)}"
 KUJO_BIN="${KUJO_BIN:-$KUJO_REPOS/kujo/target/release/kujo}"
 KUJO="${KUJO:-$KUJO_BIN}"
 export KUJO KUJO_BIN

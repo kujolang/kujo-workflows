@@ -2,7 +2,7 @@
 set -u
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-KUJO_REPOS="${KUJO_REPOS:-$(cd "$ROOT/.." && pwd)}"
+KUJO_REPOS="${KUJO_REPOS:-$(cd "$ROOT/../.." && pwd)}"
 KUJO_BIN="${KUJO_BIN:-$KUJO_REPOS/kujo/target/release/kujo}"
 PORT="${PORT:-8099}"
 STRICT="${STRICT:-0}"
