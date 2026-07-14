@@ -18,6 +18,9 @@ This repo collects runnable workflow kits for the Kujo agency and AI tooling sta
 | `howl-content-factory/` | Developers, agency owners | Howl turns real Kujo examples into Markdown, HTML, SVG, gallery, and captions. | `bash scripts/run-workflow.sh` |
 | `loop-engineering/` | Anyone building agents | A bounded Goal→Context→Agent→Evaluation→Stop loop runs portably and stops safely. | `bash scripts/run-workflow.sh` |
 | `docsgen-repo-contract-runner/` | Developers, agent operators | DocsGen scans a user-chosen repo and writes an auditable docs contract packet. | `TARGET_REPO=/path/to/repo bash scripts/run-workflow.sh` |
+| `tribunal-decision-gate/` | Governance, release, security teams | Tribunal mock review becomes a verified advisory decision receipt. | `bash scripts/run.sh` |
+| `relay-lifecycle-handoff/` | Workflow operators | Relay pause/resume and integrity-checked export become correlated handoff receipts. | `bash scripts/run.sh` |
+| `workcell-execution-gate/` | Agent operators | Workcell validates, inspects, and executes a bounded Docker package with completion evidence. | `bash scripts/run.sh` |
 
 ## Portable Pattern: Loop Engineering
 
@@ -40,6 +43,7 @@ The newer workflow kits cover a broad buyer story without duplicating the existi
 4. `casefile-incident-evidence-packet/` - incident and failed-run evidence that another human or agent can act on.
 5. `howl-content-factory/` - deterministic content asset generation from real examples.
 6. `docsgen-repo-contract-runner/` - user-chosen repo documentation generation with JSON, gap files, and agent handoff artifacts.
+7. `tribunal-decision-gate/`, `relay-lifecycle-handoff/`, and `workcell-execution-gate/` - explicit decision, handoff, and bounded-execution contract boundaries.
 
 Each newer workflow includes:
 
@@ -74,7 +78,7 @@ done
 ## Current Caveats
 
 - Some Kujo interpreter runs emit type-checking warnings before successful output. For these workflow demos, exit status and generated artifacts are the verification source.
-- `agency-verified-fix-loop/` can still expose missing optional tool binaries in this checkout, especially the historical `changebucket` path. The newer workflows were chosen to run with the tools available locally.
+- `agency-verified-fix-loop/` records explicit failures for PatchBrief, ChangeBucket, and ShipCheck when the checked-out Kujo runtime cannot resolve their `cli` module; it does not claim those reports were produced.
 - Generated `.runs/` folders are proof artifacts. Keep or clean them based on whether you want verified packets committed.
 
 ## Content Positioning
@@ -96,4 +100,4 @@ python3 scripts/validate_catalog.py --json
 python3 -m unittest discover -s tests -p 'test_*.py'
 ```
 
-The audit found the current execution sandbox under the canonical name `workcell`; no repository or skill named `Workso` exists in the inspected Kujo checkout. Tribunal, Relay, and Workcell remain documented integration opportunities rather than silently-added best-effort stages because their shared decision, mission, workspace, and resume contracts are not yet present in this catalog.
+The audit found the current execution sandbox under the canonical name `workcell`; no repository or skill named `Workso` exists in the inspected Kujo checkout. Tribunal, Relay, and Workcell now have dedicated contract-gated integrations. They remain optional: Tribunal mock decisions are advisory and unsigned, Relay proves local persistence rather than remote exactly-once delivery, and Workcell remains a trusted local Docker/Podman boundary without scheduling or reassignment.

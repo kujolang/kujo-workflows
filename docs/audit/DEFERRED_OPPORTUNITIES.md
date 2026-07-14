@@ -1,32 +1,47 @@
 # Deferred Opportunities
 
-## Tribunal decision stage — P2
+## Feature card → Tribunal binding policy — P2
 
-- Opportunity: optional adversarial review for high-impact feature, security, release, and architecture cards.
-- Not implemented because: current cards have no stable docket schema, participant/threshold contract, dissent representation, human override, or verified resume adapter.
-- Evidence needed: mock hearing plus `tribunal audit --trust-policy ... --require-signature --json`, decision packet schema mapping, and a paused-workflow resume test.
-- Next action: define a versioned `decision-request/v1` artifact and make Tribunal advisory until an explicit approval policy binds it.
+- Opportunity: bind Tribunal review to high-impact feature, security, release,
+  and architecture cards.
+- Not implemented because: the advisory decision receipt exists, but authority
+  for participants, threshold, dissent handling, human override, and paused
+  workflow resume is still a product/governance decision.
+- Next action: define a signed decision-request contract and a binding policy;
+  keep the current gate advisory until then.
 
-## Relay mission adapter — P2
+## Relay external provider delivery — P2
 
-- Opportunity: replace direct agent/shell execution with bounded mission state, event-chain evidence, typed tool results, and repair/resume.
-- Not implemented because: Relay is hardened local alpha; no workflow owns a Relay mission schema, and authenticated service mode, durable concurrent storage, full Workcell recovery, and release gates remain open.
-- Evidence needed: fixture mission pause/resume, `runs verify`, valid/partial export checks, approval denial, integrity tamper rejection, and a RunLedger handoff contract.
-- Next action: add a dedicated adapter only after the mission package and ownership boundaries are approved.
+- Opportunity: deliver workflow handoffs across repositories or external
+  providers with acknowledgements and dead-letter recovery.
+- Not implemented because: the inspected Relay guarantees cover local durable
+  state, bounded retries/repair, and operator resume; strict remote delivery
+  semantics are not established by the current implementation.
+- Next action: add a provider adapter only after sender/recipient
+  authorization, acknowledgment, deduplication, dead-letter, and callback
+  contracts are implemented and tested.
 
-## Workcell execution backend — P2
+## Workcell scheduling and reassignment — P2
 
-- Opportunity: execute agent work in a disposable container with declared resources, artifact export, immutable receipt, verification, and labeled cleanup.
-- Not implemented because: Workcell is a local Docker MVP and its repository documents trusted host/daemon assumptions; Relay and Workcell do not yet provide a complete shared recovery contract.
-- Evidence needed: definition validation/inspection, offline test suite, receipt verification, cleanup failure handling, and Docker/Podman backend evidence where available.
-- Next action: define a Workcell-backed workflow package with explicit repo cleanliness, network, image provenance, resource, artifact, and cleanup policy.
+- Opportunity: parallel workcells with worker ownership, cancellation,
+  reassignment, and conflict prevention.
+- Not implemented because: Workcell is a local bounded Docker/Podman executor;
+  no scheduler or safe reassignment contract was found.
+- Next action: keep orchestration in Dispatch/Relay and add a Workcell adapter
+  only when lifecycle ownership and workspace conflict policy are explicit.
 
 ## “Workso” naming — P3
 
-- No repository, manifest, or skill named `Workso` was found. The current repository is `workcell`, with skill `kujo-workcell-workflows`.
-- Do not create a compatibility alias until the product owner confirms whether Workso is a rename, a separate tool, or a prompt typo.
+- No repository, manifest, or skill named `Workso` was found. The canonical
+  implementation is `workcell`, with skill `kujo-workcell-workflows`.
+- Do not create an alias without product confirmation.
 
-## Additional under-tested relationships — P2
+## Independent negative fixtures for nine under-tested relationships — P2
 
-- Agency Runner, DocsGen, and RAG workflows are cataloged as compatible but under-tested because their current scripts have fixture/manual coverage rather than a repository-wide contract suite.
-- Next action: add deterministic negative fixtures for missing binaries, malformed outputs, absent artifacts, and redaction leakage before changing readiness to production-ready.
+- The strict Agency packet, DocsGen packet, and RAG packet now provide stronger
+  positive/operational evidence, but Agency's optional phases still share one
+  composite runner and its PatchBrief/ChangeBucket/ShipCheck calls are blocked
+  by the current Kujo `cli` module-resolution issue.
+- Next action: add per-skill missing-binary, malformed-output, absent-artifact,
+  and redaction-leak fixtures before promoting any of the nine relationships to
+  fully compatible.

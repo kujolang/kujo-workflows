@@ -255,6 +255,57 @@
       "tests": ["bash scripts/run-workflow.sh"],
       "documentation": ["rag-enterprise-knowledge-gate/README.md"],
       "production_readiness": "production-capable-with-limitations"
+    },
+    {
+      "id": "tribunal-decision-gate",
+      "path": "tribunal-decision-gate",
+      "status": "production-capable-with-limitations",
+      "purpose": "Run an advisory Tribunal mock review and emit a verified, versioned decision receipt.",
+      "entry": "tribunal-decision-gate/scripts/run.sh",
+      "skills": [{"name": "kujo-tribunal-workflows", "path": "skills/kujo-tribunal-workflows/SKILL.md", "compatibility": "compatible"}],
+      "tools": ["tribunal"],
+      "inputs": ["Tribunal product-decision fixture", "KUJO_BIN"],
+      "outputs": ["review.txt", "verify.json", "export.json", "decision-receipt.json"],
+      "approval_boundaries": ["mock receipt is advisory and unsigned; binding production approval requires trust-policy verification"],
+      "state_and_recovery": "Tribunal persists a run; workflow is rerunnable by idempotency key but does not resume a stopped hearing.",
+      "evidence": "verified Tribunal artifact export mapped to contracts/tribunal/decision-receipt.v1.schema.json",
+      "tests": ["tribunal mock review", "tribunal verify", "contract instance validation"],
+      "documentation": ["tribunal-decision-gate/README.md", "contracts/README.md"],
+      "production_readiness": "production-capable-with-limitations"
+    },
+    {
+      "id": "relay-lifecycle-handoff",
+      "path": "relay-lifecycle-handoff",
+      "status": "production-capable-with-limitations",
+      "purpose": "Exercise Relay pause/resume, integrity-checked export, and a local persisted handoff receipt.",
+      "entry": "relay-lifecycle-handoff/scripts/run.sh",
+      "skills": [{"name": "kujo-relay-workflows", "path": "skills/kujo-relay-workflows/SKILL.md", "compatibility": "compatible"}],
+      "tools": ["relay", "runledger", "packwrite"],
+      "inputs": ["clean Git fixture", "Relay worktree mission fixture", "KUJO_BIN"],
+      "outputs": ["paused.json", "resumed.json", "export.json", "message-envelope.json", "delivery-receipt.json", "cleanup.json"],
+      "approval_boundaries": ["mission approval is fixture-scoped", "external delivery is not implied by local receipt"],
+      "state_and_recovery": "Relay persists a paused run, resumes by run ID, verifies event/receipt integrity, and cleans the isolated worktree.",
+      "evidence": "Relay pause/resume/export/cleanup output mapped to contracts/relay/*.v1.schema.json",
+      "tests": ["Relay worktree mission", "pause/resume", "runs export integrity", "contract instance validation"],
+      "documentation": ["relay-lifecycle-handoff/README.md", "contracts/README.md"],
+      "production_readiness": "production-capable-with-limitations"
+    },
+    {
+      "id": "workcell-execution-gate",
+      "path": "workcell-execution-gate",
+      "status": "production-capable-with-limitations",
+      "purpose": "Validate, inspect, and attempt bounded Workcell Docker execution with explicit completion evidence.",
+      "entry": "workcell-execution-gate/scripts/run.sh",
+      "skills": [{"name": "kujo-workcell-workflows", "path": "skills/kujo-workcell-workflows/SKILL.md", "compatibility": "compatible"}],
+      "tools": ["workcell"],
+      "inputs": ["clean Git fixture", "Workcell hello definition", "KUJO_BIN"],
+      "outputs": ["validate.json", "inspect.json", "run-result.json", "work-package.json", "completion-receipt.json"],
+      "approval_boundaries": ["Docker daemon and image are trusted local infrastructure; network is none; declared artifacts only"],
+      "state_and_recovery": "Workcell owns bounded lifecycle, cleanup, and receipt; this workflow does not claim reassignment or multi-worker scheduling.",
+      "evidence": "Workcell validate/inspect/run output mapped to contracts/workcell/*.v1.schema.json",
+      "tests": ["Workcell validate", "Workcell inspect security policy", "Docker run", "contract instance validation"],
+      "documentation": ["workcell-execution-gate/README.md", "contracts/README.md"],
+      "production_readiness": "production-capable-with-limitations"
     }
   ]
 }

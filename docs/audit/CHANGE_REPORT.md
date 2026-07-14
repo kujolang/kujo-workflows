@@ -18,8 +18,25 @@
    - Before: several runners defaulted to `/Users/robertdevore/2026/Kujolang/kujo-repos`, and the verified-fix loop resolved one directory too shallow.
    - After: defaults resolve the sibling repository root from the workflow location while preserving explicit `KUJO_REPOS` overrides.
 
+4. Added versioned Tribunal, Relay, and Workcell contract boundaries and three dedicated integrations.
+   - Files: `contracts/`, `tribunal-decision-gate/`, `relay-lifecycle-handoff/`, `workcell-execution-gate/`, `scripts/validate_contracts.py`, `scripts/validate_contract_instance.py`, `tests/test_contracts.py`.
+   - Before: the audit only documented opportunities; no workflow-facing package, message, decision, or completion receipt was validated in this repository.
+   - After: Tribunal mock review, Relay pause/resume/export/cleanup, and Workcell validate/inspect/run each produce a schema-validated artifact packet with explicit advisory, local-delivery, bounded-runtime, redaction, provenance, and idempotency semantics.
+   - Evidence: `python3 scripts/validate_contracts.py`, the three gate scripts, and `docs/audit/PHASE2_EVIDENCE.md`.
+
+5. Fixed agency browser-loop reproducibility and resolved Relay aggregate acceptance.
+   - Files: `agency-verified-fix-loop/scripts/run-loop.sh`; Relay commit `7ead89a` in `tests/relay_agents_tool_smoke.sh`.
+   - Before: port reuse could serve a stale fixed fixture, and Relay's absolute-runtime agent smoke failed because `KUJO_BIN` was not exported.
+   - After: the browser loop selects a free port, stops on an unexpected pre-fix result, and records a real expected failure. Relay's full 25-script aggregate passes with an explicit absolute runtime.
+   - Evidence: agency packet `.runs/20260714T023325Z`; Relay acceptance log and pushed commit `7ead89a`.
+
+6. Added stronger evidence for the nine previously under-tested skill relationships.
+   - Files: `docs/audit/skill-compatibility-matrix.json`, `docs/audit/PHASE2_EVIDENCE.md`.
+   - Before: relationships were only supported by source inspection and composite documentation.
+   - After: strict Agency, DocsGen, and RAG packets are recorded with exact artifact paths; relationships remain under-tested where independent negative fixtures are still missing.
+
 ## Intentionally not changed
 
-- No direct Tribunal, Relay, or Workcell execution stage was added. The tool matrix documents the gap and deferral because the required shared docket, mission, workspace, receipt, and resume contracts are not present, and Relay explicitly leaves full Workcell isolation/recovery open.
+- No existing production workflow was made dependent on the new Tribunal, Relay, or Workcell stages. The integrations are optional dedicated gates with rollback-safe receipts; the matrix documents where binding composition remains deferred.
 - Existing dirty files in `ai-sdk`, `dispatch`, and `spec` were not touched.
 - No generated `.runs`, `.work`, provider outputs, credentials, or tool evidence were committed.
