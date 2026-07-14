@@ -5,7 +5,7 @@
 1. Added a canonical workflow catalog and validator.
    - Files: `docs/audit/workflow-catalog.json`, `scripts/validate_catalog.py`, `tests/validate_catalog.sh`, `tests/test_catalog_validator.py`.
    - Before: workflow-to-skill and workflow-to-tool dependencies were only implied by prose and shell commands.
-   - After: 12 active workflows declare canonical skill names/paths, tool repositories, inputs, outputs, approval boundaries, state/recovery, evidence, tests, documentation, and readiness posture. The validator fails closed when dependencies disappear or drift.
+   - After: 15 active workflows declare canonical skill names/paths, tool repositories, inputs, outputs, approval boundaries, state/recovery, evidence, tests, documentation, and readiness posture. The validator fails closed when dependencies disappear or drift.
    - Evidence: `python3 scripts/validate_catalog.py --json`; validator contract tests cover missing skills and unknown tools.
 
 2. Added durable audit matrices and baseline.
