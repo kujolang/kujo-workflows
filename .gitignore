@@ -2,3 +2,4 @@ agency-runner/.tmp/
 __pycache__/
 *.py[cod]
 .runs/
+.loop-engineering/
