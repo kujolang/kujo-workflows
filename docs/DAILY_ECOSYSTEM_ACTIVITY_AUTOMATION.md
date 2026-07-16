@@ -52,10 +52,11 @@ The following are also safe read operations:
 npm run strata -- notes get <NOTE_UUID> --json
 npm run strata -- notes get <NOTE_UUID> --content-only --pretty
 npm run strata -- search "exact phrase" --limit 100 --json
-npm run strata -- --agent --json agent context search "exact phrase" --limit 100
 ```
 
-`notes get` returns the full body. `notes list`, `search`, and agent context search also return full note objects, not summaries.
+`notes get` returns the full body. `notes list` and `search` also return full note objects, not summaries.
+
+Do not use `agent context search` in Strata 0.6.0. Direct testing showed that the current Commander registration (`command('context search <query>')`) is parsed as a `context` command with positional arguments named `search` and `query`; the action receives the literal word `search` instead of the supplied phrase. Its JSON response reported `query: "search"` and returned unrelated recent notes. Generic `search <query>` is the reliable read-side command until this registration is fixed.
 
 ### Record model and filters
 
@@ -91,7 +92,7 @@ Projects are separate objects with `id`, `name`, `createdAt`, `updatedAt`, and `
 
 There are no first-class filters for created time, updated time, rolling windows, time zone, repository, agent, task, chat/session, note type, status, source, or consolidation state. Those concepts exist only when agents place them in the Markdown body or tags such as `repo-watchdog`, `memory-state-snapshot`, `status-active`, and `session-...`.
 
-There are no native report or daily-digest commands. `agent context search` is a thin search wrapper, and `agent summary` creates a note, so it must not be used by this read-only automation. Backlinks and related-note endpoints can enrich a selected cluster, but relationships are otherwise usually searchable Markdown IDs rather than typed API fields.
+There are no native report or daily-digest commands. The intended `agent context search` wrapper is currently broken as described above, and `agent summary` creates a note, so neither belongs in this read-only automation. Backlinks and related-note endpoints can enrich a selected cluster, but relationships are otherwise usually searchable Markdown IDs rather than typed API fields.
 
 ### Output, limits, and complete-window retrieval
 
@@ -385,6 +386,7 @@ There is no blocker to running the automation today: complete reads are possible
 ### Useful improvements
 
 - Add `created-after`, `created-before`, `updated-after`, `updated-before`, exact ISO timestamp/time-zone validation, cursor pagination, total count, and JSONL output to Strata CLI/API.
+- Fix the Commander registration for `agent context search` and add a test proving the supplied phrase, rather than the literal token `search`, reaches `searchNotes`.
 - Add structured optional note metadata for repository paths/slugs, task/session/chat/run IDs, note type/status, source artifacts, commits, branch, validation, push state, and supersession relationships.
 - Add a read-only `strata report activity --since ... --until ... --json` command that returns complete candidates without consolidating or mutating notes.
 - Standardize agent completion records on the session template and explicitly distinguish code, non-code, plan, failed attempt, partial, and completed outcomes.
