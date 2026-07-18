@@ -2,6 +2,8 @@
 
 Phase 2 evidence captured on 2026-07-14 local time.
 
+Weekly refresh evidence captured on 2026-07-18 local time.
+
 ## Passed automatically
 
 - `python3 scripts/validate_catalog.py --json` — PASS; 15 workflows, no errors.
@@ -18,6 +20,15 @@ Phase 2 evidence captured on 2026-07-14 local time.
 - Relay contract suite — PASS when run directly with the pinned Kujo runtime; the suite emitted its contract PASS cases and returned 0.
 - bash tests/skill_relationship_contracts.sh — PASS; nine relationships each exercised with a positive boundary and a malformed or missing-input failure assertion.
 - python3 tests/test_skill_relationships.py — PASS; 1 integration test.
+- 2026-07-18: `python3 scripts/validate_catalog.py --json` — PASS; 15 workflows, no errors.
+- 2026-07-18: `python3 scripts/validate_contracts.py` — PASS; 5 schemas, 5 examples, 157 required-field negatives, additive-field checks.
+- 2026-07-18: `python3 -m unittest discover -s tests -p 'test_*.py'` — PASS; 5 tests.
+- 2026-07-18: `bash tests/validate_catalog.sh` — PASS.
+- 2026-07-18: JSON validation over tracked `*.json` files — PASS.
+- 2026-07-18: `bash -n` over repository `*.sh` files — PASS.
+- 2026-07-18: `git diff --check` — PASS.
+- 2026-07-18 sibling AI Chat: `npm test` — PASS; 107 tests.
+- 2026-07-18 sibling Watchdog: `KUJO_BIN=/Users/robertdevore/2026/Kujolang/kujo-repos/kujo/target/release/kujo node tests/proxy_integration_stub_suite.js && .../api_query_support_static_check.js && .../frontend_contract_suite.js` — PASS.
 
 ## Partially verified or blocked
 
@@ -30,3 +41,6 @@ Phase 2 evidence captured on 2026-07-14 local time.
 - `bash docsgen-repo-contract-runner/scripts/run-workflow.sh` — PASS; packet `.runs/20260714T023826Z`.
 - `bash rag-enterprise-knowledge-gate/scripts/run-workflow.sh` — PASS; packet `.runs/20260714T023826Z`.
 - Live provider paths for AI SDK, Watchdog, Relay, PackWrite, and Tribunal — NOT RUN; credentials and provider cost were intentionally not used.
+- 2026-07-18: AI Chat `npm run benchmark:run`, `npm run smoke:browser`, and live Web Search were not run; they require a running app, explicit app token, Chromium/browser configuration, SearXNG or Ollama Web Search credentials, and selected pane profiles.
+- 2026-07-18: Watchdog live named-upstream and agent-insights dashboard behavior was repository- and test-contract reviewed only; no live upstream credentials were used.
+- 2026-07-18: Relay provider-generated tool behavior was checked against repository docs, skill evidence, and `KUJO_BIN=/Users/robertdevore/2026/Kujolang/kujo-repos/kujo/target/release/kujo bash tests/relay_provider_tool_smoke.sh`; the smoke printed `PASS relay provider tool smoke`, but the process did not exit cleanly and was interrupted after 90 seconds, so this remains partial verification. The local workflow catalog did not rerun the sibling Relay aggregate acceptance suite.
