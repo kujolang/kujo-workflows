@@ -21,6 +21,20 @@
   authorization, acknowledgment, deduplication, dead-letter, and callback
   contracts are implemented and tested.
 
+## Relay smoke cleanup and fixture setup — P1
+
+- Opportunity: make Relay aggregate acceptance and provider-tool smoke fully
+  exit-clean after printing their PASS evidence.
+- Not implemented because: the 2026-07-25 audit was scoped to workflow-catalog
+  drift and found this in the sibling Relay repository, not in a workflow
+  artifact. `relay_provider_tool_smoke.sh` still printed PASS but did not
+  exit cleanly before interruption, and `relay_lock_stress_smoke.sh` failed
+  before lock assertions because `examples/fixture-mission.json` references a
+  missing `/tmp/relay-fixture-workspace`.
+- Next action: fix the sibling Relay smoke fixture setup and process cleanup,
+  then rerun `tests/relay_acceptance.sh` before promoting any Relay acceptance
+  claim beyond partial verification.
+
 ## Workcell scheduling and reassignment — P2
 
 - Opportunity: parallel workcells with worker ownership, cancellation,
