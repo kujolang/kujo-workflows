@@ -101,3 +101,12 @@ python3 -m unittest discover -s tests -p 'test_*.py'
 ```
 
 The audit found the current execution sandbox under the canonical name `workcell`; no repository or skill named `Workso` exists in the inspected Kujo checkout. Tribunal, Relay, and Workcell now have dedicated contract-gated integrations. They remain optional: Tribunal mock decisions are advisory and unsigned, Relay proves local persistence rather than remote exactly-once delivery, and Workcell remains a trusted local Docker/Podman boundary without scheduling or reassignment.
+
+## Launch readiness
+
+Current launch scope: locally verified support/distribution technical preview.
+The 2026-07-28 next batch proof validates the catalog, contracts, examples,
+unit tests, and representative Workcell, Tribunal, and Relay workflows. Hosted
+workflow runners, live external-provider workflows, clean-machine installation,
+and production/enterprise readiness are not claimed. See
+[`docs/launch-checklist.md`](docs/launch-checklist.md).
