@@ -30,8 +30,9 @@ agent-loop pattern (Goal → Context → Agent → Evaluation → Stop) that map
 Kujo tooling through adapters while running anywhere — local CLI harnesses, repo
 bots, CI, scheduled jobs, human-in-the-loop review, and future Kujo/BZBY
 orchestration. The reference driver runs with zero dependencies and enforces the
-stop conditions; see [`loop-engineering/WORKFLOW.md`](loop-engineering/WORKFLOW.md)
-and [`loop-engineering/loop.spec.yml`](loop-engineering/loop.spec.yml).
+stop conditions; see [`loop-engineering/README.md`](loop-engineering/README.md),
+[`loop-engineering/HOWTO.md`](loop-engineering/HOWTO.md), and
+[`loop-engineering/loop.spec.yml`](loop-engineering/loop.spec.yml).
 
 ## New Content Pillars
 

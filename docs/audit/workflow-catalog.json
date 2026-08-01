@@ -1,6 +1,6 @@
 {
   "schema": "kujo.workflow-catalog/v1",
-  "audit_id": "kujo-workflows-audit-2026-07-25",
+  "audit_id": "kujo-workflows-audit-2026-08-01",
   "source_repositories": {
     "workflows": "../kujo-workflows",
     "skills": "../kujo-skills",
@@ -63,7 +63,7 @@
       "state_and_recovery": "timestamped run and disposable work tree; cleanup trap",
       "evidence": "stage table, logs, proof artifacts, receipts",
       "tests": ["bash scripts/run-loop.sh", "STRICT=1 bash scripts/run-loop.sh"],
-      "documentation": ["agency-verified-fix-loop/README.md", "AGENCY_VERIFIED_FIX_LOOP_HOWTO.md"],
+      "documentation": ["agency-verified-fix-loop/README.md"],
       "production_readiness": "production-capable-with-limitations"
     },
     {
@@ -219,7 +219,7 @@
       "state_and_recovery": "iteration evidence and structured external blockers",
       "evidence": "context, action, diff, eval log, verdict per iteration",
       "tests": ["config mode smoke", "checklist classification smoke", "shell syntax"],
-      "documentation": ["loop-engineering/WORKFLOW.md", "loop-engineering/loop.spec.yml"],
+      "documentation": ["loop-engineering/README.md", "loop-engineering/HOWTO.md", "loop-engineering/loop.spec.yml"],
       "production_readiness": "production-ready"
     },
     {
