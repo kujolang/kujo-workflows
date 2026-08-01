@@ -9,3 +9,8 @@ non-root user, the workflow emits a `blocked` receipt and stops; it never
 claims success from an incomplete run.
 
 Run: `KUJO_BIN=/path/to/kujo workcell-execution-gate/scripts/run.sh`
+
+By default, temporary fixture repositories are created under
+`../.workcell-host-tmp` so Colima/Docker can mount them from the same host
+filesystem used by Workcell. Set `WORKCELL_TMP_ROOT` to override that location
+when using a different Docker host.
