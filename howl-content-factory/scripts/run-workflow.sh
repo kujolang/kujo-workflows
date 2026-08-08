@@ -75,6 +75,19 @@ cat > "$SHOWCASE/howl.json" <<'EOF'
       "expected_output": "ship",
       "caption": "Release gates should be explicit, local, and reviewable.",
       "cta": "Kujo turns workflow intent into artifacts."
+    },
+    {
+      "id": "social-launch-card",
+      "title": "Workflow proof that ships",
+      "tagline": "A branded launch card rendered from the same manifest as the example gallery.",
+      "file": "examples/release-gate.kujo",
+      "language": "kujo",
+      "variant": "social",
+      "label": "workflow launch",
+      "concepts": ["social card", "launch asset", "deterministic content"],
+      "expected_output": "ship",
+      "caption": "Launch cards should stay tied to the examples they promote.",
+      "cta": "Kujo workflows keep content reviewable."
     }
   ]
 }
@@ -116,7 +129,10 @@ for required in \
   "$SHOWCASE/dist/howl/agent-handoff.svg" \
   "$SHOWCASE/dist/howl/release-gate.md" \
   "$SHOWCASE/dist/howl/release-gate.html" \
-  "$SHOWCASE/dist/howl/release-gate.svg"; do
+  "$SHOWCASE/dist/howl/release-gate.svg" \
+  "$SHOWCASE/dist/howl/social-launch-card.md" \
+  "$SHOWCASE/dist/howl/social-launch-card.html" \
+  "$SHOWCASE/dist/howl/social-launch-card.svg"; do
   if [[ ! -f "$required" ]]; then
     echo "Missing expected Howl artifact: $required" >&2
     exit 1
@@ -131,7 +147,7 @@ Run: $STAMP
 
 ## Verdict
 
-PASS - Howl validated a showcase manifest, rendered Markdown/HTML/SVG/gallery assets, and generated deterministic caption copy.
+PASS - Howl validated a showcase manifest, rendered Markdown/HTML/SVG/gallery assets including a branded social SVG card, and generated deterministic caption copy.
 
 ## Content Pillar
 
@@ -144,6 +160,7 @@ Content should come from real examples and deterministic manifests, so launch as
 - Gallery: \`$SHOWCASE/dist/howl/index.html\`
 - Card markdown: \`$SHOWCASE/dist/howl/agent-handoff.md\`
 - Card SVG: \`$SHOWCASE/dist/howl/agent-handoff.svg\`
+- Branded social SVG: \`$SHOWCASE/dist/howl/social-launch-card.svg\`
 - Caption: \`$LOG_DIR/caption-agent-handoff.txt\`
 
 ## Buyer Relevance

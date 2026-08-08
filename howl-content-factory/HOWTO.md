@@ -19,6 +19,7 @@ Open:
 .runs/<timestamp>/showcase/dist/howl/agent-handoff.md
 .runs/<timestamp>/showcase/dist/howl/agent-handoff.svg
 .runs/<timestamp>/showcase/dist/howl/agent-handoff.html
+.runs/<timestamp>/showcase/dist/howl/social-launch-card.svg
 ```
 
 ## 3. Use It In A Real Repo
@@ -38,6 +39,8 @@ Generate a caption:
 /Users/robertdevore/2026/Kujolang/kujo-repos/howl/bin/howl caption agent-handoff --platform x
 ```
 
+Use `variant: "social"` in a card to render Howl's branded 1200x630 social SVG layout. Optional `background_image` and `font_file` assets must stay under the manifest directory.
+
 ## 4. Content Notes
 
 The key proof is that Howl renders only what exists in `howl.json` and the referenced example files. It does not invent claims, call an LLM, or post anywhere.
@@ -51,4 +54,3 @@ export KUJO=/path/to/kujo
 ```
 
 The launcher resolves manifests relative to the current working directory, so run Howl from the project that contains `howl.json`.
-

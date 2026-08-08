@@ -1,6 +1,6 @@
 # Howl Content Factory
 
-This workflow shows Kujo Howl turning real example files into deterministic content assets: Markdown, HTML, SVG cards, captions, and a static gallery.
+This workflow shows Kujo Howl turning real example files into deterministic content assets: Markdown, HTML, SVG cards, branded social SVG cards, captions, and a static gallery.
 
 It is designed for developers and agency owners who need content pillars that stay tied to working examples instead of hand-made slides that drift.
 
@@ -39,11 +39,10 @@ The script:
 
 1. Creates a mini showcase project with real `.kujo` examples.
 2. Validates the Howl manifest.
-3. Lists cards and renders deterministic Markdown, HTML, SVG, and gallery artifacts.
+3. Lists cards and renders deterministic Markdown, HTML, SVG, branded social SVG, and gallery artifacts.
 4. Generates a platform-safe caption for one card.
 5. Verifies the generated content files exist.
 
 ## Why This Matters
 
 Developers can publish examples without design-tool overhead. Agency owners can build repeatable content packages. Enterprise teams can review generated assets because the manifest and example source stay in the run packet.
-

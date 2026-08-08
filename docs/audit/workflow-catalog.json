@@ -1,6 +1,6 @@
 {
   "schema": "kujo.workflow-catalog/v1",
-  "audit_id": "kujo-workflows-audit-2026-08-01",
+  "audit_id": "kujo-workflows-audit-2026-08-08",
   "source_repositories": {
     "workflows": "../kujo-workflows",
     "skills": "../kujo-skills",
@@ -197,11 +197,11 @@
       "skills": [{"name": "kujo-howl-workflows", "path": "skills/kujo-howl-workflows/SKILL.md", "compatibility": "compatible"}],
       "tools": ["howl"],
       "inputs": ["showcase manifest", "Kujo examples"],
-      "outputs": ["Markdown", "HTML", "SVG", "gallery", "caption"],
+      "outputs": ["Markdown", "HTML", "SVG", "branded social SVG", "gallery", "caption"],
       "approval_boundaries": ["publication is outside scope"],
       "state_and_recovery": "timestamped generated packet",
-      "evidence": "manifest, render outputs and status.tsv",
-      "tests": ["bash scripts/run-workflow.sh", "tests/skill_relationship_contracts.sh"],
+      "evidence": "manifest, render outputs including social variant, and status.tsv",
+      "tests": ["bash scripts/run-workflow.sh", "branded social SVG artifact check", "tests/skill_relationship_contracts.sh"],
       "documentation": ["howl-content-factory/README.md"],
       "production_readiness": "production-capable-with-limitations"
     },
