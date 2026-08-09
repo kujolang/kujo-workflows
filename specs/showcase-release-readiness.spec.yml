@@ -1,0 +1,101 @@
+name: "Prepare Kujo Workflows for external showcasing"
+id: "2f091169-b4cf-4d24-9783-617129d055f8"
+version: "1.0.0"
+status: "ready"
+priority: "high"
+goal: "Make the repository's technical-preview release surface portable, truthful, legally distributable, continuously validated, and reproducible from a clean checkout."
+background: >
+  A 2026-08-08 release-readiness review found that the local workflow demos are
+  useful and largely healthy, but the public repository surface has missing
+  release metadata, broken documentation references, host-specific commands,
+  incomplete CI coverage, stale proof claims, and a failing strict agency demo.
+scope: "Add repository-level release metadata; rewrite the root README as a portable technical-preview landing page; repair missing Markdown links; replace maintainer-specific paths; condense obsolete cleanup inventories; add self-contained CI validation; make the strict agency fixture gate deterministic; and refresh launch-readiness and audit documentation from current evidence."
+non_goals:
+  - "Deploy hosted workflow runners."
+  - "Run live external providers or spend provider credits."
+  - "Claim production or enterprise readiness."
+  - "Publish packages, releases, or tags."
+  - "Change branch protection or repository visibility."
+relevant_systems:
+  - "Kujo Spec"
+  - "ShipCheck"
+  - "GitHub Actions"
+  - "Agency Verified Fix Loop"
+  - "Workflow catalog and contract validators"
+likely_files:
+  - "README.md"
+  - "LICENSE"
+  - "VERSION"
+  - "CHANGELOG.md"
+  - "Makefile"
+  - "examples/README.md"
+  - ".github/workflows/validate.yml"
+  - "scripts/validate_docs.py"
+  - "docs/launch-checklist.md"
+  - "docs/audit/README.md"
+  - "loop-engineering/README.md"
+  - "loop-engineering/HOWTO.md"
+  - "loop-engineering/loop.spec.yml"
+  - "agency-verified-fix-loop/fixtures/northstar-storefront-buggy/"
+  - "agency-verified-fix-loop/scripts/run-loop.sh"
+acceptance_criteria:
+  - "ShipCheck gate passes at the repository root with no error-level findings."
+  - "The repository contains an MIT LICENSE, VERSION, and CHANGELOG.md appropriate for a 0.1.0 technical preview."
+  - "Every checked-in relative Markdown link resolves to an existing file or local anchor target."
+  - "Active documentation contains no maintainer-specific /Users path and all copyable commands state or encode their working directory."
+  - "The root README distinguishes experimental, production-capable-with-limitations, and production-ready workflows and provides one portable first-run path."
+  - "GitHub Actions runs self-contained contract, unit, documentation, metadata, and static validation on pushes and pull requests."
+  - "Agency Verified Fix Loop completes with STRICT=1 and produces passing ChangeBucket and ShipCheck gates."
+  - "Catalog, contract, unit, Workcell, Tribunal, Relay, and representative workflow validations pass in the current checkout."
+  - "The required validation set passes from a detached clean local worktree without relying on untracked files."
+  - "The tracked worktree is clean, committed in meaningful commits, and pushed without rewriting history."
+eval_requirements:
+  - description: "Validate the task Spec in strict mode."
+    check_type: "command_succeeds"
+    params:
+      command: "spec validate specs/showcase-release-readiness.spec.yml --strict"
+  - description: "Validate repository documentation and release metadata."
+    check_type: "command_succeeds"
+    params:
+      command: "python3 scripts/validate_docs.py"
+  - description: "Run repository unit tests."
+    check_type: "command_succeeds"
+    params:
+      command: "python3 -m unittest discover -s tests -p 'test_*.py'"
+  - description: "Run the strict agency workflow."
+    check_type: "command_succeeds"
+    params:
+      command: "agency-runner/bin/agency-loop demo-verified-loop --strict"
+  - description: "Pass the ShipCheck release gate."
+    check_type: "command_succeeds"
+    params:
+      command: "kujo run ../shipcheck/shipcheck.kujo gate --dir . --format json"
+risks:
+  - risk: "Removing dated cleanup inventories could discard useful evidence."
+    mitigation: "Preserve their durable conclusions and provenance in a concise replacement before deleting bulk inventories."
+    severity: "medium"
+  - risk: "CI cannot execute sibling-repository integration gates in an isolated checkout."
+    mitigation: "Keep those gates explicit as host-dependent validation and do not represent them as self-contained CI coverage."
+    severity: "high"
+  - risk: "Fixture changes made solely to satisfy release tools could weaken the demo."
+    mitigation: "Keep metadata honest and verify that the functional ChangeBucket diff contains only the intended CSS and JavaScript changes."
+    severity: "medium"
+dependencies:
+  - "Python 3 with jsonschema"
+  - "Local Kujo runtime and sibling repositories for host-dependent workflow gates"
+  - "Docker or Podman for Workcell proof"
+review_expectations:
+  - "Review public claims for technical-preview accuracy and avoid production-readiness language."
+  - "Verify all README commands from their documented working directory."
+  - "Inspect the strict agency run summary and ensure only the intended CSS/JavaScript fix remains in its ChangeBucket diff."
+  - "Confirm the condensed audit summary preserves provenance without retaining bulk disposable inventories."
+human_approval_points:
+  - "Publishing a release or tag remains a separate explicit decision."
+  - "Changing the repository's technical-preview scope requires maintainer approval."
+estimated_effort: "medium"
+tags:
+  - "release-readiness"
+  - "documentation"
+  - "showcase"
+  - "ci"
+  - "technical-preview"

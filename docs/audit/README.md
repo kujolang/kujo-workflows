@@ -15,7 +15,7 @@ The machine-readable source of truth is [`workflow-catalog.json`](workflow-catal
 - “Workso” was not found as a repository, manifest, or canonical skill. The actual current execution sandbox is Workcell; the alias is recorded and rejected by the validator.
 - The catalog is safe as a documentation/inventory contract after validation. Individual workflows remain production-capable with limitations unless their own fixture, provider, host, and approval prerequisites are satisfied.
 - Nine previously under-tested skill relationships still have deterministic positive and negative boundary fixtures; they remain under-tested pending provider, consumer, and fully authenticated browser evidence.
-- The 2026-07-28 markdown cleanup removed stale review docs, including `AGENCY_VERIFIED_FIX_LOOP_HOWTO.md` and `loop-engineering/WORKFLOW.md`; the catalog now points at surviving canonical workflow docs.
+- The 2026-07-28 Markdown cleanup removed stale review docs, including `AGENCY_VERIFIED_FIX_LOOP_HOWTO.md` and `loop-engineering/WORKFLOW.md`; surviving workflow docs no longer link to those deleted files.
 
 ## Files
 
@@ -24,11 +24,12 @@ The machine-readable source of truth is [`workflow-catalog.json`](workflow-catal
 - [`tool-integration-matrix.json`](tool-integration-matrix.json) — current/proposed tool use, gaps, risks, tests, and rollback.
 - [`WEEKLY_AUDIT_2026_08_08.md`](WEEKLY_AUDIT_2026_08_08.md) — latest weekly drift review, affected repositories, compatibility disposition, validation, and next watch list.
 - [`WEEKLY_AUDIT_2026_08_01.md`](WEEKLY_AUDIT_2026_08_01.md) — previous weekly drift review.
-- [`markdown-doc-triage-2026-07-25.md`](markdown-doc-triage-2026-07-25.md), [`markdown-doc-review-disposition-2026-07-28.md`](markdown-doc-review-disposition-2026-07-28.md), [`markdown-doc-needs-review-2026-07-28.md`](markdown-doc-needs-review-2026-07-28.md), and [`markdown-doc-delete-candidates-missing-2026-07-28.txt`](markdown-doc-delete-candidates-missing-2026-07-28.txt) — markdown cleanup evidence and remaining review inventory.
+- [`markdown-cleanup-summary-2026-07-28.md`](markdown-cleanup-summary-2026-07-28.md) — durable policy and outcome from the July Markdown cleanup; exact bulk inventories remain available in Git history.
 
 Validate from the repository root:
 
 ```bash
 python3 scripts/validate_catalog.py --json
+python3 scripts/validate_docs.py
 python3 -m unittest discover -s tests -p 'test_*.py'
 ```

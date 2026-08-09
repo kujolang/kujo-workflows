@@ -70,8 +70,8 @@ RID=$(kujo run dispatch.kujo runs --output-root .runs/chatops --status paused --
 kujo run dispatch.kujo resume "$RID" --yes --non-interactive --output-root .runs/chatops
 ```
 
-See [`dispatch/docs/chatops-integration.md`](../../dispatch/docs/chatops-integration.md)
-and the Leash checkout's `docs/chatops.md` for the contracts, provider setup,
+In sibling checkouts, read `$KUJO_REPOS/dispatch/docs/chatops-integration.md`
+and `$KUJO_REPOS/leash/docs/chatops.md` for the contracts, provider setup,
 failure model, and real-workspace limitations.
 
 For bidirectional conversations and backend routing, use the Leash gateway

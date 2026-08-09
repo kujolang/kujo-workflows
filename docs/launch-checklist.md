@@ -1,33 +1,62 @@
 # Launch Checklist
 
-Current launch scope: `locally verified support/distribution technical preview`. Workflow catalog, contracts, representative workflows, unit validation, and Workcell proof pass locally. Hosted runner behavior, live external-provider workflows, and clean-machine install/use are not complete.
+Current launch scope: `locally verified support/distribution technical preview` (`0.1.0`). Repository-owned validation and representative local workflows pass on the development host. Hosted runner behavior, live external-provider workflows, and clean-machine installation on a separate host are not complete.
 
-## Local Gates
+## Self-Contained Gates
 
-- [x] Catalog checked with `python3 scripts/validate_catalog.py --json`.
-- [x] Contracts checked with `python3 scripts/validate_contracts.py`.
-- [x] Workcell contract examples checked with `python3 scripts/validate_contract_instance.py`.
-- [x] Unit validation checked with `python3 -m unittest discover -s tests -p 'test_*.py'`.
-- [x] Representative Workcell workflow checked with `bash workcell-execution-gate/scripts/run.sh`.
-- [x] Representative Tribunal workflow checked with `bash tribunal-decision-gate/scripts/run.sh`.
-- [x] Representative Relay workflow checked with `bash relay-lifecycle-handoff/scripts/run.sh`.
-- [x] Formatting checked with `git diff --check`.
-- [x] Workcell proof checked with `workcell run --file docs/workcell-launch-gate.json --repo . --no-pull`.
-- [ ] Clean-checkout workflow validation on a separate machine.
+These commands run from the repository root without sibling tool checkouts, except for the optional Spec CLI command:
+
+- [x] Release metadata and Markdown links: `python3 scripts/validate_docs.py`.
+- [x] Catalog structure: `python3 scripts/validate_catalog.py --structure-only --json`.
+- [x] Contract schemas and examples: `python3 scripts/validate_contracts.py`.
+- [x] Unit validation: `python3 -m unittest discover -s tests -p 'test_*.py'`.
+- [x] Shell, JavaScript, Python, JSON, and YAML syntax validation.
+- [x] Formatting: `git diff --check`.
+- [x] Release-readiness Spec: `spec validate specs/showcase-release-readiness.spec.yml --strict`.
+
+Individual contract instances use both required arguments. For example:
+
+```bash
+python3 scripts/validate_contract_instance.py \
+  contracts/workcell/work-package.v1.schema.json \
+  contracts/examples/workcell-work-package.json
+```
+
+## Host-Dependent Gates
+
+These commands require the local Kujo runtime, sibling tool repositories, and any named host dependency:
+
+- [x] Full catalog identity and repository resolution: `python3 scripts/validate_catalog.py --json`.
+- [x] Agency Verified Fix Loop strict gate: `agency-runner/bin/agency-loop demo-verified-loop --strict`.
+- [x] Representative Workcell workflow: `bash workcell-execution-gate/scripts/run.sh`.
+- [x] Representative Tribunal workflow: `bash tribunal-decision-gate/scripts/run.sh`.
+- [x] Representative Relay workflow: `bash relay-lifecycle-handoff/scripts/run.sh`.
+- [x] Six catalog workflow fixture demos documented in the root README.
+- [x] Loop Engineering, AI SDK + Watchdog, and AI SDK + Muzzle fixture demos.
+- [x] Workcell proof: `workcell run --file docs/workcell-launch-gate.json --repo . --no-pull`.
+- [x] Detached clean local worktree validation on the development host.
+- [ ] Clean-checkout installation and workflow validation on a separate machine.
+- [ ] Live-provider and fully authenticated browser validation.
+- [ ] Hosted runner validation.
 
 ## Workcell Proof Notes
 
-Workcell proof passed after building `kujolang/workcell-base:local` with `DOCKER_BUILDKIT=0`, using the Colima Workcell Docker host, and setting `TMPDIR` to a path under `/Users/robertdevore/2026/Kujolang/kujo-repos/.workcell-host-tmp` so the disposable worktree mount was visible inside the Colima VM.
-
-Resume command:
+The development-host proof uses the local `kujolang/workcell-base:local` image and a Docker/Colima socket. Keep the disposable worktree under a host path visible to the selected Docker VM:
 
 ```bash
-export DOCKER_HOST=unix:///Users/robertdevore/.colima/kujo-workcell/docker.sock
-export DOCKER_CONFIG=/tmp/kujo-next-batch-docker-config
-export TMPDIR=/Users/robertdevore/2026/Kujolang/kujo-repos/.workcell-host-tmp
+export KUJO_REPOS=/path/to/kujo-repos
+export DOCKER_HOST=unix:///path/to/docker.sock
+export DOCKER_CONFIG=/tmp/kujo-workflows-docker-config
+export TMPDIR="$KUJO_REPOS/.workcell-host-tmp"
 workcell run --file docs/workcell-launch-gate.json --repo . --no-pull
 workcell verify --run .workcell/runs/<run-id> --json
 ```
+
+The exact socket path is host-specific and must not be copied from another developer's machine.
+
+## Evidence Policy
+
+Generated `.runs/` and `.workcell/` directories are ignored local evidence. A launch claim must name the command, exit status, and expected artifact contract; it must not link to an ignored path as if that path were part of a fresh clone.
 
 ## Forbidden Launch Actions
 

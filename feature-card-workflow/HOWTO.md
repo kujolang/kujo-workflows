@@ -30,7 +30,7 @@ Install or verify these tools before running the workflow.
 - The sibling Kujo tool repos under:
 
 ```text
-/Users/robertdevore/2026/Kujolang/kujo-repos/
+/path/to/kujo-repos/
 ```
 
 Expected sibling repos include:
@@ -54,14 +54,16 @@ kujo-workflows
 Run:
 
 ```bash
+export KUJO_REPOS=/path/to/kujo-repos
+export KUJO_WORKFLOWS="$KUJO_REPOS/kujo-workflows"
 git --version
 python3 --version
 node --version
 npm --version
 php --version
 composer --version
-/Applications/Codex.app/Contents/Resources/codex --version
-/Users/robertdevore/2026/Kujolang/kujo-repos/kujo/target/release/kujo --version
+codex --version
+"$KUJO_REPOS/kujo/target/release/kujo" --version
 ```
 
 If your Kujo binary is somewhere else, set:
@@ -155,7 +157,7 @@ Use this when the page can be viewed without logging in:
 ```bash
 FEATURE_LENS_URL="http://127.0.0.1:8888/repro-page/" \
 FEATURE_VERIFY_COMMANDS=$'composer validate --no-check-publish\nnpm test -- --watch=false\nnpm run build' \
-/Users/robertdevore/2026/Kujolang/kujo-repos/kujo-workflows/feature-card-workflow/muzzle-template/workflows/feature-card-full.sh \
+"$KUJO_WORKFLOWS/feature-card-workflow/muzzle-template/workflows/feature-card-full.sh" \
   CARD-123 \
   card.md \
   /path/to/project-repo
@@ -176,7 +178,7 @@ FEATURE_LOGIN_USERNAME_ENV=TEST_SITE_USER \
 FEATURE_LOGIN_PASSWORD_ENV=TEST_SITE_PASS \
 FEATURE_LOGIN_SUCCESS_TEXT="My account" \
 FEATURE_VERIFY_COMMANDS=$'composer validate --no-check-publish\nnpm test -- --watch=false\nnpm run build' \
-/Users/robertdevore/2026/Kujolang/kujo-repos/kujo-workflows/feature-card-workflow/muzzle-template/workflows/feature-card-full.sh \
+"$KUJO_WORKFLOWS/feature-card-workflow/muzzle-template/workflows/feature-card-full.sh" \
   CARD-123 \
   card.md \
   /path/to/project-repo
@@ -301,7 +303,7 @@ If your team wants the workflow to commit automatically after running:
 FEATURE_COMMIT=1 \
 FEATURE_COMMIT_MESSAGE="CARD-123: fix cache-related page jump" \
 FEATURE_LENS_URL="http://127.0.0.1:8888/repro-page/" \
-/Users/robertdevore/2026/Kujolang/kujo-repos/kujo-workflows/feature-card-workflow/muzzle-template/workflows/feature-card-full.sh \
+"$KUJO_WORKFLOWS/feature-card-workflow/muzzle-template/workflows/feature-card-full.sh" \
   CARD-123 \
   card.md \
   /path/to/project-repo
@@ -386,7 +388,7 @@ Unauthenticated:
 ```bash
 FEATURE_LENS_URL="http://127.0.0.1:8888/repro-page/" \
 FEATURE_VERIFY_COMMANDS=$'composer validate --no-check-publish\nnpm test -- --watch=false\nnpm run build' \
-/Users/robertdevore/2026/Kujolang/kujo-repos/kujo-workflows/feature-card-workflow/muzzle-template/workflows/feature-card-full.sh CARD-123 card.md /path/to/project-repo
+"$KUJO_WORKFLOWS/feature-card-workflow/muzzle-template/workflows/feature-card-full.sh" CARD-123 card.md /path/to/project-repo
 ```
 
 Authenticated:
@@ -402,5 +404,5 @@ FEATURE_LOGIN_USERNAME_ENV=TEST_SITE_USER \
 FEATURE_LOGIN_PASSWORD_ENV=TEST_SITE_PASS \
 FEATURE_LOGIN_SUCCESS_TEXT="My account" \
 FEATURE_VERIFY_COMMANDS=$'composer validate --no-check-publish\nnpm test -- --watch=false\nnpm run build' \
-/Users/robertdevore/2026/Kujolang/kujo-repos/kujo-workflows/feature-card-workflow/muzzle-template/workflows/feature-card-full.sh CARD-123 card.md /path/to/project-repo
+"$KUJO_WORKFLOWS/feature-card-workflow/muzzle-template/workflows/feature-card-full.sh" CARD-123 card.md /path/to/project-repo
 ```

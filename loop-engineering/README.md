@@ -45,12 +45,10 @@ Unlike the other kits in this repo, Loop Engineering is not a single concrete de
 
 | File | Purpose |
 | --- | --- |
-| [`WORKFLOW.md`](WORKFLOW.md) | The full portable workflow definition (the canonical, agent-readable spec). |
-| [`loop.spec.yml`](loop.spec.yml) | Machine-readable loop contract: goal, context sources, eval gates, stop conditions, approval gates, adapters. |
+| [`loop.spec.yml`](loop.spec.yml) | Canonical machine-readable loop contract: goal, context sources, eval gates, stop conditions, approval gates, and adapters. |
 | [`HOWTO.md`](HOWTO.md) | How to adopt and run the loop in your own system. |
 | [`scripts/init-repo-loop.sh`](scripts/init-repo-loop.sh) | Repo-local initializer that creates `.loop-engineering/` state, config, ledger, evidence, blockers, and summary files. |
 | [`scripts/run-workflow.sh`](scripts/run-workflow.sh) | A portable loop driver with explicit demo, config, and Markdown checklist modes. |
-| [`TODO.md`](TODO.md) | Status and future seams. |
 
 ## Quick Start
 

@@ -5,14 +5,14 @@
 Expected local repos:
 
 ```text
-/Users/robertdevore/2026/Kujolang/kujo-repos/kujo
-/Users/robertdevore/2026/Kujolang/kujo-repos/dispatch
+/path/to/kujo-repos/kujo
+/path/to/kujo-repos/dispatch
 ```
 
 The script defaults to:
 
 ```bash
-KUJO_REPOS=/Users/robertdevore/2026/Kujolang/kujo-repos
+KUJO_REPOS=/path/to/kujo-repos
 KUJO_BIN=$KUJO_REPOS/kujo/target/release/kujo
 ```
 
@@ -70,4 +70,3 @@ For a short post or sales demo, show three screens:
 If Dispatch rejects the output root, keep the script's `DISPATCH_ALLOW_ANY_OUTPUT_ROOT=true` setting. It is scoped to this local demo because `.runs/<timestamp>/` is outside the Dispatch repo.
 
 If Kujo prints type warnings but exits `0` and writes artifacts, treat the artifact output as authoritative for this demo.
-

@@ -11,7 +11,7 @@ The workflow now has two modes:
 
 ## Repo Review Summary
 
-The sibling repos in `/Users/robertdevore/2026/Kujolang/kujo-repos/` already line up well for this workflow:
+The sibling repos under `$KUJO_REPOS` line up as follows for this workflow:
 
 | Stage | Repo | Role |
 | --- | --- | --- |
@@ -114,9 +114,11 @@ EOF
 Run the full workflow directly. Replace the URL and repo path for whichever project the card targets:
 
 ```bash
+export KUJO_REPOS=/path/to/kujo-repos
+export KUJO_WORKFLOWS="$KUJO_REPOS/kujo-workflows"
 FEATURE_LENS_URL="http://127.0.0.1:8888/page-with-widget/" \
 FEATURE_VERIFY_COMMANDS=$'composer validate --no-check-publish\nnpm test -- --watch=false\nnpm run build' \
-/Users/robertdevore/2026/Kujolang/kujo-repos/kujo-workflows/feature-card-workflow/muzzle-template/workflows/feature-card-full.sh \
+"$KUJO_WORKFLOWS/feature-card-workflow/muzzle-template/workflows/feature-card-full.sh" \
   CARD-123 \
   card.md \
   /path/to/wordpress-plugin
@@ -134,7 +136,7 @@ FEATURE_LOGIN_URL="http://127.0.0.1:8888/wp-login.php" \
 FEATURE_LOGIN_USERNAME_ENV=TEST_SITE_USER \
 FEATURE_LOGIN_PASSWORD_ENV=TEST_SITE_PASS \
 FEATURE_LOGIN_SUCCESS_SELECTOR="body.logged-in" \
-/Users/robertdevore/2026/Kujolang/kujo-repos/kujo-workflows/feature-card-workflow/muzzle-template/workflows/feature-card-full.sh \
+"$KUJO_WORKFLOWS/feature-card-workflow/muzzle-template/workflows/feature-card-full.sh" \
   CARD-123 \
   card.md \
   /path/to/project-repo
@@ -144,8 +146,8 @@ Or install it into the target repo's Muzzle workflows:
 
 ```bash
 mkdir -p .muzzle/workflows .muzzle/manifests
-cp /Users/robertdevore/2026/Kujolang/kujo-repos/kujo-workflows/feature-card-workflow/muzzle-template/workflows/feature-card-full.sh .muzzle/workflows/
-cp /Users/robertdevore/2026/Kujolang/kujo-repos/kujo-workflows/feature-card-workflow/muzzle-template/manifests/feature-card-full.json .muzzle/manifests/
+cp "$KUJO_WORKFLOWS/feature-card-workflow/muzzle-template/workflows/feature-card-full.sh" .muzzle/workflows/
+cp "$KUJO_WORKFLOWS/feature-card-workflow/muzzle-template/manifests/feature-card-full.json" .muzzle/manifests/
 chmod +x .muzzle/workflows/feature-card-full.sh
 
 FEATURE_LENS_URL="http://127.0.0.1:8888/page-with-widget/" \
@@ -240,8 +242,8 @@ If Muzzle is available, copy the template into the target repo once:
 
 ```bash
 mkdir -p .muzzle/workflows .muzzle/manifests
-cp /Users/robertdevore/2026/Kujolang/kujo-repos/kujo-workflows/feature-card-workflow/muzzle-template/workflows/feature-card-start.sh .muzzle/workflows/
-cp /Users/robertdevore/2026/Kujolang/kujo-repos/kujo-workflows/feature-card-workflow/muzzle-template/manifests/feature-card-start.json .muzzle/manifests/
+cp "$KUJO_WORKFLOWS/feature-card-workflow/muzzle-template/workflows/feature-card-start.sh" .muzzle/workflows/
+cp "$KUJO_WORKFLOWS/feature-card-workflow/muzzle-template/manifests/feature-card-start.json" .muzzle/manifests/
 chmod +x .muzzle/workflows/feature-card-start.sh
 muzzle run feature-card-start CARD-123 task.md
 ```
@@ -249,7 +251,7 @@ muzzle run feature-card-start CARD-123 task.md
 Start a RunLedger entry if the team wants an audit receipt for the card:
 
 ```bash
-export KUJO_REPOS=/Users/robertdevore/2026/Kujolang/kujo-repos
+export KUJO_REPOS=/path/to/kujo-repos
 export KUJO="$KUJO_REPOS/kujo/target/release/kujo"
 export PATH="$KUJO_REPOS/runledger/bin:$PATH"
 
@@ -266,7 +268,7 @@ runledger start \
 Write `.kujo/feature-cards/<card-id>/spec/task.spec.yml` from the card. It should contain goal, scope, non-goals, acceptance criteria, eval requirements, risks, dependencies, and review expectations.
 
 ```bash
-export KUJO_REPOS=/Users/robertdevore/2026/Kujolang/kujo-repos
+export KUJO_REPOS=/path/to/kujo-repos
 export PATH="$KUJO_REPOS/spec/scripts:$PATH"
 export KUJO_BIN="$KUJO_REPOS/kujo/target/release/kujo"
 export KUJO="$KUJO_BIN"

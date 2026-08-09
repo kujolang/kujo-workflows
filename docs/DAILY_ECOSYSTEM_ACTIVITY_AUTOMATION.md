@@ -9,11 +9,11 @@ Reviewed against the local Strata `0.6.0` source, CLI, HTTP API, and current loc
 The canonical source-checkout invocation is:
 
 ```bash
-cd /Users/robertdevore/2026/strata
+cd /path/to/strata
 npm run strata -- <command> [options]
 ```
 
-`package.json` maps that command to `tsx app/cli/index.ts`. The CLI is an HTTP client; it never reads or writes SQLite directly. The desktop app owns the local SQLite database under Electron `userData` (currently `/Users/robertdevore/Library/Application Support/strata/data/strata.sqlite`) and starts the HTTP service. Automations must not use that database path directly.
+`package.json` maps that command to `tsx app/cli/index.ts`. The CLI is an HTTP client; it never reads or writes SQLite directly. The desktop app owns the local SQLite database under its platform-specific Electron `userData` directory and starts the HTTP service. Automations must not access that database path directly.
 
 The default endpoint is `http://127.0.0.1:3939`. Strata must already be running. The supported runtime settings are:
 
@@ -35,7 +35,7 @@ Useful exit codes are `0` success, `2` validation error, `3` API unavailable, `4
 These commands were run successfully against the local service:
 
 ```bash
-cd /Users/robertdevore/2026/strata
+cd /path/to/strata
 npm run strata -- health --json
 npm run strata -- config show --json
 npm run strata -- config doctor --json
@@ -266,11 +266,11 @@ version: 1
 report:
   timezone: America/Toronto
   window_hours: 24
-  output: /Users/robertdevore/2026/reports/ecosystem-daily.md
+  output: /path/to/reports/ecosystem-daily.md
   expensive_verification: false
 
 strata:
-  repo: /Users/robertdevore/2026/strata
+  repo: /path/to/strata
   base_url: http://127.0.0.1:3939
   # Token comes only from STRATA_API_TOKEN.
 
@@ -282,8 +282,8 @@ reporadar:
 repositories:
   explicit: []
   roots:
-    - /Users/robertdevore/2026/Kujolang/kujo-repos
-    - /Users/robertdevore/2026
+    - /path/to/kujo-repos
+    - /path/to/workspace
   max_discovery_depth: 3
   exclusions:
     - "**/node_modules/**"
@@ -416,12 +416,12 @@ You are generating a read-only daily report answering “what changed across the
 Use these defaults unless the automation supplies overrides:
 
 ```text
-STRATA_REPO=/Users/robertdevore/2026/strata
+STRATA_REPO=/path/to/strata
 STRATA_API_BASE_URL=http://127.0.0.1:3939
 REPORADAR_API_BASE_URL=http://127.0.0.1:8080
 REPORT_TIME_ZONE=America/Toronto
 WINDOW_HOURS=24
-REPOSITORY_ROOTS=/Users/robertdevore/2026/Kujolang/kujo-repos,/Users/robertdevore/2026
+REPOSITORY_ROOTS=/path/to/kujo-repos,/path/to/workspace
 EXPLICIT_REPOSITORIES=
 EXCLUDED_PATHS=node_modules,.git,vendor,dist,build
 ARCHIVED_REPOSITORIES=

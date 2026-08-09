@@ -6,7 +6,7 @@ Prior automation run: `2026-07-25T10:01:53.963Z`
 
 ## Scope
 
-This audit compared the Kujo workflow catalog against sibling repositories under `/Users/robertdevore/2026/Kujolang/kujo-repos`, prioritizing repositories with commits after the prior automation run and workflow relationships that depend on those tools or skills.
+This audit compared the Kujo workflow catalog against sibling repositories under `$KUJO_REPOS`, prioritizing repositories with commits after the prior automation run and workflow relationships that depend on those tools or skills.
 
 Changed sibling repositories with catalog impact or watch impact:
 

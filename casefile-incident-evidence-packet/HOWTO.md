@@ -33,8 +33,10 @@ Then inspect the case bundle:
 From a target repo:
 
 ```bash
-/Users/robertdevore/2026/Kujolang/kujo-repos/kujo/target/release/kujo run --interpreter /Users/robertdevore/2026/Kujolang/kujo-repos/casefile/casefile.kujo -- init
-/Users/robertdevore/2026/Kujolang/kujo-repos/kujo/target/release/kujo run --interpreter /Users/robertdevore/2026/Kujolang/kujo-repos/casefile/casefile.kujo -- capture --name failing-tests -- npm test
+export KUJO_REPOS=/path/to/kujo-repos
+export KUJO_BIN="$KUJO_REPOS/kujo/target/release/kujo"
+"$KUJO_BIN" run --interpreter "$KUJO_REPOS/casefile/casefile.kujo" -- init
+"$KUJO_BIN" run --interpreter "$KUJO_REPOS/casefile/casefile.kujo" -- capture --name failing-tests -- npm test
 ```
 
 Use `--mirror-exit-code` in CI when the capture should preserve the command's failure status.
@@ -46,4 +48,3 @@ The clearest demo is a side-by-side of a raw failing command and the generated `
 ## 5. Troubleshooting
 
 CaseFile writes `.casefile/` under the current repo. This workflow runs inside an isolated fixture repo under `.runs/<timestamp>/fixture/`.
-

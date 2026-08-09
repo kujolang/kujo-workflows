@@ -5,7 +5,7 @@ Captured: `2026-08-08T06:03:48-04:00` (UTC `2026-08-08T10:03:48Z`)
 
 ## Scope
 
-This audit compared the workflow catalog against sibling Kujo repositories under `/Users/robertdevore/2026/Kujolang/kujo-repos`, prioritizing repositories changed since the 2026-08-01 run. The unavailable named skill `$kujo-workflow-auditor` was not found on disk, so the audit followed the repository's `AGENTS.md`, `README.md`, contract, launch, and audit instructions directly.
+This audit compared the workflow catalog against sibling Kujo repositories under `$KUJO_REPOS`, prioritizing repositories changed since the 2026-08-01 run. The unavailable named skill `$kujo-workflow-auditor` was not found on disk, so the audit followed the repository's `AGENTS.md`, `README.md`, contract, launch, and audit instructions directly.
 
 Prioritized changed repositories and commits:
 

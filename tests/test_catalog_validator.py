@@ -42,7 +42,7 @@ class CatalogValidatorTests(unittest.TestCase):
             )
 
     def test_repository_catalog_passes(self) -> None:
-        result = subprocess.run(["python3", str(VALIDATOR)], text=True, capture_output=True, check=False)
+        result = subprocess.run(["python3", str(VALIDATOR), "--structure-only"], text=True, capture_output=True, check=False)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
 
     def test_missing_skill_fails_closed(self) -> None:

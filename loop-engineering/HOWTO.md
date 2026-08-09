@@ -1,8 +1,8 @@
 # Loop Engineering HOWTO
 
 How to adopt the portable Goal → Context → Agent → Evaluation → Stop loop in your
-own system. See [`WORKFLOW.md`](WORKFLOW.md) for the full definition and
-[`loop.spec.yml`](loop.spec.yml) for the machine-readable contract.
+own system. See [`loop.spec.yml`](loop.spec.yml) for the canonical contract and
+the workflow [`README.md`](README.md) for the conceptual overview.
 
 ## 1. Initialize A Target Repo
 
@@ -104,7 +104,7 @@ The reference driver enforces the control flow but does not call a model. To run
 true autonomous loop, hand the driver's contract to your agent runtime:
 
 1. Load `loop.spec.yml` as the goal/policy.
-2. Use the agent task prompt in [`WORKFLOW.md`](WORKFLOW.md#example-invocation--task-prompt) as the driver's system instruction.
+2. Translate the `goal`, `agent`, `evaluation`, approval, and stop sections in [`loop.spec.yml`](loop.spec.yml) into the driver's system instruction.
 3. Implement the `act` capability with your agent + tools; keep `evaluate` independent of `act` where possible.
 4. Append every decision to the ledger and honor the stop conditions verbatim.
 

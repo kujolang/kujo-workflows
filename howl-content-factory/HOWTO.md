@@ -27,16 +27,17 @@ Open:
 From a repo with Kujo examples:
 
 ```bash
-export KUJO=/Users/robertdevore/2026/Kujolang/kujo-repos/kujo/target/release/kujo
-/Users/robertdevore/2026/Kujolang/kujo-repos/howl/bin/howl init
-/Users/robertdevore/2026/Kujolang/kujo-repos/howl/bin/howl validate
-/Users/robertdevore/2026/Kujolang/kujo-repos/howl/bin/howl render
+export KUJO_REPOS=/path/to/kujo-repos
+export KUJO="$KUJO_REPOS/kujo/target/release/kujo"
+"$KUJO_REPOS/howl/bin/howl" init
+"$KUJO_REPOS/howl/bin/howl" validate
+"$KUJO_REPOS/howl/bin/howl" render
 ```
 
 Generate a caption:
 
 ```bash
-/Users/robertdevore/2026/Kujolang/kujo-repos/howl/bin/howl caption agent-handoff --platform x
+"$KUJO_REPOS/howl/bin/howl" caption agent-handoff --platform x
 ```
 
 Use `variant: "social"` in a card to render Howl's branded 1200x630 social SVG layout. Optional `background_image` and `font_file` assets must stay under the manifest directory.

@@ -33,10 +33,12 @@ The query logs are JSON responses that include answer text and citation metadata
 Use the underlying command shape:
 
 ```bash
-cd /Users/robertdevore/2026/Kujolang/kujo-repos/rag
+export KUJO_REPOS=/path/to/kujo-repos
+export KUJO_BIN="$KUJO_REPOS/kujo/target/release/kujo"
+cd "$KUJO_REPOS/rag"
 KUJO_RAG_INDEX_PATH=/tmp/client-index/rag_index.json \
 KUJO_RAG_NAMESPACE=client_alpha \
-/Users/robertdevore/2026/Kujolang/kujo-repos/kujo/target/release/kujo run main.kujo --interpreter ingest \
+"$KUJO_BIN" run main.kujo --interpreter ingest \
   --path /path/to/docs \
   --recursive true
 ```
@@ -46,7 +48,7 @@ Query it:
 ```bash
 KUJO_RAG_INDEX_PATH=/tmp/client-index/rag_index.json \
 KUJO_RAG_NAMESPACE=client_alpha \
-/Users/robertdevore/2026/Kujolang/kujo-repos/kujo/target/release/kujo run main.kujo --interpreter query \
+"$KUJO_BIN" run main.kujo --interpreter query \
   --question "What approval controls apply?"
 ```
 
@@ -57,4 +59,3 @@ The best demo artifact is a query response with citations pointing at files in t
 ## 5. Troubleshooting
 
 If results are weak, add more explicit terms to the corpus or query. This demo uses offline hash embeddings, so clear source phrasing is useful.
-

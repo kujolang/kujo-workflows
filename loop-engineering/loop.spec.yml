@@ -12,8 +12,8 @@ version: "0.1.0"
 kind: "agent-loop"
 description: >
   Bounded Goal -> Context -> Agent -> Evaluation -> Stop loop. Edit the GOAL block
-  per task; the rest is reusable. This file is the contract; WORKFLOW.md is the
-  human/agent-readable spec.
+  per task; the rest is reusable. This file is the canonical human- and
+  agent-readable contract.
 
 # ---------------------------------------------------------------------------
 # 1. GOAL  (Spec / RunLedger / Watchdog)

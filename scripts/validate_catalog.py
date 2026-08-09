@@ -40,7 +40,7 @@ def frontmatter_name(path: Path) -> str | None:
     return None
 
 
-def validate(catalog_path: Path, skills_root: Path, tools_root: Path) -> list[str]:
+def validate(catalog_path: Path, skills_root: Path, tools_root: Path, *, check_external: bool = True) -> list[str]:
     errors: list[str] = []
     try:
         catalog = load_json(catalog_path)
@@ -61,9 +61,9 @@ def validate(catalog_path: Path, skills_root: Path, tools_root: Path) -> list[st
 
     known_skills: dict[str, Path] = {}
     skill_dir = skills_root / "skills"
-    if not skill_dir.is_dir():
+    if check_external and not skill_dir.is_dir():
         errors.append(f"skills directory not found: {skill_dir}")
-    else:
+    elif check_external:
         for skill_file in sorted(skill_dir.glob("*/SKILL.md")):
             name = frontmatter_name(skill_file)
             if name:
@@ -103,7 +103,10 @@ def validate(catalog_path: Path, skills_root: Path, tools_root: Path) -> list[st
                 name = relation.get("name")
                 path = relation.get("path")
                 compatibility = relation.get("compatibility")
-                if name not in known_skills:
+                if not isinstance(name, str) or not name:
+                    errors.append(f"{workflow_id}: skill name must be a non-empty string")
+                    continue
+                if check_external and name not in known_skills:
                     errors.append(f"{workflow_id}: unknown skill: {name}")
                     continue
                 expected = f"skills/{name}/SKILL.md"
@@ -111,9 +114,10 @@ def validate(catalog_path: Path, skills_root: Path, tools_root: Path) -> list[st
                     errors.append(f"{workflow_id}: non-canonical path for {name}: {path} (expected {expected})")
                 if compatibility not in COMPATIBILITY:
                     errors.append(f"{workflow_id}: invalid compatibility for {name}: {compatibility}")
-                actual = known_skills[name].relative_to(skills_root).as_posix()
-                if actual != expected:
-                    errors.append(f"{workflow_id}: skill identity/path mismatch for {name}: {actual}")
+                if check_external:
+                    actual = known_skills[name].relative_to(skills_root).as_posix()
+                    if actual != expected:
+                        errors.append(f"{workflow_id}: skill identity/path mismatch for {name}: {actual}")
 
         tools = workflow.get("tools")
         if not isinstance(tools, list):
@@ -128,9 +132,10 @@ def validate(catalog_path: Path, skills_root: Path, tools_root: Path) -> list[st
                     continue
                 if tool in {"kujo", "loop-engineering"}:
                     continue
-                tool_path = tools_root / tool
-                if not (tool_path / ".git").exists():
-                    errors.append(f"{workflow_id}: tool repository not found: {tool}")
+                if check_external:
+                    tool_path = tools_root / tool
+                    if not (tool_path / ".git").exists():
+                        errors.append(f"{workflow_id}: tool repository not found: {tool}")
 
         for field in ("inputs", "outputs", "approval_boundaries", "tests", "documentation"):
             if not isinstance(workflow.get(field), list) or not workflow[field]:
@@ -147,6 +152,11 @@ def main() -> int:
     parser.add_argument("--catalog", type=Path, default=Path("docs/audit/workflow-catalog.json"))
     parser.add_argument("--skills-root", type=Path)
     parser.add_argument("--tools-root", type=Path)
+    parser.add_argument(
+        "--structure-only",
+        action="store_true",
+        help="validate repository-owned catalog structure without requiring sibling skill/tool checkouts",
+    )
     parser.add_argument("--json", action="store_true", dest="as_json")
     args = parser.parse_args()
 
@@ -154,8 +164,14 @@ def main() -> int:
     workflows_root = catalog_path.parents[2]
     skills_root = (args.skills_root or workflows_root.parent / "kujo-skills").resolve()
     tools_root = (args.tools_root or workflows_root.parent).resolve()
-    errors = validate(catalog_path, skills_root, tools_root)
-    result = {"ok": not errors, "catalog": str(catalog_path), "workflow_count": 0, "errors": errors}
+    errors = validate(catalog_path, skills_root, tools_root, check_external=not args.structure_only)
+    result = {
+        "ok": not errors,
+        "catalog": str(catalog_path),
+        "workflow_count": 0,
+        "mode": "structure-only" if args.structure_only else "full",
+        "errors": errors,
+    }
     try:
         result["workflow_count"] = len(load_json(catalog_path).get("active_workflows", []))
     except ValueError:

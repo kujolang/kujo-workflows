@@ -1,0 +1,40 @@
+name: validate
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  repository:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+
+      - name: Install validation dependencies
+        run: python3 -m pip install --disable-pip-version-check jsonschema PyYAML
+
+      - name: Validate release documentation
+        run: python3 scripts/validate_docs.py
+
+      - name: Validate catalog structure
+        run: python3 scripts/validate_catalog.py --structure-only --json
+
+      - name: Validate contracts
+        run: python3 scripts/validate_contracts.py
+
+      - name: Run unit tests
+        run: python3 -m unittest discover -s tests -p 'test_*.py'
+
+      - name: Validate source and data syntax
+        run: python3 scripts/validate_static.py
+
+      - name: Check whitespace
+        run: git diff --check

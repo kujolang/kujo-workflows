@@ -14,17 +14,18 @@ The prototype is intentionally self-contained in this folder. It does not modify
 ## Quick Start
 
 ```bash
+export KUJO_WORKFLOWS=/path/to/kujo-workflows
 cd /path/to/client-repo
-/Users/robertdevore/2026/Kujolang/kujo-repos/agency-runner/bin/agency-loop init
+"$KUJO_WORKFLOWS/agency-runner/bin/agency-loop" init
 
-/Users/robertdevore/2026/Kujolang/kujo-repos/agency-runner/bin/agency-loop site add acme \
+"$KUJO_WORKFLOWS/agency-runner/bin/agency-loop" site add acme \
   --type wordpress \
   --environment staging \
   --base-url https://staging.acme.example \
   --login-url https://staging.acme.example/wp-login.php \
   --repo-path "$PWD"
 
-/Users/robertdevore/2026/Kujolang/kujo-repos/agency-runner/bin/agency-loop run \
+"$KUJO_WORKFLOWS/agency-runner/bin/agency-loop" run \
   --site acme \
   --recipe account-settings \
   --file task.md \

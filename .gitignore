@@ -1,3 +1,4 @@
+.DS_Store
 agency-runner/.tmp/
 __pycache__/
 *.py[cod]

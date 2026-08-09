@@ -38,14 +38,16 @@ Then review the safety packet:
 Run the underlying command against any local repo:
 
 ```bash
-cd /Users/robertdevore/2026/Kujolang/kujo-repos/mcp
-/Users/robertdevore/2026/Kujolang/kujo-repos/kujo/target/release/kujo run mcp.kujo --interpreter make /path/to/repo --no-ai --validate
+export KUJO_REPOS=/path/to/kujo-repos
+export KUJO_BIN="$KUJO_REPOS/kujo/target/release/kujo"
+cd "$KUJO_REPOS/mcp"
+"$KUJO_BIN" run mcp.kujo --interpreter make /path/to/repo --no-ai --validate
 ```
 
 For a custom output location:
 
 ```bash
-/Users/robertdevore/2026/Kujolang/kujo-repos/kujo/target/release/kujo run mcp.kujo --interpreter make /path/to/repo \
+"$KUJO_BIN" run mcp.kujo --interpreter make /path/to/repo \
   --out /tmp/generated-server \
   --artifacts /tmp/mcp-artifacts \
   --no-ai \
@@ -59,4 +61,3 @@ The strongest demo moment is opening `safety-review.md` beside `mcp.manifest.jso
 ## 5. Troubleshooting
 
 The MCP command may print Kujo type warnings before the success text. For this workflow, use the command exit code and generated files as the verification source.
-
