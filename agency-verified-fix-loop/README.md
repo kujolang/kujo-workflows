@@ -42,7 +42,7 @@ The script attempts these stages:
 - Export agent context and an Eval suite from Spec.
 - Run Scout against the fixture repo.
 - Run Scent to build task-specific context.
-- Prepare a static agent execution pack.
+- Assemble a static agent execution pack from the generated Spec context and Eval inputs.
 - Start a RunLedger record.
 - Start the PHP dev server.
 - Run the Lens flow before the fix and expect failure.

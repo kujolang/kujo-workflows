@@ -463,7 +463,12 @@ run_project "scent" "$KUJO_BIN" run "$KUJO_REPOS/scent/scent.kujo" pack \
   --max-file-bytes 60000 \
   --format both
 
-run_host_shell "prepare-static-agent-pack" "$(printf 'mkdir -p %q; cp -R %q %q' "$RUN_DIR/pack" "$ROOT/agent-pack" "$RUN_DIR/pack/agent")"
+run_host_shell "prepare-static-agent-pack" "$(printf 'mkdir -p %q; cp %q %q; cp %q %q' \
+  "$RUN_DIR/pack/agent" \
+  "$RUN_DIR/spec/agent-context.md" \
+  "$RUN_DIR/pack/agent/AGENT_CONTEXT.md" \
+  "$RUN_DIR/eval/mobile-promo-drawer.from-spec.json" \
+  "$RUN_DIR/pack/agent/EVAL.json")"
 
 if [ "${RUN_PACKWRITE:-0}" = "1" ] && [ -n "${PACKWRITE_API_KEY:-}" ]; then
   run_project "packwrite-live-dry-run" env PACKWRITE_API_KEY="$PACKWRITE_API_KEY" KUJO="$KUJO_BIN" "$KUJO_REPOS/packwrite/bin/packwrite" init "$RUN_DIR/spec/agent-context.md" --provider openai --model gpt-4.1-mini --output .agency-pack --dry-run
