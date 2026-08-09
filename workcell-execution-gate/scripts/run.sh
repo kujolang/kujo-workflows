@@ -31,10 +31,11 @@ run_status=0
 env TMPDIR="$TMP_ROOT" KUJO="$KUJO_BIN" "$WORKCELL/bin/workcell" run --file "$WORKCELL/examples/hello/workcell.json" --repo "$TMP" --output "$RUN_OUTPUT" --no-pull --json > "$OUT/run-result.json" || run_status=$?
 test "$run_status" -eq 0 -o "$run_status" -eq 7 -o "$run_status" -eq 8
 
-python3 - "$OUT/inspect.json" "$OUT/run-result.json" "$OUT/work-package.json" "$OUT/completion-receipt.json" <<'PY'
+python3 - "$OUT/inspect.json" "$OUT/run-result.json" "$OUT/work-package.json" "$OUT/completion-receipt.json" "$(tr -d '[:space:]' < "$WORKCELL/VERSION")" <<'PY'
 import json
 import sys
 inspect_result, result = [json.load(open(path)) for path in sys.argv[1:3]]
+source_version = sys.argv[5]
 run_id = result.get("run_id", "workcell-run-unknown")
 ok = result.get("ok") is True
 error = result.get("error", "")
@@ -49,7 +50,7 @@ package = {
     "source": {"repository": receipt.get("source_repository", "fixture"), "commit": receipt.get("source_commit", "unknown"), "dirty_allowed": False},
     "execution": {"runtime_backend": inspect_result["runtime_backend"], "workspace_strategy": inspect_result["definition"]["workspace"]["strategy"], "command": inspect_result["definition"]["command"], "resource_limits": {"timeout_ms": inspect_result["resource_limits"]["timeout_ms"], "max_output_bytes": inspect_result["resource_limits"]["max_output_bytes"]}, "network_mode": inspect_result["network_mode"]},
     "artifacts": [{"path": "hello.txt", "required": True}], "verification": {"required": True, "commands": [["test", "-f", "hello.txt"]]},
-    "provenance": {"source_tool": "workcell", "source_version": "0.1.0", "artifact_refs": ["receipt.json", "manifest.json"]},
+    "provenance": {"source_tool": "workcell", "source_version": source_version, "artifact_refs": ["receipt.json", "manifest.json"]},
     "redaction": {"policy": "workflow-default-redaction-v1", "redacted_fields": []}, "idempotency_key": f"{run_id}:bounded-docker-execution:1"
 }
 completion = {
@@ -59,7 +60,7 @@ completion = {
     "execution": {"runtime_backend": result.get("runtime_backend", inspect_result["runtime_backend"]), "cleanup_status": receipt.get("cleanup_status", "not_run"), "receipt_path": result.get("receipt_path", "receipt.json"), "manifest_path": receipt.get("manifest_path", "manifest.json"), "source_commit": receipt.get("source_commit", ""), "definition_hash": receipt.get("workcell_definition_hash", "")},
     "artifacts": [{"path": "hello.txt", "status": "exported" if ok else "missing"}],
     "errors": [] if ok else [{"code": "WORKCELL_EXECUTION_BLOCKED" if status == "blocked" else "WORKCELL_EXECUTION_FAILED", "message": error or "Workcell returned a non-success result.", "retryable": status != "blocked"}],
-    "provenance": {"source_tool": "workcell", "source_version": "0.1.0", "artifact_refs": ["receipt.json", "manifest.json", "stderr.log"]},
+    "provenance": {"source_tool": "workcell", "source_version": source_version, "artifact_refs": ["receipt.json", "manifest.json", "stderr.log"]},
     "redaction": {"policy": "workflow-default-redaction-v1", "redacted_fields": []}
 }
 json.dump(package, open(sys.argv[3], "w"), indent=2)

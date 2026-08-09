@@ -10,7 +10,7 @@
   "execution": {"runtime_backend": "docker", "workspace_strategy": "git-worktree", "command": ["sh", "-lc", "printf 'hello from Workcell\\n' > hello.txt"], "resource_limits": {"timeout_ms": 60000, "max_output_bytes": 4000000}, "network_mode": "none"},
   "artifacts": [{"path": "hello.txt", "required": true}],
   "verification": {"required": true, "commands": [["test", "-f", "hello.txt"]]},
-  "provenance": {"source_tool": "workcell", "source_version": "0.1.0", "artifact_refs": ["examples/hello/workcell.json"]},
+  "provenance": {"source_tool": "workcell", "source_version": "1.0.0", "artifact_refs": ["examples/hello/workcell.json"]},
   "redaction": {"policy": "workcell-default-redaction-v1", "redacted_fields": []},
   "idempotency_key": "pkg-workcell-hello-001:attempt:1"
 }
