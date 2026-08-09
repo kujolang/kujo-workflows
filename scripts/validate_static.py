@@ -7,6 +7,7 @@ import json
 import shutil
 import subprocess
 import sys
+from functools import cache
 from pathlib import Path
 
 import yaml
@@ -16,14 +17,31 @@ ROOT = Path(__file__).resolve().parents[1]
 SKIP_PARTS = {".git", ".runs", ".work", ".workcell", ".tmp", "__pycache__"}
 
 
+@cache
+def repository_files() -> list[Path]:
+    if (ROOT / ".git").exists() and shutil.which("git"):
+        result = subprocess.run(
+            ["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"],
+            cwd=ROOT,
+            capture_output=True,
+            check=False,
+        )
+        if result.returncode == 0:
+            return sorted(
+                ROOT / relative.decode("utf-8")
+                for relative in result.stdout.split(b"\0")
+                if relative and (ROOT / relative.decode("utf-8")).is_file()
+            )
+    return sorted(path for path in ROOT.rglob("*") if path.is_file())
+
+
 def files_with_suffix(*suffixes: str) -> list[Path]:
-    return sorted(
+    return [
         path
-        for path in ROOT.rglob("*")
-        if path.is_file()
-        and path.suffix in suffixes
+        for path in repository_files()
+        if path.suffix in suffixes
         and not any(part in SKIP_PARTS for part in path.relative_to(ROOT).parts)
-    )
+    ]
 
 
 def run(command: list[str], failures: list[str]) -> None:
