@@ -7,6 +7,9 @@ KUJO_BIN="${KUJO_BIN:-$KUJO_REPOS/kujo/target/release/kujo}"
 PORT="${PORT:-8099}"
 STRICT="${STRICT:-0}"
 KEEP_WORK="${KEEP_WORK:-0}"
+# Corepack can otherwise mutate the disposable fixture by adding a
+# packageManager field when sibling Node-based tools invoke pnpm.
+export COREPACK_ENABLE_AUTO_PIN="${COREPACK_ENABLE_AUTO_PIN:-0}"
 
 SPEC_BIN="$KUJO_REPOS/spec/scripts/spec"
 LENS_BIN="$KUJO_REPOS/lens/lens"
