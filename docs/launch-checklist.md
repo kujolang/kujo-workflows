@@ -9,7 +9,7 @@ These commands run from the repository root without sibling tool checkouts, exce
 - [x] Release metadata and Markdown links: `python3 scripts/validate_docs.py`.
 - [x] Catalog structure: `python3 scripts/validate_catalog.py --structure-only --json`.
 - [x] Contract schemas and examples: `python3 scripts/validate_contracts.py`.
-- [x] Unit validation: `python3 -m unittest discover -s tests -p 'test_*.py'`.
+- [x] Unit validation: `python3 -m unittest discover -s tests -p 'test_*.py'`. The sibling-tool relationship test skips in standalone clones.
 - [x] Shell, JavaScript, Python, JSON, and YAML syntax validation.
 - [x] Formatting: `git diff --check`.
 - [x] Release-readiness Spec: `spec validate specs/showcase-release-readiness.spec.yml --strict`.
@@ -26,6 +26,7 @@ python3 scripts/validate_contract_instance.py \
 
 These commands require the local Kujo runtime, sibling tool repositories, and any named host dependency:
 
+- [x] Cross-repository relationship contracts: `bash tests/skill_relationship_contracts.sh`.
 - [x] Full catalog identity and repository resolution: `python3 scripts/validate_catalog.py --json`.
 - [x] Agency Verified Fix Loop strict gate: `agency-runner/bin/agency-loop demo-verified-loop --strict`.
 - [x] Representative Workcell workflow: `bash workcell-execution-gate/scripts/run.sh`.
