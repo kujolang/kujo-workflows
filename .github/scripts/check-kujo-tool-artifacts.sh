@@ -32,7 +32,7 @@ if (( ${#missing_rules[@]} > 0 )); then
 fi
 
 if [[ -z "$base_sha" || "$base_sha" == "0000000000000000000000000000000000000000" ]]; then
-  if git rev-parse --verify HEAD^\{commit\} >/dev/null 2>&1; then
+  if git rev-parse --verify "HEAD^" >/dev/null 2>&1; then
     base_sha="$(git rev-parse HEAD^)"
   else
     echo "[tool-artifacts] OK: ignore rules are present; no commit range to scan"
