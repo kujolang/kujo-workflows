@@ -21,20 +21,8 @@ jobs:
       - name: Install validation dependencies
         run: python3 -m pip install --disable-pip-version-check jsonschema PyYAML
 
-      - name: Validate release documentation
-        run: python3 scripts/validate_docs.py
+      - name: Validate release readiness
+        run: bash tests/release-readiness.sh
 
-      - name: Validate catalog structure
-        run: python3 scripts/validate_catalog.py --structure-only --json
-
-      - name: Validate contracts
-        run: python3 scripts/validate_contracts.py
-
-      - name: Run unit tests
-        run: python3 -m unittest discover -s tests -p 'test_*.py'
-
-      - name: Validate source and data syntax
-        run: python3 scripts/validate_static.py
-
-      - name: Check whitespace
-        run: git diff --check
+      - name: Verify clean checkout
+        run: bash tests/clean-checkout.sh

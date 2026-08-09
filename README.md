@@ -1,8 +1,21 @@
 # Kujo Workflows
 
-Kujo Workflows is a collection of runnable, local-first workflow kits for the Kujo agency and AI tooling ecosystem. Each kit demonstrates one concrete outcome and leaves behind inspectable evidence instead of relying on an opaque hosted runner.
+[![Version](https://img.shields.io/badge/version-0.1.0-black)](https://github.com/kujolang/kujo-workflows)
+[![License](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
+[![built with Kujo](https://img.shields.io/badge/built%20with-Kujo-white.svg)](https://github.com/kujolang/kujo)
+[![CI](https://github.com/kujolang/kujo-workflows/actions/workflows/validate.yml/badge.svg)](https://github.com/kujolang/kujo-workflows/actions/workflows/validate.yml)
+
+Repository-backed, local-first workflow kits for the [Kujo programming language](https://kujolang.ai) and its agency and AI tooling ecosystem. Each kit demonstrates one concrete outcome and leaves behind inspectable evidence instead of relying on an opaque hosted runner.
 
 Current release scope: **locally verified support/distribution technical preview** (`0.1.0`). Hosted runners, live-provider coverage, clean-machine installation on a separate host, and production or enterprise readiness are not claimed.
+
+## Why Use These Workflows?
+
+- Start from bounded, runnable examples instead of assembling a multi-tool workflow from scratch.
+- Use fixture-first paths that are deterministic, local, and safe to evaluate without provider credentials.
+- Inspect evidence packets, receipts, reports, and handoffs produced by each workflow.
+- Keep host, provider, approval, and security boundaries explicit in both commands and documentation.
+- Adapt individual kits without adopting a hosted workflow service.
 
 ## Start Here
 
@@ -70,13 +83,15 @@ All commands below run from the repository root.
 
 ## Verification
 
-Self-contained checks:
+Run the portable release gates:
 
 ```bash
 python3 -m pip install jsonschema PyYAML
-make validate
-make format
+bash tests/release-readiness.sh
+bash tests/clean-checkout.sh
 ```
+
+The first command validates release metadata, documentation links, catalog structure, contracts, tests, syntax, artifact-ignore coverage, and whitespace. The clean-checkout gate repeats the repository-owned checks from a temporary archive containing only tracked files.
 
 Catalog validation additionally resolves canonical skills and sibling tool repositories:
 
@@ -97,14 +112,30 @@ bash relay-lifecycle-handoff/scripts/run.sh
 
 Generated `.runs/`, `.workcell/`, and tool-specific state directories are local evidence. They are ignored unless a deliberately reviewed proof artifact is promoted into a tracked documentation location.
 
-See the current [launch checklist](docs/launch-checklist.md) and [release-readiness Spec](specs/showcase-release-readiness.spec.yml) for the exact boundary and acceptance contract.
+See the current [launch checklist](docs/launch-checklist.md) and [release-readiness Spec](kujo-workflows.spec.yml) for the exact boundary and acceptance contract.
+
+## Repository Map
+
+- [`agency-runner/`](agency-runner/) and the other top-level workflow directories contain runnable kits and workflow-specific guidance.
+- [`contracts/`](contracts/) contains versioned Tribunal, Relay, and Workcell evidence contracts.
+- [`docs/audit/`](docs/audit/) contains the machine-readable workflow catalog and compatibility evidence.
+- [`examples/`](examples/) identifies low-risk starting points.
+- [`scripts/`](scripts/) contains repository validators.
+- [`tests/`](tests/) contains portable release and integration checks.
+- [`kujo-workflows.spec.yml`](kujo-workflows.spec.yml) is the canonical `0.1.0` acceptance contract.
 
 ## Documentation
 
 - [`contracts/README.md`](contracts/README.md) — versioned evidence contracts and compatibility rules.
 - [`docs/audit/README.md`](docs/audit/README.md) — catalog, compatibility, and weekly drift evidence.
 - [`docs/launch-checklist.md`](docs/launch-checklist.md) — verified launch gates and remaining external proof.
-- [`docs/specs/showcase-release-readiness.md`](docs/specs/showcase-release-readiness.md) — rendered implementation contract for this release cleanup.
+- [`docs/specs/showcase-release-readiness.md`](docs/specs/showcase-release-readiness.md) — rendered `0.1.0` acceptance contract.
+
+## Release and Support Status
+
+This repository is the MIT-licensed `0.1.0` technical preview of the Kujo workflow-kit distribution. The release covers the checked-in local workflows, documentation, versioned evidence contracts, and repository-owned validation gates. It does not publish a package, container image, hosted runner, or workflow service.
+
+For contribution, support, conduct, and vulnerability-reporting guidance, see [CONTRIBUTING.md](CONTRIBUTING.md), [SUPPORT.md](SUPPORT.md), [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), and [SECURITY.md](SECURITY.md).
 
 ## Known Limits
 

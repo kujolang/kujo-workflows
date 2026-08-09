@@ -12,7 +12,11 @@ These commands run from the repository root without sibling tool checkouts, exce
 - [x] Unit validation: `python3 -m unittest discover -s tests -p 'test_*.py'`. The sibling-tool relationship test skips in standalone clones.
 - [x] Shell, JavaScript, Python, JSON, and YAML syntax validation.
 - [x] Formatting: `git diff --check`.
-- [x] Release-readiness Spec: `spec validate specs/showcase-release-readiness.spec.yml --strict`.
+- [x] Release-readiness Spec: `spec validate kujo-workflows.spec.yml --strict`.
+- [x] Version agreement across README, VERSION, package metadata, changelog, and Spec.
+- [x] Public contribution, support, security, and conduct guidance.
+- [x] Portable release gate: `bash tests/release-readiness.sh`.
+- [x] Tracked-file clean-checkout gate: `bash tests/clean-checkout.sh`.
 
 Individual contract instances use both required arguments. For example:
 

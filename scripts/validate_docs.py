@@ -3,16 +3,38 @@
 
 from __future__ import annotations
 
+import json
 import re
 import sys
 from pathlib import Path
 from urllib.parse import unquote
 
+import yaml
+
 
 ROOT = Path(__file__).resolve().parents[1]
 SKIP_PARTS = {".git", ".runs", ".work", ".workcell", ".tmp", "__pycache__"}
-REQUIRED_FILES = ("README.md", "LICENSE", "VERSION", "CHANGELOG.md")
-REQUIRED_README_SECTIONS = ("Start Here", "Workflow Catalog", "Verification", "Known Limits", "License")
+REQUIRED_FILES = (
+    "README.md",
+    "LICENSE",
+    "VERSION",
+    "CHANGELOG.md",
+    "CONTRIBUTING.md",
+    "SECURITY.md",
+    "SUPPORT.md",
+    "CODE_OF_CONDUCT.md",
+    "package.json",
+    "kujo-workflows.spec.yml",
+)
+REQUIRED_README_SECTIONS = (
+    "Start Here",
+    "Workflow Catalog",
+    "Verification",
+    "Repository Map",
+    "Release and Support Status",
+    "Known Limits",
+    "License",
+)
 INLINE_LINK = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
 REFERENCE_LINK = re.compile(r"^\s*\[[^\]]+\]:\s*(\S+)", re.MULTILINE)
 HEADING = re.compile(r"^\s{0,3}#{1,6}\s+(.+?)\s*#*\s*$", re.MULTILINE)
@@ -82,6 +104,47 @@ def main() -> int:
     for section in REQUIRED_README_SECTIONS:
         if f"## {section}" not in readme:
             failures.append(f"README.md: missing required section: {section}")
+
+    version = (ROOT / "VERSION").read_text(encoding="utf-8").strip() if (ROOT / "VERSION").exists() else ""
+    if not re.fullmatch(r"(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)", version):
+        failures.append(f"VERSION: expected semantic version, found {version!r}")
+
+    if version and f"version-{version}-black" not in readme:
+        failures.append(f"README.md: version badge does not match VERSION ({version})")
+    if version and f"(`{version}`)" not in readme:
+        failures.append(f"README.md: release scope does not identify VERSION ({version})")
+
+    changelog = (ROOT / "CHANGELOG.md").read_text(encoding="utf-8") if (ROOT / "CHANGELOG.md").exists() else ""
+    if version and not re.search(rf"^## \[{re.escape(version)}\] - \d{{4}}-\d{{2}}-\d{{2}}$", changelog, re.MULTILINE):
+        failures.append(f"CHANGELOG.md: missing dated release heading for {version}")
+
+    try:
+        package = json.loads((ROOT / "package.json").read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        failures.append(f"package.json: cannot read release metadata: {exc}")
+    else:
+        if package.get("name") != "@kujolang/kujo-workflows":
+            failures.append("package.json: name must be @kujolang/kujo-workflows")
+        if package.get("version") != version:
+            failures.append(f"package.json: version does not match VERSION ({version})")
+        if package.get("license") != "MIT":
+            failures.append("package.json: license must be MIT")
+        if package.get("private") is not True:
+            failures.append("package.json: distribution metadata must remain private")
+
+    try:
+        spec = yaml.safe_load((ROOT / "kujo-workflows.spec.yml").read_text(encoding="utf-8"))
+    except (OSError, yaml.YAMLError) as exc:
+        failures.append(f"kujo-workflows.spec.yml: cannot read release contract: {exc}")
+    else:
+        if not isinstance(spec, dict):
+            failures.append("kujo-workflows.spec.yml: root must be a mapping")
+        elif str(spec.get("version", "")) != version:
+            failures.append(f"kujo-workflows.spec.yml: version does not match VERSION ({version})")
+
+    license_text = (ROOT / "LICENSE").read_text(encoding="utf-8") if (ROOT / "LICENSE").exists() else ""
+    if "MIT License" not in license_text:
+        failures.append("LICENSE: expected MIT License text")
 
     files = markdown_files()
     for path in files:

@@ -1,4 +1,4 @@
-.PHONY: validate lint format test
+.PHONY: validate lint format test release clean-checkout
 
 validate: lint test
 
@@ -13,3 +13,9 @@ format:
 
 test:
 	python3 -m unittest discover -s tests -p 'test_*.py'
+
+release:
+	bash tests/release-readiness.sh
+
+clean-checkout:
+	bash tests/clean-checkout.sh

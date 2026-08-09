@@ -1,0 +1,18 @@
+{
+  "name": "@kujolang/kujo-workflows",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Repository-backed local workflow kits for Kujo ecosystem tools.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kujolang/kujo-workflows.git"
+  },
+  "homepage": "https://github.com/kujolang/kujo-workflows#readme",
+  "scripts": {
+    "test": "bash tests/release-readiness.sh",
+    "lint": "make lint",
+    "format:check": "make format",
+    "clean-checkout": "bash tests/clean-checkout.sh"
+  }
+}

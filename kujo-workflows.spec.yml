@@ -1,6 +1,6 @@
-name: "Prepare Kujo Workflows for external showcasing"
+name: "Kujo Workflows technical preview"
 id: "2f091169-b4cf-4d24-9783-617129d055f8"
-version: "1.0.0"
+version: "0.1.0"
 status: "ready"
 priority: "high"
 goal: "Make the repository's technical-preview release surface portable, truthful, legally distributable, continuously validated, and reproducible from a clean checkout."
@@ -9,7 +9,7 @@ background: >
   useful and largely healthy, but the public repository surface has missing
   release metadata, broken documentation references, host-specific commands,
   incomplete CI coverage, stale proof claims, and a failing strict agency demo.
-scope: "Add repository-level release metadata; rewrite the root README as a portable technical-preview landing page; repair missing Markdown links; replace maintainer-specific paths; condense obsolete cleanup inventories; add self-contained CI validation; make the strict agency fixture gate deterministic; and refresh launch-readiness and audit documentation from current evidence."
+scope: "Maintain repository-level release metadata and public policy files; present the root README as a portable technical-preview landing page; keep Markdown links and copyable commands portable; preserve concise audit evidence; run self-contained and clean-checkout CI validation; keep the strict agency fixture gate deterministic; and align launch-readiness documentation with current evidence."
 non_goals:
   - "Deploy hosted workflow runners."
   - "Run live external providers or spend provider credits."
@@ -27,6 +27,11 @@ likely_files:
   - "LICENSE"
   - "VERSION"
   - "CHANGELOG.md"
+  - "CONTRIBUTING.md"
+  - "SECURITY.md"
+  - "SUPPORT.md"
+  - "CODE_OF_CONDUCT.md"
+  - "package.json"
   - "Makefile"
   - "examples/README.md"
   - ".github/workflows/validate.yml"
@@ -41,10 +46,13 @@ likely_files:
 acceptance_criteria:
   - "ShipCheck gate passes at the repository root with no error-level findings."
   - "The repository contains an MIT LICENSE, VERSION, and CHANGELOG.md appropriate for a 0.1.0 technical preview."
+  - "README, VERSION, package metadata, changelog, and the canonical Spec agree on version 0.1.0."
+  - "Public contribution, support, security, and conduct policies are present and linked from the README."
   - "Every checked-in relative Markdown link resolves to an existing file or local anchor target."
   - "Active documentation contains no maintainer-specific /Users path and all copyable commands state or encode their working directory."
   - "The root README distinguishes experimental, production-capable-with-limitations, and production-ready workflows and provides one portable first-run path."
   - "GitHub Actions runs self-contained contract, unit, documentation, metadata, and static validation on pushes and pull requests."
+  - "Portable release-readiness and tracked-file clean-checkout gates run locally and in GitHub Actions."
   - "Agency Verified Fix Loop completes with STRICT=1 and produces passing ChangeBucket and ShipCheck gates."
   - "Catalog, contract, unit, Workcell, Tribunal, Relay, and representative workflow validations pass in the current checkout."
   - "The required validation set passes from a detached clean local worktree without relying on untracked files."
@@ -53,7 +61,7 @@ eval_requirements:
   - description: "Validate the task Spec in strict mode."
     check_type: "command_succeeds"
     params:
-      command: "spec validate specs/showcase-release-readiness.spec.yml --strict"
+      command: "spec validate kujo-workflows.spec.yml --strict"
   - description: "Validate repository documentation and release metadata."
     check_type: "command_succeeds"
     params:
@@ -62,6 +70,14 @@ eval_requirements:
     check_type: "command_succeeds"
     params:
       command: "python3 -m unittest discover -s tests -p 'test_*.py'"
+  - description: "Run the portable release-readiness gate."
+    check_type: "command_succeeds"
+    params:
+      command: "bash tests/release-readiness.sh"
+  - description: "Run the tracked-file clean-checkout gate."
+    check_type: "command_succeeds"
+    params:
+      command: "bash tests/clean-checkout.sh"
   - description: "Run the strict agency workflow."
     check_type: "command_succeeds"
     params:
