@@ -1,0 +1,10 @@
+{
+  "error": "",
+  "schema": "siteprobe.robots/v1",
+  "sitemaps": [
+    "https://agents.kujolang.ai/sitemap.xml"
+  ],
+  "status": 200,
+  "text_fingerprint": "148ce5d69e41927857498c5aac6a3d3776e7c8af40f518084c5f5fcbb84d229f",
+  "url": "https://agents.kujolang.ai/robots.txt"
+}

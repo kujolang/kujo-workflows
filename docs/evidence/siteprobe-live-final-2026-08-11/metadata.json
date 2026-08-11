@@ -1,0 +1,367 @@
+{
+  "descriptions": {
+    "A coordinated roster for strategy, planning, execution, verification, knowledge, and routine work.": [
+      "https://agents.kujolang.ai/agents/chain-of-command/"
+    ],
+    "A coordinated roster for technical SEO, content intelligence, site quality, search analytics, and safe WebOps operations.": [
+      "https://agents.kujolang.ai/agents/webops/"
+    ],
+    "A source-grounded library of specialized Kujo agent sets.": [
+      "https://agents.kujolang.ai/"
+    ],
+    "Analyze broken internal and outbound links, redirect chains, malformed destinations, and unexpected targets.": [
+      "https://agents.kujolang.ai/agents/link-health-auditor/"
+    ],
+    "Analyze longitudinal measured impressions, clicks, CTR, position, query movement, page movement, and query/page relationships.": [
+      "https://agents.kujolang.ai/agents/search-performance-analyst/"
+    ],
+    "Analyze measured website behavior from a real analytics capability while preserving dimensions, metrics, identity settings, and uncertainty.": [
+      "https://agents.kujolang.ai/agents/analytics-analyst/"
+    ],
+    "Analyze new and lost backlinks, relevant or unlinked mentions, and evidence-backed suspicious links.": [
+      "https://agents.kujolang.ai/agents/backlink-mention-analyst/"
+    ],
+    "Audit deterministic crawl, canonical, redirect, metadata, structured-data, internal-link, and indexability conditions.": [
+      "https://agents.kujolang.ai/agents/technical-seo-auditor/"
+    ],
+    "Audit titles, descriptions, canonicals, robots, Open Graph, social, article metadata, duplication, and missing fields.": [
+      "https://agents.kujolang.ai/agents/metadata-auditor/"
+    ],
+    "Browse source-grounded Kujo agent contracts for planning, implementation, verification, research, security, and operations.": [
+      "https://agents.kujolang.ai/agents/"
+    ],
+    "Build or maintain CLI tools, scripts, local automation, developer workflows, and KUJO tool integrations.": [
+      "https://agents.kujolang.ai/agents/tooling-developer/"
+    ],
+    "Capture command output, logs, RunLedger receipts, CaseFile bundles, Watchdog telemetry references, and evidence paths for auditability.": [
+      "https://agents.kujolang.ai/agents/receipt-collector/"
+    ],
+    "Check explicitly assigned issue hygiene conditions such as duplicates, stale status, labels, milestones, or missing reproduction details.": [
+      "https://agents.kujolang.ai/agents/issue-hygiene-worker/"
+    ],
+    "Check release readiness, run or coordinate release gates, and report blockers before ship decisions.": [
+      "https://agents.kujolang.ai/agents/release-verifier/"
+    ],
+    "Classify audience and search needs against current coverage as strong, partial, stale, weak, missing, or irrelevant.": [
+      "https://agents.kujolang.ai/agents/content-gap-analyst/"
+    ],
+    "Classify content longitudinally as CREATE, GROW, MAINTAIN, REFRESH, MERGE, REDIRECT, RETIRE, or IGNORE.": [
+      "https://agents.kujolang.ai/agents/content-portfolio-manager/"
+    ],
+    "Connect GitHub/GitLab, MCP, CI, external services, deployment systems, telemetry, provider adapters, and workflow orchestration boundaries.": [
+      "https://agents.kujolang.ai/agents/integration-engineer/"
+    ],
+    "Convert goals into milestones, tasks, sequencing, dependencies, acceptance criteria, and verification plans.": [
+      "https://agents.kujolang.ai/agents/planner/"
+    ],
+    "Create and maintain task contracts with scope, acceptance criteria, eval requirements, risks, dependencies, and review expectations.": [
+      "https://agents.kujolang.ai/agents/spec-writer/"
+    ],
+    "Define test plans, evidence requirements, acceptance gates, and quality status for a change or release candidate.": [
+      "https://agents.kujolang.ai/agents/qa-lead/"
+    ],
+    "Determine whether the deployed site actually loads, links, renders, and behaves sanely using crawl and browser evidence.": [
+      "https://agents.kujolang.ai/agents/site-qa-operator/"
+    ],
+    "Discover emerging domain topics, terminology, tools, questions, standards, and shifts without deciding editorial strategy alone.": [
+      "https://agents.kujolang.ai/agents/trend-scout/"
+    ],
+    "Distinguish local crawlability and indexability from provider-confirmed search-engine index state.": [
+      "https://agents.kujolang.ai/agents/indexation-analyst/"
+    ],
+    "Find and, under explicit ACT authority, apply contextually useful internal links supported by content relationships.": [
+      "https://agents.kujolang.ai/agents/internal-link-specialist/"
+    ],
+    "Find obsolete, redundant, or low-value content and propose evidence-backed keep, merge, redirect, refresh, or retire decisions.": [
+      "https://agents.kujolang.ai/agents/content-pruning-analyst/"
+    ],
+    "Gather repo, API, dependency, workflow, or technical context and separate confirmed facts from inference.": [
+      "https://agents.kujolang.ai/agents/research-analyst/"
+    ],
+    "Identify pages substantially competing for the same intent while separating normal topical overlap from likely cannibalization.": [
+      "https://agents.kujolang.ai/agents/cannibalization-analyst/"
+    ],
+    "Identify query opportunities from measured site data, optional third-party estimates, public research, and current site coverage.": [
+      "https://agents.kujolang.ai/agents/keyword-opportunity-analyst/"
+    ],
+    "Identify risk, security concerns, migration issues, release blockers, scope creep, and evidence gaps before or during work.": [
+      "https://agents.kujolang.ai/agents/risk-officer/"
+    ],
+    "Identify stale or deteriorating content using measured movement, optional analytics, factual age, source change, and relevance evidence.": [
+      "https://agents.kujolang.ai/agents/content-decay-analyst/"
+    ],
+    "Implement APIs, persistence, jobs, auth boundaries, service logic, and server-side integrations within a bounded task.": [
+      "https://agents.kujolang.ai/agents/backend-developer/"
+    ],
+    "Implement bounded source changes and focused tests inside an assigned scope.": [
+      "https://agents.kujolang.ai/agents/core-developer/"
+    ],
+    "Implement user interfaces, interaction flows, responsive behavior, and browser-verifiable frontend changes.": [
+      "https://agents.kujolang.ai/agents/frontend-developer/"
+    ],
+    "Interpret broad missions, choose agent lanes, resolve cross-agent conflicts, synthesize final outcomes, and escalate unresolved risk.": [
+      "https://agents.kujolang.ai/agents/general-commander/"
+    ],
+    "Monitor authoritative search, structured-data, indexing, analytics, browser, AI-search, and web-specification changes.": [
+      "https://agents.kujolang.ai/agents/search-web-standards-watch/"
+    ],
+    "Monitor selected peers for meaningful changes in topics, positioning, structure, search presence, content, and available backlink evidence.": [
+      "https://agents.kujolang.ai/agents/competitor-intelligence-analyst/"
+    ],
+    "Own architecture, module boundaries, platform decisions, runtime tradeoffs, and long-term technical coherence.": [
+      "https://agents.kujolang.ai/agents/systems-architect/"
+    ],
+    "Own user value, roadmap fit, feature framing, adoption assumptions, and ICP alignment.": [
+      "https://agents.kujolang.ai/agents/product-strategist/"
+    ],
+    "Prepare compact context bundles, execution packs, workflow summaries, and handoff packets for downstream agents.": [
+      "https://agents.kujolang.ai/agents/context-packager/"
+    ],
+    "Produce deterministic browser, layout, accessibility, console, network, and visual evidence for user-facing surfaces.": [
+      "https://agents.kujolang.ai/agents/visual-qa-agent/"
+    ],
+    "Produce short status reports, current-state summaries, and handoff snapshots from available evidence.": [
+      "https://agents.kujolang.ai/agents/sitrep-agent/"
+    ],
+    "Review diffs for bugs, regressions, contract drift, missing tests, unsafe scope, and documentation mismatches.": [
+      "https://agents.kujolang.ai/agents/code-reviewer/"
+    ],
+    "Review flagged wrong outputs, stopped workflow states, failed handoffs, and abnormal results so the chain can decide whether to resume, reroute, require human review, or coordinate the immediate next response.": [
+      "https://agents.kujolang.ai/agents/triage-agent/"
+    ],
+    "Review guidance, APIs, versions, products, references, and factual claims against current authoritative sources.": [
+      "https://agents.kujolang.ai/agents/content-accuracy-reviewer/"
+    ],
+    "Review navigation, hierarchy, categories, tags, breadcrumbs, clusters, URLs, depth, discoverability, and orphaning.": [
+      "https://agents.kujolang.ai/agents/information-architecture-auditor/"
+    ],
+    "Review secrets, auth, host effects, path boundaries, network exposure, unsafe commands, dependency risk, and sensitive artifacts.": [
+      "https://agents.kujolang.ai/agents/security-reviewer/"
+    ],
+    "Review structured data validity, relevance, visible-content consistency, missing appropriate types, and obsolete patterns.": [
+      "https://agents.kujolang.ai/agents/schema-auditor/"
+    ],
+    "Run explicit dependency, package, manifest, lockfile, and package-status checks.": [
+      "https://agents.kujolang.ai/agents/dependency-scanner/"
+    ],
+    "Run explicit lint, format-check, static-check, or compile-check commands and report exact results.": [
+      "https://agents.kujolang.ai/agents/lint-runner/"
+    ],
+    "Run explicit test, eval, or smoke commands and report exact results.": [
+      "https://agents.kujolang.ai/agents/test-runner/"
+    ],
+    "Run explicitly assigned local commands or scripts and report exact results without interpretation beyond simple status.": [
+      "https://agents.kujolang.ai/agents/routine-worker/"
+    ],
+    "Run repeatable automated accessibility checks and produce evidence-backed repair priorities with explicit manual-review gaps.": [
+      "https://agents.kujolang.ai/agents/accessibility-auditor/"
+    ],
+    "Run repeatable fixed-query visibility benchmarks across explicitly configured AI and search surfaces.": [
+      "https://agents.kujolang.ai/agents/ai-search-visibility-analyst/"
+    ],
+    "Submit authorized URLs or sitemaps through supported providers and preserve auditable receipts without promising indexing.": [
+      "https://agents.kujolang.ai/agents/search-submission-operator/"
+    ],
+    "Synthesize existing WebOps evidence into quiet reports focused on improvements, regressions, changes, actions, deferrals, and unavailable checks.": [
+      "https://agents.kujolang.ai/agents/webops-reporter/"
+    ],
+    "Synthesize specialist WebOps SEO evidence into a periodic prioritized assessment without reimplementing each specialty.": [
+      "https://agents.kujolang.ai/agents/seo-auditor/"
+    ],
+    "Track lab and real-user field performance as distinct evidence classes and compare them longitudinally.": [
+      "https://agents.kujolang.ai/agents/performance-analyst/"
+    ],
+    "Turn approved published content into source-grounded distribution assets and publish only with explicit ACT authority and integration.": [
+      "https://agents.kujolang.ai/agents/distribution-operator/"
+    ],
+    "Turn vague goals into structured objectives, assign lanes, manage handoffs, and keep work auditable.": [
+      "https://agents.kujolang.ai/agents/chief-of-staff/"
+    ],
+    "Update READMEs, onboarding docs, changelogs, examples, runbooks, and user-facing technical documentation from source-grounded facts.": [
+      "https://agents.kujolang.ai/agents/documentation-writer/"
+    ]
+  },
+  "schema": "siteprobe.metadata/v1",
+  "titles": {
+    "AI Search Visibility Analyst | Kujo WebOps | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/ai-search-visibility-analyst/"
+    ],
+    "Accessibility Auditor | Kujo WebOps | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/accessibility-auditor/"
+    ],
+    "Agents | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/"
+    ],
+    "Analytics Analyst | Kujo WebOps | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/analytics-analyst/"
+    ],
+    "Backend Developer | Kujo Chain of Command | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/backend-developer/"
+    ],
+    "Backlink & Mention Analyst | Kujo WebOps | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/backlink-mention-analyst/"
+    ],
+    "Cannibalization Analyst | Kujo WebOps | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/cannibalization-analyst/"
+    ],
+    "Chain of Command Agents | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/chain-of-command/"
+    ],
+    "Chief Of Staff | Kujo Chain of Command | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/chief-of-staff/"
+    ],
+    "Code Reviewer | Kujo Chain of Command | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/code-reviewer/"
+    ],
+    "Competitor Intelligence Analyst | Kujo WebOps | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/competitor-intelligence-analyst/"
+    ],
+    "Content Accuracy Reviewer | Kujo WebOps | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/content-accuracy-reviewer/"
+    ],
+    "Content Decay Analyst | Kujo WebOps | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/content-decay-analyst/"
+    ],
+    "Content Gap Analyst | Kujo WebOps | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/content-gap-analyst/"
+    ],
+    "Content Portfolio Manager | Kujo WebOps | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/content-portfolio-manager/"
+    ],
+    "Content Pruning Analyst | Kujo WebOps | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/content-pruning-analyst/"
+    ],
+    "Context Packager | Kujo Chain of Command | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/context-packager/"
+    ],
+    "Core Developer | Kujo Chain of Command | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/core-developer/"
+    ],
+    "Dependency Scanner | Kujo Chain of Command | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/dependency-scanner/"
+    ],
+    "Distribution Operator | Kujo WebOps | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/distribution-operator/"
+    ],
+    "Documentation Writer | Kujo Chain of Command | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/documentation-writer/"
+    ],
+    "Frontend Developer | Kujo Chain of Command | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/frontend-developer/"
+    ],
+    "General Commander | Kujo Chain of Command | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/general-commander/"
+    ],
+    "Indexation Analyst | Kujo WebOps | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/indexation-analyst/"
+    ],
+    "Information Architecture Auditor | Kujo WebOps | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/information-architecture-auditor/"
+    ],
+    "Integration Engineer | Kujo Chain of Command | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/integration-engineer/"
+    ],
+    "Internal Link Specialist | Kujo WebOps | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/internal-link-specialist/"
+    ],
+    "Issue Hygiene Worker | Kujo Chain of Command | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/issue-hygiene-worker/"
+    ],
+    "Keyword Opportunity Analyst | Kujo WebOps | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/keyword-opportunity-analyst/"
+    ],
+    "Kujo Agents": [
+      "https://agents.kujolang.ai/"
+    ],
+    "Link Health Auditor | Kujo WebOps | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/link-health-auditor/"
+    ],
+    "Lint Runner | Kujo Chain of Command | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/lint-runner/"
+    ],
+    "Metadata Auditor | Kujo WebOps | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/metadata-auditor/"
+    ],
+    "Performance Analyst | Kujo WebOps | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/performance-analyst/"
+    ],
+    "Planner | Kujo Chain of Command | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/planner/"
+    ],
+    "Product Strategist | Kujo Chain of Command | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/product-strategist/"
+    ],
+    "QA Lead | Kujo Chain of Command | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/qa-lead/"
+    ],
+    "Receipt Collector | Kujo Chain of Command | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/receipt-collector/"
+    ],
+    "Release Verifier | Kujo Chain of Command | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/release-verifier/"
+    ],
+    "Research Analyst | Kujo Chain of Command | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/research-analyst/"
+    ],
+    "Risk Officer | Kujo Chain of Command | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/risk-officer/"
+    ],
+    "Routine Worker | Kujo Chain of Command | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/routine-worker/"
+    ],
+    "SEO Auditor | Kujo WebOps | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/seo-auditor/"
+    ],
+    "SITREP Agent | Kujo Chain of Command | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/sitrep-agent/"
+    ],
+    "Schema Auditor | Kujo WebOps | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/schema-auditor/"
+    ],
+    "Search & Web Standards Watch | Kujo WebOps | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/search-web-standards-watch/"
+    ],
+    "Search Performance Analyst | Kujo WebOps | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/search-performance-analyst/"
+    ],
+    "Search Submission Operator | Kujo WebOps | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/search-submission-operator/"
+    ],
+    "Security Reviewer | Kujo Chain of Command | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/security-reviewer/"
+    ],
+    "Site QA Operator | Kujo WebOps | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/site-qa-operator/"
+    ],
+    "Spec Writer | Kujo Chain of Command | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/spec-writer/"
+    ],
+    "Systems Architect | Kujo Chain of Command | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/systems-architect/"
+    ],
+    "Technical SEO Auditor | Kujo WebOps | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/technical-seo-auditor/"
+    ],
+    "Test Runner | Kujo Chain of Command | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/test-runner/"
+    ],
+    "Tooling Developer | Kujo Chain of Command | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/tooling-developer/"
+    ],
+    "Trend Scout | Kujo WebOps | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/trend-scout/"
+    ],
+    "Triage Agent | Kujo Chain of Command | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/triage-agent/"
+    ],
+    "Visual QA Agent | Kujo Chain of Command | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/visual-qa-agent/"
+    ],
+    "WebOps Agents | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/webops/"
+    ],
+    "WebOps Reporter | Kujo WebOps | Kujo Agents": [
+      "https://agents.kujolang.ai/agents/webops-reporter/"
+    ]
+  }
+}

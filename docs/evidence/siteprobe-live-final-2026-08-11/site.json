@@ -1,0 +1,11 @@
+{
+  "crawlable_pages": 60,
+  "indexable_pages": 60,
+  "origin": "https://agents.kujolang.ai",
+  "robots_url": "https://agents.kujolang.ai/robots.txt",
+  "schema": "siteprobe.site/v1",
+  "sitemaps": [
+    "https://agents.kujolang.ai/sitemap.xml"
+  ],
+  "target": "https://agents.kujolang.ai/"
+}

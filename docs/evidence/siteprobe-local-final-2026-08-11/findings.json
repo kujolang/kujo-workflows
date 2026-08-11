@@ -1,0 +1,605 @@
+{
+  "findings": [
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/",
+        "final_url": "http://127.0.0.1:4173/"
+      },
+      "id": "SP-C6E4F52B3811E469",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/",
+        "final_url": "http://127.0.0.1:4173/agents/"
+      },
+      "id": "SP-D80609ECC423F182",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/accessibility-auditor/",
+        "final_url": "http://127.0.0.1:4173/agents/accessibility-auditor/"
+      },
+      "id": "SP-07016404B1039FA0",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/accessibility-auditor/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/ai-search-visibility-analyst/",
+        "final_url": "http://127.0.0.1:4173/agents/ai-search-visibility-analyst/"
+      },
+      "id": "SP-B76CAC5CBBE0E702",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/ai-search-visibility-analyst/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/analytics-analyst/",
+        "final_url": "http://127.0.0.1:4173/agents/analytics-analyst/"
+      },
+      "id": "SP-B79EF8008775FB48",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/analytics-analyst/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/backend-developer/",
+        "final_url": "http://127.0.0.1:4173/agents/backend-developer/"
+      },
+      "id": "SP-38074F5AEFEEAE0D",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/backend-developer/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/backlink-mention-analyst/",
+        "final_url": "http://127.0.0.1:4173/agents/backlink-mention-analyst/"
+      },
+      "id": "SP-C6CDAD61CAD0400E",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/backlink-mention-analyst/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/cannibalization-analyst/",
+        "final_url": "http://127.0.0.1:4173/agents/cannibalization-analyst/"
+      },
+      "id": "SP-145CDD48137A633A",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/cannibalization-analyst/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/chain-of-command/",
+        "final_url": "http://127.0.0.1:4173/agents/chain-of-command/"
+      },
+      "id": "SP-3D72DE56FFCDAD4E",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/chain-of-command/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/chief-of-staff/",
+        "final_url": "http://127.0.0.1:4173/agents/chief-of-staff/"
+      },
+      "id": "SP-A6111090234FF661",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/chief-of-staff/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/code-reviewer/",
+        "final_url": "http://127.0.0.1:4173/agents/code-reviewer/"
+      },
+      "id": "SP-FC4764D8243404D3",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/code-reviewer/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/competitor-intelligence-analyst/",
+        "final_url": "http://127.0.0.1:4173/agents/competitor-intelligence-analyst/"
+      },
+      "id": "SP-F92614C7DFF68EFC",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/competitor-intelligence-analyst/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/content-accuracy-reviewer/",
+        "final_url": "http://127.0.0.1:4173/agents/content-accuracy-reviewer/"
+      },
+      "id": "SP-DD4CD2AB3145C817",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/content-accuracy-reviewer/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/content-decay-analyst/",
+        "final_url": "http://127.0.0.1:4173/agents/content-decay-analyst/"
+      },
+      "id": "SP-AA2FFA0ECDE17408",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/content-decay-analyst/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/content-gap-analyst/",
+        "final_url": "http://127.0.0.1:4173/agents/content-gap-analyst/"
+      },
+      "id": "SP-1AB000B27E8E3714",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/content-gap-analyst/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/content-portfolio-manager/",
+        "final_url": "http://127.0.0.1:4173/agents/content-portfolio-manager/"
+      },
+      "id": "SP-F2E93A9B12A6341A",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/content-portfolio-manager/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/content-pruning-analyst/",
+        "final_url": "http://127.0.0.1:4173/agents/content-pruning-analyst/"
+      },
+      "id": "SP-CE14B258C79E9FCE",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/content-pruning-analyst/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/context-packager/",
+        "final_url": "http://127.0.0.1:4173/agents/context-packager/"
+      },
+      "id": "SP-B76343F9D5B4A491",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/context-packager/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/core-developer/",
+        "final_url": "http://127.0.0.1:4173/agents/core-developer/"
+      },
+      "id": "SP-79D39D06B40119CD",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/core-developer/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/dependency-scanner/",
+        "final_url": "http://127.0.0.1:4173/agents/dependency-scanner/"
+      },
+      "id": "SP-DB1573B87FD392C1",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/dependency-scanner/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/distribution-operator/",
+        "final_url": "http://127.0.0.1:4173/agents/distribution-operator/"
+      },
+      "id": "SP-1EA1AC4B13D3AB10",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/distribution-operator/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/documentation-writer/",
+        "final_url": "http://127.0.0.1:4173/agents/documentation-writer/"
+      },
+      "id": "SP-290CFE45C44BC649",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/documentation-writer/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/frontend-developer/",
+        "final_url": "http://127.0.0.1:4173/agents/frontend-developer/"
+      },
+      "id": "SP-4CABE722DBAEF8CC",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/frontend-developer/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/general-commander/",
+        "final_url": "http://127.0.0.1:4173/agents/general-commander/"
+      },
+      "id": "SP-7CED3B7B332842AA",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/general-commander/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/indexation-analyst/",
+        "final_url": "http://127.0.0.1:4173/agents/indexation-analyst/"
+      },
+      "id": "SP-19B481D8C994CDAF",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/indexation-analyst/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/information-architecture-auditor/",
+        "final_url": "http://127.0.0.1:4173/agents/information-architecture-auditor/"
+      },
+      "id": "SP-D70BD8580BC2C137",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/information-architecture-auditor/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/integration-engineer/",
+        "final_url": "http://127.0.0.1:4173/agents/integration-engineer/"
+      },
+      "id": "SP-4757F9E2F2F42736",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/integration-engineer/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/internal-link-specialist/",
+        "final_url": "http://127.0.0.1:4173/agents/internal-link-specialist/"
+      },
+      "id": "SP-27F147911AFBF76A",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/internal-link-specialist/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/issue-hygiene-worker/",
+        "final_url": "http://127.0.0.1:4173/agents/issue-hygiene-worker/"
+      },
+      "id": "SP-5E2F5812FA286F15",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/issue-hygiene-worker/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/keyword-opportunity-analyst/",
+        "final_url": "http://127.0.0.1:4173/agents/keyword-opportunity-analyst/"
+      },
+      "id": "SP-1B26B1D586B4B835",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/keyword-opportunity-analyst/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/link-health-auditor/",
+        "final_url": "http://127.0.0.1:4173/agents/link-health-auditor/"
+      },
+      "id": "SP-FC982AA957E38D4E",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/link-health-auditor/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/lint-runner/",
+        "final_url": "http://127.0.0.1:4173/agents/lint-runner/"
+      },
+      "id": "SP-528125BF85E75CED",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/lint-runner/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/metadata-auditor/",
+        "final_url": "http://127.0.0.1:4173/agents/metadata-auditor/"
+      },
+      "id": "SP-F3F0A1B804A58B3F",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/metadata-auditor/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/performance-analyst/",
+        "final_url": "http://127.0.0.1:4173/agents/performance-analyst/"
+      },
+      "id": "SP-092AE600747BF69F",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/performance-analyst/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/planner/",
+        "final_url": "http://127.0.0.1:4173/agents/planner/"
+      },
+      "id": "SP-D259B11FE0AAD4E1",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/planner/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/product-strategist/",
+        "final_url": "http://127.0.0.1:4173/agents/product-strategist/"
+      },
+      "id": "SP-7B00CB7D0211DDBA",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/product-strategist/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/qa-lead/",
+        "final_url": "http://127.0.0.1:4173/agents/qa-lead/"
+      },
+      "id": "SP-D1D1F3E63BA65575",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/qa-lead/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/receipt-collector/",
+        "final_url": "http://127.0.0.1:4173/agents/receipt-collector/"
+      },
+      "id": "SP-4186D869CCC241C7",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/receipt-collector/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/release-verifier/",
+        "final_url": "http://127.0.0.1:4173/agents/release-verifier/"
+      },
+      "id": "SP-6153ADEEBC88ECCF",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/release-verifier/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/research-analyst/",
+        "final_url": "http://127.0.0.1:4173/agents/research-analyst/"
+      },
+      "id": "SP-A13222EF718EEB30",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/research-analyst/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/risk-officer/",
+        "final_url": "http://127.0.0.1:4173/agents/risk-officer/"
+      },
+      "id": "SP-7347B24F6622CADE",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/risk-officer/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/routine-worker/",
+        "final_url": "http://127.0.0.1:4173/agents/routine-worker/"
+      },
+      "id": "SP-CCB89C853CA15264",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/routine-worker/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/schema-auditor/",
+        "final_url": "http://127.0.0.1:4173/agents/schema-auditor/"
+      },
+      "id": "SP-93ECA8CFAEB704B2",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/schema-auditor/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/search-performance-analyst/",
+        "final_url": "http://127.0.0.1:4173/agents/search-performance-analyst/"
+      },
+      "id": "SP-BFBFBDAD2D4D331C",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/search-performance-analyst/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/search-submission-operator/",
+        "final_url": "http://127.0.0.1:4173/agents/search-submission-operator/"
+      },
+      "id": "SP-D66F0C7605525266",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/search-submission-operator/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/search-web-standards-watch/",
+        "final_url": "http://127.0.0.1:4173/agents/search-web-standards-watch/"
+      },
+      "id": "SP-EE511E9ACE78FBAB",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/search-web-standards-watch/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/security-reviewer/",
+        "final_url": "http://127.0.0.1:4173/agents/security-reviewer/"
+      },
+      "id": "SP-3A31F8E1F94D06FF",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/security-reviewer/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/seo-auditor/",
+        "final_url": "http://127.0.0.1:4173/agents/seo-auditor/"
+      },
+      "id": "SP-097835BC99A76F24",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/seo-auditor/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/site-qa-operator/",
+        "final_url": "http://127.0.0.1:4173/agents/site-qa-operator/"
+      },
+      "id": "SP-920A1CC26FAA1126",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/site-qa-operator/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/sitrep-agent/",
+        "final_url": "http://127.0.0.1:4173/agents/sitrep-agent/"
+      },
+      "id": "SP-1F837F89A9911562",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/sitrep-agent/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/spec-writer/",
+        "final_url": "http://127.0.0.1:4173/agents/spec-writer/"
+      },
+      "id": "SP-3CB076554CAE60AB",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/spec-writer/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/systems-architect/",
+        "final_url": "http://127.0.0.1:4173/agents/systems-architect/"
+      },
+      "id": "SP-82C0BE4539D8F8E1",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/systems-architect/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/technical-seo-auditor/",
+        "final_url": "http://127.0.0.1:4173/agents/technical-seo-auditor/"
+      },
+      "id": "SP-B34A87F8B8EB3982",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/technical-seo-auditor/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/test-runner/",
+        "final_url": "http://127.0.0.1:4173/agents/test-runner/"
+      },
+      "id": "SP-A3D52533438D4C00",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/test-runner/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/tooling-developer/",
+        "final_url": "http://127.0.0.1:4173/agents/tooling-developer/"
+      },
+      "id": "SP-EE7D6A6D88ED267C",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/tooling-developer/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/trend-scout/",
+        "final_url": "http://127.0.0.1:4173/agents/trend-scout/"
+      },
+      "id": "SP-DA6A2EB96A39044E",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/trend-scout/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/triage-agent/",
+        "final_url": "http://127.0.0.1:4173/agents/triage-agent/"
+      },
+      "id": "SP-7FF57228E134686B",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/triage-agent/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/visual-qa-agent/",
+        "final_url": "http://127.0.0.1:4173/agents/visual-qa-agent/"
+      },
+      "id": "SP-13A667B7191F4204",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/visual-qa-agent/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/webops-reporter/",
+        "final_url": "http://127.0.0.1:4173/agents/webops-reporter/"
+      },
+      "id": "SP-3763F7FA83C62E0B",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/webops-reporter/"
+    },
+    {
+      "check": "canonical-conflict",
+      "evidence": {
+        "canonical": "https://agents.kujolang.ai/agents/webops/",
+        "final_url": "http://127.0.0.1:4173/agents/webops/"
+      },
+      "id": "SP-354E0C95301A074B",
+      "severity": "warning",
+      "target": "http://127.0.0.1:4173/agents/webops/"
+    }
+  ],
+  "schema": "siteprobe.findings/v1"
+}

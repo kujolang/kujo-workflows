@@ -1,0 +1,22 @@
+{
+  "completed_at": "2026-08-11T08:42:32Z",
+  "configuration": {
+    "baseline": null,
+    "concurrency": 4,
+    "max_depth": 3,
+    "max_pages": 70,
+    "respect_robots": true,
+    "same_origin": true,
+    "timeout": 15
+  },
+  "counts": {
+    "findings": 60,
+    "links": 1177,
+    "pages": 60,
+    "redirects": 0
+  },
+  "run_id": "siteprobe-local-final-2026-08-11",
+  "schema": "siteprobe.run/v1",
+  "started_at": "2026-08-11T08:42:31Z",
+  "target": "http://127.0.0.1:4173/"
+}

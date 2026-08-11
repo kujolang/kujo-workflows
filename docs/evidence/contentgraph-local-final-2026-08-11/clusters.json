@@ -1,0 +1,129 @@
+{
+  "clusters": [
+    {
+      "id": "cluster-001",
+      "label": "analyst / auditor / content / search",
+      "method": "deterministic-lexical/v1",
+      "node_ids": [
+        "CG-042eaaaf1a30ff528ff1",
+        "CG-07995d7571cd8010516c",
+        "CG-1190e267d3b0e43552e6",
+        "CG-144d61ad1a8e4ecb3e10",
+        "CG-18b53ae08fab9b625ee5",
+        "CG-1e04242da36f84e2ebbb",
+        "CG-1ed99e83fcbc99e674ba",
+        "CG-2a4d3a61d3d12d44d786",
+        "CG-2f40f05c252cee6c70d8",
+        "CG-31bc40cc5dddc7d97f80",
+        "CG-320fffbbdc8281a8d5b1",
+        "CG-33ca6f5f499d3fe3e746",
+        "CG-34a1150c4e723f60384c",
+        "CG-34c87480823c4e4f226c",
+        "CG-35fab354fcc1f055ed99",
+        "CG-37df3da3356ad9531923",
+        "CG-39a8ed00cb6d21e08239",
+        "CG-3c4e680207313899fe7b",
+        "CG-403cfba26dacfa3e6022",
+        "CG-4785ca6182c6f7099d8e",
+        "CG-5022d31098b2dffd66ff",
+        "CG-55f57016ac69a80c8d5b",
+        "CG-5b1a77d0811319fa2c3b",
+        "CG-619981a589d2ec2b304c",
+        "CG-629820bc80c9d4c2a0a5",
+        "CG-6f797927d1a86030473a",
+        "CG-7068ed324dccc6e1fb35",
+        "CG-7d5f4a7a25c3af6db8e9",
+        "CG-83723cb526d1e2e6a1a4",
+        "CG-97e36b293aa0a126c09e",
+        "CG-a4b276d097bd5d534335",
+        "CG-b396b2b349f7c0eb04ce",
+        "CG-b56926333ca3bdbf914d",
+        "CG-b56bfade656207ff4d5b",
+        "CG-b668b0ef4619a924e4c8",
+        "CG-b7eb2f1016e3916a99e8",
+        "CG-bba601c52e004c421d48",
+        "CG-bd02f3cce92cfa463973",
+        "CG-bed8d4211e3ee35a97de",
+        "CG-c7fbb3b8c0efaf196a0c",
+        "CG-cad30f523f910694b0e1",
+        "CG-cea7338c6eec888e34b9",
+        "CG-cf3f2c48a491004ffc5c",
+        "CG-d28d07127d7e28446f4a",
+        "CG-d83168d3d40f2712d418",
+        "CG-dfbb79842d9fd6a87924",
+        "CG-e32c08db94c3a14419e3",
+        "CG-f09a808590a6d1a07d35",
+        "CG-f774ae8933d68d17c292",
+        "CG-f99f1ab89cb374dfdbe7",
+        "CG-fc9093d7e99bea777a0f",
+        "CG-fd26a8225d8854f27d4a"
+      ],
+      "size": 52
+    },
+    {
+      "id": "cluster-002",
+      "label": "engineer / integration / adapters / ci",
+      "method": "deterministic-lexical/v1",
+      "node_ids": [
+        "CG-06c7ada0d26b01fcbe11",
+        "CG-9c0ea1da8ff0fc4a9380"
+      ],
+      "size": 2
+    },
+    {
+      "id": "cluster-003",
+      "label": "chief / staff / assign / manage",
+      "method": "deterministic-lexical/v1",
+      "node_ids": [
+        "CG-6ff7cbefb5413f245958"
+      ],
+      "size": 1
+    },
+    {
+      "id": "cluster-004",
+      "label": "collector / receipt / auditability / capture",
+      "method": "deterministic-lexical/v1",
+      "node_ids": [
+        "CG-725f5a3db10631f348b6"
+      ],
+      "size": 1
+    },
+    {
+      "id": "cluster-005",
+      "label": "scout / trend / alone / deciding",
+      "method": "deterministic-lexical/v1",
+      "node_ids": [
+        "CG-7ae6426077f50e48d7e3"
+      ],
+      "size": 1
+    },
+    {
+      "id": "cluster-006",
+      "label": "commander / general / broad / choose",
+      "method": "deterministic-lexical/v1",
+      "node_ids": [
+        "CG-8dc2e58b3b12d939c1af"
+      ],
+      "size": 1
+    },
+    {
+      "id": "cluster-007",
+      "label": "triage / review / abnormal / decide",
+      "method": "deterministic-lexical/v1",
+      "node_ids": [
+        "CG-9aa72a58dd1d8e292a90"
+      ],
+      "size": 1
+    },
+    {
+      "id": "cluster-008",
+      "label": "product / strategist / adoption / alignment",
+      "method": "deterministic-lexical/v1",
+      "node_ids": [
+        "CG-a2ec7cc3c3ed9ce7e079"
+      ],
+      "size": 1
+    }
+  ],
+  "schema": "contentgraph.clusters/v1"
+}

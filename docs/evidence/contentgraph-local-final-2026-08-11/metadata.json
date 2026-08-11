@@ -1,0 +1,24 @@
+{
+  "counts": {
+    "clusters": 8,
+    "edges": 1558,
+    "link_opportunities": 742,
+    "nodes": 60,
+    "orphans": 0,
+    "overlaps": 1
+  },
+  "inputs": {
+    "searchbridge": [],
+    "siteprobe": [
+      "../kujo-workflows/docs/evidence/siteprobe-local-final-2026-08-11"
+    ],
+    "source": []
+  },
+  "run_id": "contentgraph-local-final-2026-08-11",
+  "schema": "contentgraph.metadata/v1",
+  "thresholds": {
+    "cluster": 0.2,
+    "minimum": 0.12,
+    "overlap": 0.55
+  }
+}

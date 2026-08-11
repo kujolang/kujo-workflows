@@ -1,0 +1,1537 @@
+{
+  "pages": [
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          "description": "A source-grounded library of specialized Kujo agent sets.",
+          "headline": "Kujo Agents",
+          "image": "https://agents.kujolang.ai/assets/images/agent-hero-background.webp",
+          "name": "Kujo Agents",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          "description": "Browse source-grounded Kujo agent contracts for planning, implementation, verification, research, security, and operations.",
+          "headline": "Agents",
+          "image": "https://agents.kujolang.ai/assets/images/agent-hero-background.webp",
+          "name": "Agents",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/webops/accessibility-auditor/AGENT.md",
+          "dateModified": "2026-08-11",
+          "description": "Run repeatable automated accessibility checks and produce evidence-backed repair priorities with explicit manual-review gaps.",
+          "headline": "Accessibility Auditor | Kujo WebOps",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Accessibility Auditor | Kujo WebOps",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/accessibility-auditor/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/accessibility-auditor/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/webops/ai-search-visibility-analyst/AGENT.md",
+          "dateModified": "2026-08-11",
+          "description": "Run repeatable fixed-query visibility benchmarks across explicitly configured AI and search surfaces.",
+          "headline": "AI Search Visibility Analyst | Kujo WebOps",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "AI Search Visibility Analyst | Kujo WebOps",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/ai-search-visibility-analyst/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/ai-search-visibility-analyst/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/webops/analytics-analyst/AGENT.md",
+          "dateModified": "2026-08-11",
+          "description": "Analyze measured website behavior from a real analytics capability while preserving dimensions, metrics, identity settings, and uncertainty.",
+          "headline": "Analytics Analyst | Kujo WebOps",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Analytics Analyst | Kujo WebOps",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/analytics-analyst/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/analytics-analyst/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/chain-of-command/backend-developer/AGENT.md",
+          "dateModified": "2026-07-05",
+          "description": "Implement APIs, persistence, jobs, auth boundaries, service logic, and server-side integrations within a bounded task.",
+          "headline": "Backend Developer | Kujo Chain of Command",
+          "image": "https://agents.kujolang.ai/images/backend-developer-daca76a2cd95.webp",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Backend Developer | Kujo Chain of Command",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/backend-developer/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/backend-developer/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/webops/backlink-mention-analyst/AGENT.md",
+          "dateModified": "2026-08-11",
+          "description": "Analyze new and lost backlinks, relevant or unlinked mentions, and evidence-backed suspicious links.",
+          "headline": "Backlink & Mention Analyst | Kujo WebOps",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Backlink & Mention Analyst | Kujo WebOps",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/backlink-mention-analyst/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/backlink-mention-analyst/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/webops/cannibalization-analyst/AGENT.md",
+          "dateModified": "2026-08-11",
+          "description": "Identify pages substantially competing for the same intent while separating normal topical overlap from likely cannibalization.",
+          "headline": "Cannibalization Analyst | Kujo WebOps",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Cannibalization Analyst | Kujo WebOps",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/cannibalization-analyst/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/cannibalization-analyst/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          "description": "A coordinated roster for strategy, planning, execution, verification, knowledge, and routine work.",
+          "headline": "Chain of Command Agents",
+          "image": "https://agents.kujolang.ai/assets/images/agent-hero-background.webp",
+          "name": "Chain of Command Agents",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/chain-of-command/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/chain-of-command/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/chain-of-command/chief-of-staff/AGENT.md",
+          "dateModified": "2026-08-08",
+          "description": "Turn vague goals into structured objectives, assign lanes, manage handoffs, and keep work auditable.",
+          "headline": "Chief Of Staff | Kujo Chain of Command",
+          "image": "https://agents.kujolang.ai/images/chief-of-staff-2e6f76b93f30.webp",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Chief Of Staff | Kujo Chain of Command",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/chief-of-staff/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/chief-of-staff/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/chain-of-command/code-reviewer/AGENT.md",
+          "dateModified": "2026-07-05",
+          "description": "Review diffs for bugs, regressions, contract drift, missing tests, unsafe scope, and documentation mismatches.",
+          "headline": "Code Reviewer | Kujo Chain of Command",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Code Reviewer | Kujo Chain of Command",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/code-reviewer/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/code-reviewer/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/webops/competitor-intelligence-analyst/AGENT.md",
+          "dateModified": "2026-08-11",
+          "description": "Monitor selected peers for meaningful changes in topics, positioning, structure, search presence, content, and available backlink evidence.",
+          "headline": "Competitor Intelligence Analyst | Kujo WebOps",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Competitor Intelligence Analyst | Kujo WebOps",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/competitor-intelligence-analyst/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/competitor-intelligence-analyst/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/webops/content-accuracy-reviewer/AGENT.md",
+          "dateModified": "2026-08-11",
+          "description": "Review guidance, APIs, versions, products, references, and factual claims against current authoritative sources.",
+          "headline": "Content Accuracy Reviewer | Kujo WebOps",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Content Accuracy Reviewer | Kujo WebOps",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/content-accuracy-reviewer/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/content-accuracy-reviewer/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/webops/content-decay-analyst/AGENT.md",
+          "dateModified": "2026-08-11",
+          "description": "Identify stale or deteriorating content using measured movement, optional analytics, factual age, source change, and relevance evidence.",
+          "headline": "Content Decay Analyst | Kujo WebOps",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Content Decay Analyst | Kujo WebOps",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/content-decay-analyst/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/content-decay-analyst/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/webops/content-gap-analyst/AGENT.md",
+          "dateModified": "2026-08-11",
+          "description": "Classify audience and search needs against current coverage as strong, partial, stale, weak, missing, or irrelevant.",
+          "headline": "Content Gap Analyst | Kujo WebOps",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Content Gap Analyst | Kujo WebOps",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/content-gap-analyst/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/content-gap-analyst/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/webops/content-portfolio-manager/AGENT.md",
+          "dateModified": "2026-08-11",
+          "description": "Classify content longitudinally as CREATE, GROW, MAINTAIN, REFRESH, MERGE, REDIRECT, RETIRE, or IGNORE.",
+          "headline": "Content Portfolio Manager | Kujo WebOps",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Content Portfolio Manager | Kujo WebOps",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/content-portfolio-manager/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/content-portfolio-manager/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/webops/content-pruning-analyst/AGENT.md",
+          "dateModified": "2026-08-11",
+          "description": "Find obsolete, redundant, or low-value content and propose evidence-backed keep, merge, redirect, refresh, or retire decisions.",
+          "headline": "Content Pruning Analyst | Kujo WebOps",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Content Pruning Analyst | Kujo WebOps",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/content-pruning-analyst/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/content-pruning-analyst/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/chain-of-command/context-packager/AGENT.md",
+          "dateModified": "2026-08-01",
+          "description": "Prepare compact context bundles, execution packs, workflow summaries, and handoff packets for downstream agents.",
+          "headline": "Context Packager | Kujo Chain of Command",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Context Packager | Kujo Chain of Command",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/context-packager/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/context-packager/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/chain-of-command/core-developer/AGENT.md",
+          "dateModified": "2026-07-05",
+          "description": "Implement bounded source changes and focused tests inside an assigned scope.",
+          "headline": "Core Developer | Kujo Chain of Command",
+          "image": "https://agents.kujolang.ai/images/core-developer-422309ea814e.webp",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Core Developer | Kujo Chain of Command",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/core-developer/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/core-developer/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/chain-of-command/dependency-scanner/AGENT.md",
+          "dateModified": "2026-07-05",
+          "description": "Run explicit dependency, package, manifest, lockfile, and package-status checks.",
+          "headline": "Dependency Scanner | Kujo Chain of Command",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Dependency Scanner | Kujo Chain of Command",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/dependency-scanner/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/dependency-scanner/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/webops/distribution-operator/AGENT.md",
+          "dateModified": "2026-08-11",
+          "description": "Turn approved published content into source-grounded distribution assets and publish only with explicit ACT authority and integration.",
+          "headline": "Distribution Operator | Kujo WebOps",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Distribution Operator | Kujo WebOps",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/distribution-operator/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/distribution-operator/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/chain-of-command/documentation-writer/AGENT.md",
+          "dateModified": "2026-08-08",
+          "description": "Update READMEs, onboarding docs, changelogs, examples, runbooks, and user-facing technical documentation from source-grounded facts.",
+          "headline": "Documentation Writer | Kujo Chain of Command",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Documentation Writer | Kujo Chain of Command",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/documentation-writer/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/documentation-writer/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/chain-of-command/frontend-developer/AGENT.md",
+          "dateModified": "2026-08-08",
+          "description": "Implement user interfaces, interaction flows, responsive behavior, and browser-verifiable frontend changes.",
+          "headline": "Frontend Developer | Kujo Chain of Command",
+          "image": "https://agents.kujolang.ai/images/frontend-developer-38b0ab2f6a78.webp",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Frontend Developer | Kujo Chain of Command",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/frontend-developer/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/frontend-developer/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/chain-of-command/general-commander/AGENT.md",
+          "dateModified": "2026-08-08",
+          "description": "Interpret broad missions, choose agent lanes, resolve cross-agent conflicts, synthesize final outcomes, and escalate unresolved risk.",
+          "headline": "General Commander | Kujo Chain of Command",
+          "image": "https://agents.kujolang.ai/images/general-commander-b873a4f8d54c.webp",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "General Commander | Kujo Chain of Command",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/general-commander/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/general-commander/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/webops/indexation-analyst/AGENT.md",
+          "dateModified": "2026-08-11",
+          "description": "Distinguish local crawlability and indexability from provider-confirmed search-engine index state.",
+          "headline": "Indexation Analyst | Kujo WebOps",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Indexation Analyst | Kujo WebOps",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/indexation-analyst/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/indexation-analyst/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/webops/information-architecture-auditor/AGENT.md",
+          "dateModified": "2026-08-11",
+          "description": "Review navigation, hierarchy, categories, tags, breadcrumbs, clusters, URLs, depth, discoverability, and orphaning.",
+          "headline": "Information Architecture Auditor | Kujo WebOps",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Information Architecture Auditor | Kujo WebOps",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/information-architecture-auditor/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/information-architecture-auditor/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/chain-of-command/integration-engineer/AGENT.md",
+          "dateModified": "2026-07-18",
+          "description": "Connect GitHub/GitLab, MCP, CI, external services, deployment systems, telemetry, provider adapters, and workflow orchestration boundaries.",
+          "headline": "Integration Engineer | Kujo Chain of Command",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Integration Engineer | Kujo Chain of Command",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/integration-engineer/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/integration-engineer/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/webops/internal-link-specialist/AGENT.md",
+          "dateModified": "2026-08-11",
+          "description": "Find and, under explicit ACT authority, apply contextually useful internal links supported by content relationships.",
+          "headline": "Internal Link Specialist | Kujo WebOps",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Internal Link Specialist | Kujo WebOps",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/internal-link-specialist/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/internal-link-specialist/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/chain-of-command/issue-hygiene-worker/AGENT.md",
+          "dateModified": "2026-07-05",
+          "description": "Check explicitly assigned issue hygiene conditions such as duplicates, stale status, labels, milestones, or missing reproduction details.",
+          "headline": "Issue Hygiene Worker | Kujo Chain of Command",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Issue Hygiene Worker | Kujo Chain of Command",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/issue-hygiene-worker/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/issue-hygiene-worker/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/webops/keyword-opportunity-analyst/AGENT.md",
+          "dateModified": "2026-08-11",
+          "description": "Identify query opportunities from measured site data, optional third-party estimates, public research, and current site coverage.",
+          "headline": "Keyword Opportunity Analyst | Kujo WebOps",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Keyword Opportunity Analyst | Kujo WebOps",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/keyword-opportunity-analyst/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/keyword-opportunity-analyst/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/webops/link-health-auditor/AGENT.md",
+          "dateModified": "2026-08-11",
+          "description": "Analyze broken internal and outbound links, redirect chains, malformed destinations, and unexpected targets.",
+          "headline": "Link Health Auditor | Kujo WebOps",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Link Health Auditor | Kujo WebOps",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/link-health-auditor/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/link-health-auditor/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/chain-of-command/lint-runner/AGENT.md",
+          "dateModified": "2026-07-05",
+          "description": "Run explicit lint, format-check, static-check, or compile-check commands and report exact results.",
+          "headline": "Lint Runner | Kujo Chain of Command",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Lint Runner | Kujo Chain of Command",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/lint-runner/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/lint-runner/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/webops/metadata-auditor/AGENT.md",
+          "dateModified": "2026-08-11",
+          "description": "Audit titles, descriptions, canonicals, robots, Open Graph, social, article metadata, duplication, and missing fields.",
+          "headline": "Metadata Auditor | Kujo WebOps",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Metadata Auditor | Kujo WebOps",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/metadata-auditor/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/metadata-auditor/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/webops/performance-analyst/AGENT.md",
+          "dateModified": "2026-08-11",
+          "description": "Track lab and real-user field performance as distinct evidence classes and compare them longitudinally.",
+          "headline": "Performance Analyst | Kujo WebOps",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Performance Analyst | Kujo WebOps",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/performance-analyst/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/performance-analyst/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/chain-of-command/planner/AGENT.md",
+          "dateModified": "2026-07-05",
+          "description": "Convert goals into milestones, tasks, sequencing, dependencies, acceptance criteria, and verification plans.",
+          "headline": "Planner | Kujo Chain of Command",
+          "image": "https://agents.kujolang.ai/images/planner-e871338c4b36.webp",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Planner | Kujo Chain of Command",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/planner/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/planner/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/chain-of-command/product-strategist/AGENT.md",
+          "dateModified": "2026-08-08",
+          "description": "Own user value, roadmap fit, feature framing, adoption assumptions, and ICP alignment.",
+          "headline": "Product Strategist | Kujo Chain of Command",
+          "image": "https://agents.kujolang.ai/images/product-strategist-d1ec402a746c.webp",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Product Strategist | Kujo Chain of Command",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/product-strategist/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/product-strategist/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/chain-of-command/qa-lead/AGENT.md",
+          "dateModified": "2026-07-25",
+          "description": "Define test plans, evidence requirements, acceptance gates, and quality status for a change or release candidate.",
+          "headline": "QA Lead | Kujo Chain of Command",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "QA Lead | Kujo Chain of Command",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/qa-lead/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/qa-lead/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/chain-of-command/receipt-collector/AGENT.md",
+          "dateModified": "2026-08-01",
+          "description": "Capture command output, logs, RunLedger receipts, CaseFile bundles, Watchdog telemetry references, and evidence paths for auditability.",
+          "headline": "Receipt Collector | Kujo Chain of Command",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Receipt Collector | Kujo Chain of Command",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/receipt-collector/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/receipt-collector/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/chain-of-command/release-verifier/AGENT.md",
+          "dateModified": "2026-08-01",
+          "description": "Check release readiness, run or coordinate release gates, and report blockers before ship decisions.",
+          "headline": "Release Verifier | Kujo Chain of Command",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Release Verifier | Kujo Chain of Command",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/release-verifier/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/release-verifier/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/chain-of-command/research-analyst/AGENT.md",
+          "dateModified": "2026-08-08",
+          "description": "Gather repo, API, dependency, workflow, or technical context and separate confirmed facts from inference.",
+          "headline": "Research Analyst | Kujo Chain of Command",
+          "image": "https://agents.kujolang.ai/images/research-analyst-857221740bc4.webp",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Research Analyst | Kujo Chain of Command",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/research-analyst/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/research-analyst/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/chain-of-command/risk-officer/AGENT.md",
+          "dateModified": "2026-07-18",
+          "description": "Identify risk, security concerns, migration issues, release blockers, scope creep, and evidence gaps before or during work.",
+          "headline": "Risk Officer | Kujo Chain of Command",
+          "image": "https://agents.kujolang.ai/images/risk-officer-ebf348e4bd3d.webp",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Risk Officer | Kujo Chain of Command",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/risk-officer/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/risk-officer/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/chain-of-command/routine-worker/AGENT.md",
+          "dateModified": "2026-07-18",
+          "description": "Run explicitly assigned local commands or scripts and report exact results without interpretation beyond simple status.",
+          "headline": "Routine Worker | Kujo Chain of Command",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Routine Worker | Kujo Chain of Command",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/routine-worker/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/routine-worker/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/webops/schema-auditor/AGENT.md",
+          "dateModified": "2026-08-11",
+          "description": "Review structured data validity, relevance, visible-content consistency, missing appropriate types, and obsolete patterns.",
+          "headline": "Schema Auditor | Kujo WebOps",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Schema Auditor | Kujo WebOps",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/schema-auditor/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/schema-auditor/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/webops/search-performance-analyst/AGENT.md",
+          "dateModified": "2026-08-11",
+          "description": "Analyze longitudinal measured impressions, clicks, CTR, position, query movement, page movement, and query/page relationships.",
+          "headline": "Search Performance Analyst | Kujo WebOps",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Search Performance Analyst | Kujo WebOps",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/search-performance-analyst/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/search-performance-analyst/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/webops/search-submission-operator/AGENT.md",
+          "dateModified": "2026-08-11",
+          "description": "Submit authorized URLs or sitemaps through supported providers and preserve auditable receipts without promising indexing.",
+          "headline": "Search Submission Operator | Kujo WebOps",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Search Submission Operator | Kujo WebOps",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/search-submission-operator/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/search-submission-operator/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/webops/search-web-standards-watch/AGENT.md",
+          "dateModified": "2026-08-11",
+          "description": "Monitor authoritative search, structured-data, indexing, analytics, browser, AI-search, and web-specification changes.",
+          "headline": "Search & Web Standards Watch | Kujo WebOps",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Search & Web Standards Watch | Kujo WebOps",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/search-web-standards-watch/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/search-web-standards-watch/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/chain-of-command/security-reviewer/AGENT.md",
+          "dateModified": "2026-08-01",
+          "description": "Review secrets, auth, host effects, path boundaries, network exposure, unsafe commands, dependency risk, and sensitive artifacts.",
+          "headline": "Security Reviewer | Kujo Chain of Command",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Security Reviewer | Kujo Chain of Command",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/security-reviewer/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/security-reviewer/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/webops/seo-auditor/AGENT.md",
+          "dateModified": "2026-08-11",
+          "description": "Synthesize specialist WebOps SEO evidence into a periodic prioritized assessment without reimplementing each specialty.",
+          "headline": "SEO Auditor | Kujo WebOps",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "SEO Auditor | Kujo WebOps",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/seo-auditor/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/seo-auditor/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/webops/site-qa-operator/AGENT.md",
+          "dateModified": "2026-08-11",
+          "description": "Determine whether the deployed site actually loads, links, renders, and behaves sanely using crawl and browser evidence.",
+          "headline": "Site QA Operator | Kujo WebOps",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Site QA Operator | Kujo WebOps",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/site-qa-operator/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/site-qa-operator/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/chain-of-command/sitrep-agent/AGENT.md",
+          "dateModified": "2026-08-08",
+          "description": "Produce short status reports, current-state summaries, and handoff snapshots from available evidence.",
+          "headline": "SITREP Agent | Kujo Chain of Command",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "SITREP Agent | Kujo Chain of Command",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/sitrep-agent/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/sitrep-agent/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/chain-of-command/spec-writer/AGENT.md",
+          "dateModified": "2026-08-08",
+          "description": "Create and maintain task contracts with scope, acceptance criteria, eval requirements, risks, dependencies, and review expectations.",
+          "headline": "Spec Writer | Kujo Chain of Command",
+          "image": "https://agents.kujolang.ai/images/spec-writer-b285befd1d57.webp",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Spec Writer | Kujo Chain of Command",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/spec-writer/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/spec-writer/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/chain-of-command/systems-architect/AGENT.md",
+          "dateModified": "2026-07-05",
+          "description": "Own architecture, module boundaries, platform decisions, runtime tradeoffs, and long-term technical coherence.",
+          "headline": "Systems Architect | Kujo Chain of Command",
+          "image": "https://agents.kujolang.ai/images/systems-architect-87cc508a9cbe.webp",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Systems Architect | Kujo Chain of Command",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/systems-architect/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/systems-architect/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/webops/technical-seo-auditor/AGENT.md",
+          "dateModified": "2026-08-11",
+          "description": "Audit deterministic crawl, canonical, redirect, metadata, structured-data, internal-link, and indexability conditions.",
+          "headline": "Technical SEO Auditor | Kujo WebOps",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Technical SEO Auditor | Kujo WebOps",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/technical-seo-auditor/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/technical-seo-auditor/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/chain-of-command/test-runner/AGENT.md",
+          "dateModified": "2026-07-18",
+          "description": "Run explicit test, eval, or smoke commands and report exact results.",
+          "headline": "Test Runner | Kujo Chain of Command",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Test Runner | Kujo Chain of Command",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/test-runner/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/test-runner/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/chain-of-command/tooling-developer/AGENT.md",
+          "dateModified": "2026-07-18",
+          "description": "Build or maintain CLI tools, scripts, local automation, developer workflows, and KUJO tool integrations.",
+          "headline": "Tooling Developer | Kujo Chain of Command",
+          "image": "https://agents.kujolang.ai/images/tooling-developer-5dfd9abd0490.webp",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Tooling Developer | Kujo Chain of Command",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/tooling-developer/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/tooling-developer/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/webops/trend-scout/AGENT.md",
+          "dateModified": "2026-08-11",
+          "description": "Discover emerging domain topics, terminology, tools, questions, standards, and shifts without deciding editorial strategy alone.",
+          "headline": "Trend Scout | Kujo WebOps",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Trend Scout | Kujo WebOps",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/trend-scout/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/trend-scout/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/chain-of-command/triage-agent/AGENT.md",
+          "dateModified": "2026-07-18",
+          "description": "Review flagged wrong outputs, stopped workflow states, failed handoffs, and abnormal results so the chain can decide whether to resume, reroute, require human review, or coordinate the immediate next response.",
+          "headline": "Triage Agent | Kujo Chain of Command",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Triage Agent | Kujo Chain of Command",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/triage-agent/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/triage-agent/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/chain-of-command/visual-qa-agent/AGENT.md",
+          "dateModified": "2026-08-08",
+          "description": "Produce deterministic browser, layout, accessibility, console, network, and visual evidence for user-facing surfaces.",
+          "headline": "Visual QA Agent | Kujo Chain of Command",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "Visual QA Agent | Kujo Chain of Command",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/visual-qa-agent/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/visual-qa-agent/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "SoftwareSourceCode",
+          "codeRepository": "https://github.com/kujolang/kujo-agents/blob/main/webops/webops-reporter/AGENT.md",
+          "dateModified": "2026-08-11",
+          "description": "Synthesize existing WebOps evidence into quiet reports focused on improvements, regressions, changes, actions, deferrals, and unavailable checks.",
+          "headline": "WebOps Reporter | Kujo WebOps",
+          "image": "https://agents.kujolang.ai/images/kujo-logomark-af568480fc2c.svg",
+          "maintainer": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "name": "WebOps Reporter | Kujo WebOps",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/webops-reporter/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/webops-reporter/"
+    },
+    {
+      "items": [
+        {
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          "description": "A coordinated roster for technical SEO, content intelligence, site quality, search analytics, and safe WebOps operations.",
+          "headline": "WebOps Agents",
+          "image": "https://agents.kujolang.ai/assets/images/agent-hero-background.webp",
+          "name": "WebOps Agents",
+          "publisher": {
+            "@type": "Organization",
+            "name": "Kujo",
+            "url": "https://kujolang.ai"
+          },
+          "url": "https://agents.kujolang.ai/agents/webops/"
+        }
+      ],
+      "url": "https://agents.kujolang.ai/agents/webops/"
+    }
+  ],
+  "schema": "siteprobe.structured-data/v1"
+}
