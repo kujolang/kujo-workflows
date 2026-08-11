@@ -7,6 +7,8 @@
 - Add cross-repository validation for 28 agents, 83 skills, three website-intelligence tools, workflows, and public-site source content.
 - Add synchronized WebOps tool schema/version contracts and first-release
   qualification evidence against the immutable zero-finding public-site baseline.
+- Keep fixture workflows runnable in standalone clean checkouts through bounded,
+  explicitly labeled embedded evidence when sibling tool repositories are absent.
 
 All notable changes to Kujo Workflows are documented here.
 
