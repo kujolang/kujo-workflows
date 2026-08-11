@@ -122,10 +122,10 @@ Local SiteProbe inspected 60 generated pages and 1,177 links. Its only 60 warnin
 ## 12. GitHub Changes
 
 - Created and pushed public repositories: `kujolang/siteprobe` (`4436189`), `kujolang/searchbridge` (`6995d7d`), `kujolang/contentgraph` (`94e28aa`).
-- Modified and pushed: `kujo-agents` (`8c1cc16`), `kujo-skills` (`c1c00df`), `agents.kujolang.ai` (`8374042`, `803c889`).
+- Modified and pushed: `kujo-agents` (`8c1cc16`), `kujo-skills` (`c1c00df`), `agents.kujolang.ai` (`8374042`, `803c889`, `5f3743e`).
 - Modified: `kujo-workflows` (`0121b77` plus the evidence/report commit containing this file).
 - Branches/PRs: direct authorized updates to each repository's `main`; no PRs.
-- Deployment: GitHub Pages run `31474529867` completed successfully.
+- Deployment: final GitHub Pages run `31475276404` completed successfully.
 
 ## 13. Known Limitations
 
