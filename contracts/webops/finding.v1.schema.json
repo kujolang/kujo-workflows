@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.kujolang.ai/webops/finding.v1.json",
+  "title": "WebOps finding",
+  "type": "object",
+  "required": ["schema", "id", "agent", "check", "target", "issue_identity", "state", "evidence", "first_seen", "last_seen"],
+  "properties": {
+    "schema": {"const": "webops.finding/v1"},
+    "id": {"type": "string", "pattern": "^WF-[A-F0-9]{20}$"},
+    "state": {"enum": ["NEW", "PERSISTENT", "RESOLVED", "REGRESSED", "REOPENED"]},
+    "recommendation_ids": {"type": "array", "items": {"type": "string"}},
+    "action_ids": {"type": "array", "items": {"type": "string"}},
+    "outcome_ids": {"type": "array", "items": {"type": "string"}}
+  },
+  "additionalProperties": true
+}

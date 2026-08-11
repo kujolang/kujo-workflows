@@ -33,7 +33,17 @@ class SkillRelationshipContractTests(unittest.TestCase):
             self.skipTest(
                 "requires sibling Kujo tool checkouts: " + ", ".join(str(path) for path in missing)
             )
-        result = subprocess.run(["bash", str(SCRIPT)], cwd=ROOT, text=True, capture_output=True, check=False)
+        repos = Path(os.environ.get("KUJO_REPOS", ROOT.parent))
+        environment = os.environ.copy()
+        environment.setdefault("KUJO_BIN", str(repos / "kujo/target/release/kujo"))
+        result = subprocess.run(
+            ["bash", str(SCRIPT)],
+            cwd=ROOT,
+            env=environment,
+            text=True,
+            capture_output=True,
+            check=False,
+        )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("PASS skill relationship contracts", result.stdout)
 

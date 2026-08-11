@@ -1,0 +1,55 @@
+{
+  "schema": "webops.workflow/v1",
+  "id": "webops-finding-to-fix",
+  "version": "0.1.0",
+  "purpose": "Move one stable WebOps finding through Spec, proposal, approval, implementation boundary, Eval, Lens, SiteProbe, and receipt evidence.",
+  "default_permission": "PROPOSE",
+  "fixture_mode": true,
+  "live_mode": true,
+  "agents": [
+    "WebOps Finding",
+    "Spec",
+    "Proposal",
+    "Approval Gate",
+    "Implementation",
+    "Eval",
+    "Site QA Operator",
+    "SiteProbe",
+    "WebOps Reporter"
+  ],
+  "tools": [
+    "spec",
+    "eval",
+    "lens",
+    "siteprobe",
+    "runledger",
+    "casefile",
+    "patchbrief",
+    "changebucket"
+  ],
+  "skills": [
+    "webops-longitudinal-findings",
+    "kujo-spec-workflows",
+    "kujo-eval-workflows",
+    "kujo-lens-workflows",
+    "kujo-siteprobe-workflows",
+    "kujo-runledger-workflows",
+    "kujo-casefile-workflows",
+    "kujo-patchbrief-workflows",
+    "kujo-changebucket-workflows"
+  ],
+  "credentials": [],
+  "approval_boundaries": [
+    "Implementation and any production mutation require explicit role-bounded ACT; fixture mode produces proposal and proof plan."
+  ],
+  "state_and_recovery": "state.json records every step; rerun with --resume continues after completed steps.",
+  "outputs": [
+    "state.json",
+    "capabilities.json",
+    "steps/*.json",
+    "findings.json",
+    "report.md",
+    "run-receipt.json"
+  ],
+  "readiness": "production-capable-with-limitations"
+}

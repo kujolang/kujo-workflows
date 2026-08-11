@@ -1,0 +1,58 @@
+{
+  "schema": "webops.workflow/v1",
+  "id": "webops-monthly-seo-review",
+  "version": "0.1.0",
+  "purpose": "Synthesize monthly specialist SEO evidence without duplicating specialist analysis.",
+  "default_permission": "OBSERVE",
+  "fixture_mode": true,
+  "live_mode": true,
+  "agents": [
+    "SEO Auditor",
+    "Search Performance Analyst",
+    "Indexation Analyst",
+    "Technical SEO Auditor",
+    "Content Decay Analyst",
+    "Cannibalization Analyst",
+    "Internal Link Specialist",
+    "Schema Auditor",
+    "Metadata Auditor",
+    "Performance Analyst",
+    "Backlink & Mention Analyst",
+    "WebOps Reporter"
+  ],
+  "tools": [
+    "siteprobe",
+    "searchbridge",
+    "contentgraph",
+    "lens",
+    "runledger"
+  ],
+  "skills": [
+    "webops-technical-seo",
+    "webops-search-performance",
+    "webops-indexation",
+    "webops-content-decay",
+    "webops-cannibalization",
+    "webops-internal-linking",
+    "webops-schema-and-metadata",
+    "webops-web-performance",
+    "webops-backlink-and-mention-analysis",
+    "webops-reporting"
+  ],
+  "credentials": [
+    "Optional search, analytics, backlink, and performance providers."
+  ],
+  "approval_boundaries": [
+    "Synthesis is OBSERVE; proposed fixes route to finding-to-fix."
+  ],
+  "state_and_recovery": "state.json records every step; rerun with --resume continues after completed steps.",
+  "outputs": [
+    "state.json",
+    "capabilities.json",
+    "steps/*.json",
+    "findings.json",
+    "report.md",
+    "run-receipt.json"
+  ],
+  "readiness": "production-capable-with-limitations"
+}

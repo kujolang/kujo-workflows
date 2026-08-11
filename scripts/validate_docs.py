@@ -13,7 +13,7 @@ import yaml
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SKIP_PARTS = {".git", ".runs", ".work", ".workcell", ".tmp", "__pycache__"}
+SKIP_PARTS = {".git", ".loop-engineering", ".runs", ".work", ".workcell", ".tmp", "__pycache__"}
 REQUIRED_FILES = (
     "README.md",
     "LICENSE",

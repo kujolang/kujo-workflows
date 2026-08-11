@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.kujolang.ai/webops/history-record.v1.json",
+  "type": "object",
+  "required": ["schema", "id", "kind", "finding_id", "recorded_at", "evidence"],
+  "properties": {
+    "schema": {"const": "webops.history-record/v1"},
+    "kind": {"enum": ["recommendation", "action", "outcome"]},
+    "finding_id": {"type": "string"}
+  },
+  "additionalProperties": true
+}

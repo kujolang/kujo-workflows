@@ -1,0 +1,26 @@
+{
+  "schema": "webops.site-profile/v1",
+  "site": {
+    "id": "webops-fixture",
+    "url": "http://127.0.0.1:0",
+    "repository": "fixtures/webops/site",
+    "platform": "static-fixture"
+  },
+  "capabilities": {
+    "website": true,
+    "repository": true,
+    "browser": "optional",
+    "web-search": false,
+    "site-crawl": true,
+    "content-graph": true
+  },
+  "integrations": {
+    "search_console": "fixture",
+    "analytics": "fixture",
+    "keyword_provider": "fixture",
+    "backlink_provider": "fixture",
+    "indexnow": "fixture"
+  },
+  "permissions": {"default": "OBSERVE"},
+  "credential_references": {}
+}

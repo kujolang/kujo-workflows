@@ -1,0 +1,48 @@
+{
+  "schema": "webops.workflow/v1",
+  "id": "webops-weekly-site-health",
+  "version": "0.1.0",
+  "purpose": "Compare weekly crawl and rendered site health, links, performance, accessibility, schema, and metadata.",
+  "default_permission": "OBSERVE",
+  "fixture_mode": true,
+  "live_mode": true,
+  "agents": [
+    "SiteProbe",
+    "Site QA Operator",
+    "Link Health Auditor",
+    "Performance Analyst",
+    "Accessibility Auditor",
+    "Schema Auditor",
+    "Metadata Auditor",
+    "WebOps Reporter"
+  ],
+  "tools": [
+    "siteprobe",
+    "lens",
+    "searchbridge",
+    "runledger"
+  ],
+  "skills": [
+    "kujo-siteprobe-workflows",
+    "kujo-lens-workflows",
+    "webops-link-health",
+    "webops-web-performance",
+    "webops-accessibility-review",
+    "webops-schema-and-metadata",
+    "webops-reporting"
+  ],
+  "credentials": [],
+  "approval_boundaries": [
+    "No site mutation; optional provider credentials enable performance modules only."
+  ],
+  "state_and_recovery": "state.json records every step; rerun with --resume continues after completed steps.",
+  "outputs": [
+    "state.json",
+    "capabilities.json",
+    "steps/*.json",
+    "findings.json",
+    "report.md",
+    "run-receipt.json"
+  ],
+  "readiness": "production-capable-with-limitations"
+}

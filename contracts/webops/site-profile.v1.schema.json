@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.kujolang.ai/webops/site-profile.v1.json",
+  "title": "WebOps site profile",
+  "type": "object",
+  "required": ["schema", "site", "capabilities", "integrations", "permissions"],
+  "properties": {
+    "schema": {"const": "webops.site-profile/v1"},
+    "site": {
+      "type": "object",
+      "required": ["id", "url"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,63}$"},
+        "url": {"type": "string", "pattern": "^https?://"},
+        "repository": {"type": "string"},
+        "platform": {"type": "string"}
+      }
+    },
+    "capabilities": {"type": "object"},
+    "integrations": {"type": "object"},
+    "permissions": {"type": "object", "required": ["default"], "properties": {"default": {"enum": ["OBSERVE", "PROPOSE", "ACT"]}}},
+    "credential_references": {"type": "object", "additionalProperties": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]+$"}}
+  },
+  "additionalProperties": false
+}

@@ -1,6 +1,6 @@
 {
   "schema": "kujo.workflow-catalog/v1",
-  "audit_id": "kujo-workflows-audit-2026-08-08",
+  "audit_id": "kujo-workflows-webops-2026-08-11",
   "source_repositories": {
     "workflows": "../kujo-workflows",
     "skills": "../kujo-skills",
@@ -19,22 +19,78 @@
       "purpose": "Turn an agency task and site profile into a resumable local proof packet.",
       "entry": "agency-runner/bin/agency-loop",
       "skills": [
-        {"name": "kujo-spec-workflows", "path": "skills/kujo-spec-workflows/SKILL.md", "compatibility": "compatible-but-under-tested"},
-        {"name": "kujo-scout-workflows", "path": "skills/kujo-scout-workflows/SKILL.md", "compatibility": "compatible-but-under-tested"},
-        {"name": "kujo-scent-workflows", "path": "skills/kujo-scent-workflows/SKILL.md", "compatibility": "compatible-but-under-tested"},
-        {"name": "kujo-lens-workflows", "path": "skills/kujo-lens-workflows/SKILL.md", "compatibility": "compatible-but-under-tested"},
-        {"name": "kujo-casefile-workflows", "path": "skills/kujo-casefile-workflows/SKILL.md", "compatibility": "compatible-but-under-tested"},
-        {"name": "kujo-packwrite-workflows", "path": "skills/kujo-packwrite-workflows/SKILL.md", "compatibility": "compatible-but-under-tested"},
-        {"name": "kujo-runledger-workflows", "path": "skills/kujo-runledger-workflows/SKILL.md", "compatibility": "compatible-but-under-tested"}
+        {
+          "name": "kujo-spec-workflows",
+          "path": "skills/kujo-spec-workflows/SKILL.md",
+          "compatibility": "compatible-but-under-tested"
+        },
+        {
+          "name": "kujo-scout-workflows",
+          "path": "skills/kujo-scout-workflows/SKILL.md",
+          "compatibility": "compatible-but-under-tested"
+        },
+        {
+          "name": "kujo-scent-workflows",
+          "path": "skills/kujo-scent-workflows/SKILL.md",
+          "compatibility": "compatible-but-under-tested"
+        },
+        {
+          "name": "kujo-lens-workflows",
+          "path": "skills/kujo-lens-workflows/SKILL.md",
+          "compatibility": "compatible-but-under-tested"
+        },
+        {
+          "name": "kujo-casefile-workflows",
+          "path": "skills/kujo-casefile-workflows/SKILL.md",
+          "compatibility": "compatible-but-under-tested"
+        },
+        {
+          "name": "kujo-packwrite-workflows",
+          "path": "skills/kujo-packwrite-workflows/SKILL.md",
+          "compatibility": "compatible-but-under-tested"
+        },
+        {
+          "name": "kujo-runledger-workflows",
+          "path": "skills/kujo-runledger-workflows/SKILL.md",
+          "compatibility": "compatible-but-under-tested"
+        }
       ],
-      "tools": ["spec", "scout", "scent", "lens", "casefile", "packwrite", "runledger"],
-      "inputs": ["site profile", "recipe", "task file or text"],
-      "outputs": ["run-state.json", "handoff", "proof artifacts", "logs"],
-      "approval_boundaries": ["site credentials", "live-site mutation", "handoff acceptance"],
+      "tools": [
+        "spec",
+        "scout",
+        "scent",
+        "lens",
+        "casefile",
+        "packwrite",
+        "runledger"
+      ],
+      "inputs": [
+        "site profile",
+        "recipe",
+        "task file or text"
+      ],
+      "outputs": [
+        "run-state.json",
+        "handoff",
+        "proof artifacts",
+        "logs"
+      ],
+      "approval_boundaries": [
+        "site credentials",
+        "live-site mutation",
+        "handoff acceptance"
+      ],
       "state_and_recovery": "run-state.json phase tracking; continue resumes pending phases",
       "evidence": "local run packet with redacted logs",
-      "tests": ["agency-runner demo-verified-loop", "manual dry-run", "tests/skill_relationship_contracts.sh"],
-      "documentation": ["agency-runner/README.md", "agency-runner/docs/KNOWN_LIMITATIONS.md"],
+      "tests": [
+        "agency-runner demo-verified-loop",
+        "manual dry-run",
+        "tests/skill_relationship_contracts.sh"
+      ],
+      "documentation": [
+        "agency-runner/README.md",
+        "agency-runner/docs/KNOWN_LIMITATIONS.md"
+      ],
       "production_readiness": "experimental"
     },
     {
@@ -44,26 +100,98 @@
       "purpose": "Demonstrate a deterministic browser-visible fix with staged evidence and handoff.",
       "entry": "agency-verified-fix-loop/scripts/run-loop.sh",
       "skills": [
-        {"name": "kujo-spec-workflows", "path": "skills/kujo-spec-workflows/SKILL.md", "compatibility": "compatible"},
-        {"name": "kujo-scout-workflows", "path": "skills/kujo-scout-workflows/SKILL.md", "compatibility": "compatible"},
-        {"name": "kujo-scent-workflows", "path": "skills/kujo-scent-workflows/SKILL.md", "compatibility": "compatible"},
-        {"name": "kujo-packwrite-workflows", "path": "skills/kujo-packwrite-workflows/SKILL.md", "compatibility": "compatible"},
-        {"name": "kujo-casefile-workflows", "path": "skills/kujo-casefile-workflows/SKILL.md", "compatibility": "compatible"},
-        {"name": "kujo-eval-workflows", "path": "skills/kujo-eval-workflows/SKILL.md", "compatibility": "compatible"},
-        {"name": "kujo-lens-workflows", "path": "skills/kujo-lens-workflows/SKILL.md", "compatibility": "compatible"},
-        {"name": "kujo-patchbrief-workflows", "path": "skills/kujo-patchbrief-workflows/SKILL.md", "compatibility": "compatible"},
-        {"name": "kujo-changebucket-workflows", "path": "skills/kujo-changebucket-workflows/SKILL.md", "compatibility": "compatible"},
-        {"name": "kujo-shipcheck-workflows", "path": "skills/kujo-shipcheck-workflows/SKILL.md", "compatibility": "compatible"},
-        {"name": "kujo-runledger-workflows", "path": "skills/kujo-runledger-workflows/SKILL.md", "compatibility": "compatible"}
+        {
+          "name": "kujo-spec-workflows",
+          "path": "skills/kujo-spec-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-scout-workflows",
+          "path": "skills/kujo-scout-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-scent-workflows",
+          "path": "skills/kujo-scent-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-packwrite-workflows",
+          "path": "skills/kujo-packwrite-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-casefile-workflows",
+          "path": "skills/kujo-casefile-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-eval-workflows",
+          "path": "skills/kujo-eval-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-lens-workflows",
+          "path": "skills/kujo-lens-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-patchbrief-workflows",
+          "path": "skills/kujo-patchbrief-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-changebucket-workflows",
+          "path": "skills/kujo-changebucket-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-shipcheck-workflows",
+          "path": "skills/kujo-shipcheck-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-runledger-workflows",
+          "path": "skills/kujo-runledger-workflows/SKILL.md",
+          "compatibility": "compatible"
+        }
       ],
-      "tools": ["spec", "scout", "scent", "packwrite", "casefile", "eval", "lens", "patchbrief", "changebucket", "shipcheck", "runledger"],
-      "inputs": ["fixture repository", "optional PORT, STRICT, KEEP_WORK"],
-      "outputs": [".runs/<timestamp>/summary.md", "Lens walkthrough", "handoff", "tool briefs"],
-      "approval_boundaries": ["live provider PackWrite", "non-fixture site access"],
+      "tools": [
+        "spec",
+        "scout",
+        "scent",
+        "packwrite",
+        "casefile",
+        "eval",
+        "lens",
+        "patchbrief",
+        "changebucket",
+        "shipcheck",
+        "runledger"
+      ],
+      "inputs": [
+        "fixture repository",
+        "optional PORT, STRICT, KEEP_WORK"
+      ],
+      "outputs": [
+        ".runs/<timestamp>/summary.md",
+        "Lens walkthrough",
+        "handoff",
+        "tool briefs"
+      ],
+      "approval_boundaries": [
+        "live provider PackWrite",
+        "non-fixture site access"
+      ],
       "state_and_recovery": "timestamped run and disposable work tree; cleanup trap",
       "evidence": "stage table, logs, proof artifacts, receipts",
-      "tests": ["bash scripts/run-loop.sh", "STRICT=1 bash scripts/run-loop.sh"],
-      "documentation": ["agency-verified-fix-loop/README.md"],
+      "tests": [
+        "bash scripts/run-loop.sh",
+        "STRICT=1 bash scripts/run-loop.sh"
+      ],
+      "documentation": [
+        "agency-verified-fix-loop/README.md"
+      ],
       "production_readiness": "production-capable-with-limitations"
     },
     {
@@ -73,18 +201,50 @@
       "purpose": "Compare raw and Muzzle-mediated AI SDK runs with token and transcript evidence.",
       "entry": "ai-sdk-muzzle-benchmark/scripts/run-benchmark.sh",
       "skills": [
-        {"name": "kujo-ai-sdk-workflows", "path": "skills/kujo-ai-sdk-workflows/SKILL.md", "compatibility": "compatible"},
-        {"name": "kujo-muzzle-workflows", "path": "skills/kujo-muzzle-workflows/SKILL.md", "compatibility": "compatible"},
-        {"name": "kujo-runledger-workflows", "path": "skills/kujo-runledger-workflows/SKILL.md", "compatibility": "compatible"}
+        {
+          "name": "kujo-ai-sdk-workflows",
+          "path": "skills/kujo-ai-sdk-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-muzzle-workflows",
+          "path": "skills/kujo-muzzle-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-runledger-workflows",
+          "path": "skills/kujo-runledger-workflows/SKILL.md",
+          "compatibility": "compatible"
+        }
       ],
-      "tools": ["ai-sdk", "muzzle", "runledger"],
-      "inputs": ["provider/model or fixture mode", "prompt template", "trial count"],
-      "outputs": ["ack.json", "compare.md", "summary.md", "RunLedger records"],
-      "approval_boundaries": ["live provider credentials and spend"],
+      "tools": [
+        "ai-sdk",
+        "muzzle",
+        "runledger"
+      ],
+      "inputs": [
+        "provider/model or fixture mode",
+        "prompt template",
+        "trial count"
+      ],
+      "outputs": [
+        "ack.json",
+        "compare.md",
+        "summary.md",
+        "RunLedger records"
+      ],
+      "approval_boundaries": [
+        "live provider credentials and spend"
+      ],
       "state_and_recovery": "per-run directories; suite aggregation is not resumable",
       "evidence": "raw/muzzle logs, metrics, token metadata",
-      "tests": ["fixture benchmark", "fixture suite"],
-      "documentation": ["ai-sdk-muzzle-benchmark/README.md"],
+      "tests": [
+        "fixture benchmark",
+        "fixture suite"
+      ],
+      "documentation": [
+        "ai-sdk-muzzle-benchmark/README.md"
+      ],
       "production_readiness": "production-capable-with-limitations"
     },
     {
@@ -94,18 +254,47 @@
       "purpose": "Route AI SDK chat traffic through Watchdog and export telemetry.",
       "entry": "ai-sdk-watchdog-showcase/scripts/run-showcase.sh",
       "skills": [
-        {"name": "kujo-ai-sdk-workflows", "path": "skills/kujo-ai-sdk-workflows/SKILL.md", "compatibility": "compatible"},
-        {"name": "kujo-ai-chat-workflows", "path": "skills/kujo-ai-chat-workflows/SKILL.md", "compatibility": "compatible"},
-        {"name": "kujo-watchdog-workflows", "path": "skills/kujo-watchdog-workflows/SKILL.md", "compatibility": "compatible"}
+        {
+          "name": "kujo-ai-sdk-workflows",
+          "path": "skills/kujo-ai-sdk-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-ai-chat-workflows",
+          "path": "skills/kujo-ai-chat-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-watchdog-workflows",
+          "path": "skills/kujo-watchdog-workflows/SKILL.md",
+          "compatibility": "compatible"
+        }
       ],
-      "tools": ["ai-sdk", "ai-chat", "watchdog"],
-      "inputs": ["fixture or live provider configuration"],
-      "outputs": ["responses", "Watchdog telemetry exports", "summary.md"],
-      "approval_boundaries": ["live provider key and spend"],
+      "tools": [
+        "ai-sdk",
+        "ai-chat",
+        "watchdog"
+      ],
+      "inputs": [
+        "fixture or live provider configuration"
+      ],
+      "outputs": [
+        "responses",
+        "Watchdog telemetry exports",
+        "summary.md"
+      ],
+      "approval_boundaries": [
+        "live provider key and spend"
+      ],
       "state_and_recovery": "local process cleanup trap; no resume protocol",
       "evidence": "request, usage, error and agent-step exports",
-      "tests": ["fixture showcase", "live mode requires credentials"],
-      "documentation": ["ai-sdk-watchdog-showcase/README.md"],
+      "tests": [
+        "fixture showcase",
+        "live mode requires credentials"
+      ],
+      "documentation": [
+        "ai-sdk-watchdog-showcase/README.md"
+      ],
       "production_readiness": "production-capable-with-limitations"
     },
     {
@@ -114,15 +303,36 @@
       "status": "production-capable-with-limitations",
       "purpose": "Capture a deterministic failure into a redacted incident evidence bundle.",
       "entry": "casefile-incident-evidence-packet/scripts/run-workflow.sh",
-      "skills": [{"name": "kujo-casefile-workflows", "path": "skills/kujo-casefile-workflows/SKILL.md", "compatibility": "compatible"}],
-      "tools": ["casefile"],
-      "inputs": ["failing command fixture"],
-      "outputs": ["case.md", "case.json", "handoff.md"],
-      "approval_boundaries": ["capture of environment and repository metadata"],
+      "skills": [
+        {
+          "name": "kujo-casefile-workflows",
+          "path": "skills/kujo-casefile-workflows/SKILL.md",
+          "compatibility": "compatible"
+        }
+      ],
+      "tools": [
+        "casefile"
+      ],
+      "inputs": [
+        "failing command fixture"
+      ],
+      "outputs": [
+        "case.md",
+        "case.json",
+        "handoff.md"
+      ],
+      "approval_boundaries": [
+        "capture of environment and repository metadata"
+      ],
       "state_and_recovery": "single capture run; cleanup is local",
       "evidence": "CaseFile bundle and rendered views",
-      "tests": ["bash scripts/run-workflow.sh", "tests/skill_relationship_contracts.sh"],
-      "documentation": ["casefile-incident-evidence-packet/README.md"],
+      "tests": [
+        "bash scripts/run-workflow.sh",
+        "tests/skill_relationship_contracts.sh"
+      ],
+      "documentation": [
+        "casefile-incident-evidence-packet/README.md"
+      ],
       "production_readiness": "production-capable-with-limitations"
     },
     {
@@ -131,15 +341,39 @@
       "status": "production-capable-with-limitations",
       "purpose": "Generate a reviewable DocsGen contract packet for a chosen repository.",
       "entry": "docsgen-repo-contract-runner/scripts/run-workflow.sh",
-      "skills": [{"name": "kujo-docgen-agent-readable", "path": "skills/kujo-docgen-agent-readable/SKILL.md", "compatibility": "compatible-but-under-tested"}],
-      "tools": ["kujo"],
-      "inputs": ["optional TARGET_REPO", "optional DOCGEN_STRICT"],
-      "outputs": ["docgen.md", "docgen.json", "docgen-gaps.json", "agent-handoff.md"],
-      "approval_boundaries": ["publication and source-repository writes are outside scope"],
+      "skills": [
+        {
+          "name": "kujo-docgen-agent-readable",
+          "path": "skills/kujo-docgen-agent-readable/SKILL.md",
+          "compatibility": "compatible-but-under-tested"
+        }
+      ],
+      "tools": [
+        "kujo"
+      ],
+      "inputs": [
+        "optional TARGET_REPO",
+        "optional DOCGEN_STRICT"
+      ],
+      "outputs": [
+        "docgen.md",
+        "docgen.json",
+        "docgen-gaps.json",
+        "agent-handoff.md"
+      ],
+      "approval_boundaries": [
+        "publication and source-repository writes are outside scope"
+      ],
       "state_and_recovery": "timestamped output packet; rerun creates a new packet",
       "evidence": "CLI JSON, gap files, logs, handoff",
-      "tests": ["bash scripts/run-workflow.sh", "strict fixture run", "tests/skill_relationship_contracts.sh"],
-      "documentation": ["docsgen-repo-contract-runner/README.md"],
+      "tests": [
+        "bash scripts/run-workflow.sh",
+        "strict fixture run",
+        "tests/skill_relationship_contracts.sh"
+      ],
+      "documentation": [
+        "docsgen-repo-contract-runner/README.md"
+      ],
       "production_readiness": "production-capable-with-limitations"
     },
     {
@@ -148,15 +382,39 @@
       "status": "production-capable-with-limitations",
       "purpose": "Run a resumable Dispatch workflow with an explicit approval boundary and diagnostics.",
       "entry": "enterprise-dispatch-approval-router/scripts/run-workflow.sh",
-      "skills": [{"name": "kujo-dispatch-workflows", "path": "skills/kujo-dispatch-workflows/SKILL.md", "compatibility": "compatible"}],
-      "tools": ["dispatch"],
-      "inputs": ["offline fixture", "optional Leash callback URL"],
-      "outputs": ["state.json", "trace.md", "report.md", "diagnostics"],
-      "approval_boundaries": ["human intervention event and resume decision"],
+      "skills": [
+        {
+          "name": "kujo-dispatch-workflows",
+          "path": "skills/kujo-dispatch-workflows/SKILL.md",
+          "compatibility": "compatible"
+        }
+      ],
+      "tools": [
+        "dispatch"
+      ],
+      "inputs": [
+        "offline fixture",
+        "optional Leash callback URL"
+      ],
+      "outputs": [
+        "state.json",
+        "trace.md",
+        "report.md",
+        "diagnostics"
+      ],
+      "approval_boundaries": [
+        "human intervention event and resume decision"
+      ],
       "state_and_recovery": "Dispatch persisted state; paused run resumes by run ID",
       "evidence": "Dispatch run artifacts and inspection JSON",
-      "tests": ["bash scripts/run-workflow.sh", "Dispatch offline fixture"],
-      "documentation": ["enterprise-dispatch-approval-router/README.md", "enterprise-dispatch-approval-router/HOWTO.md"],
+      "tests": [
+        "bash scripts/run-workflow.sh",
+        "Dispatch offline fixture"
+      ],
+      "documentation": [
+        "enterprise-dispatch-approval-router/README.md",
+        "enterprise-dispatch-approval-router/HOWTO.md"
+      ],
       "production_readiness": "production-capable-with-limitations"
     },
     {
@@ -166,26 +424,102 @@
       "purpose": "Convert a developer task card into scoped implementation, verification, evidence and handoff.",
       "entry": "feature-card-workflow/muzzle-template/workflows/feature-card-full.sh",
       "skills": [
-        {"name": "kujo-spec-workflows", "path": "skills/kujo-spec-workflows/SKILL.md", "compatibility": "compatible"},
-        {"name": "kujo-scout-workflows", "path": "skills/kujo-scout-workflows/SKILL.md", "compatibility": "compatible"},
-        {"name": "kujo-scent-workflows", "path": "skills/kujo-scent-workflows/SKILL.md", "compatibility": "compatible"},
-        {"name": "kujo-runledger-workflows", "path": "skills/kujo-runledger-workflows/SKILL.md", "compatibility": "compatible"},
-        {"name": "kujo-eval-workflows", "path": "skills/kujo-eval-workflows/SKILL.md", "compatibility": "compatible"},
-        {"name": "kujo-lens-workflows", "path": "skills/kujo-lens-workflows/SKILL.md", "compatibility": "compatible"},
-        {"name": "kujo-casefile-workflows", "path": "skills/kujo-casefile-workflows/SKILL.md", "compatibility": "compatible"},
-        {"name": "kujo-patchbrief-workflows", "path": "skills/kujo-patchbrief-workflows/SKILL.md", "compatibility": "compatible"},
-        {"name": "kujo-changebucket-workflows", "path": "skills/kujo-changebucket-workflows/SKILL.md", "compatibility": "compatible"},
-        {"name": "kujo-shipcheck-workflows", "path": "skills/kujo-shipcheck-workflows/SKILL.md", "compatibility": "compatible"},
-        {"name": "kujo-muzzle-workflows", "path": "skills/kujo-muzzle-workflows/SKILL.md", "compatibility": "compatible"}
+        {
+          "name": "kujo-spec-workflows",
+          "path": "skills/kujo-spec-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-scout-workflows",
+          "path": "skills/kujo-scout-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-scent-workflows",
+          "path": "skills/kujo-scent-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-runledger-workflows",
+          "path": "skills/kujo-runledger-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-eval-workflows",
+          "path": "skills/kujo-eval-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-lens-workflows",
+          "path": "skills/kujo-lens-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-casefile-workflows",
+          "path": "skills/kujo-casefile-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-patchbrief-workflows",
+          "path": "skills/kujo-patchbrief-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-changebucket-workflows",
+          "path": "skills/kujo-changebucket-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-shipcheck-workflows",
+          "path": "skills/kujo-shipcheck-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-muzzle-workflows",
+          "path": "skills/kujo-muzzle-workflows/SKILL.md",
+          "compatibility": "compatible"
+        }
       ],
-      "tools": ["spec", "scout", "scent", "runledger", "eval", "lens", "casefile", "patchbrief", "changebucket", "shipcheck", "muzzle"],
-      "inputs": ["card ID", "task file", "target Git repository", "optional verification/browser configuration"],
-      "outputs": [".kujo/feature-cards/<card-id>/status.tsv", "briefs", "proof", "reviewer-handoff.md"],
-      "approval_boundaries": ["implementation command or Codex", "merge/deploy approval", "optional commit"],
+      "tools": [
+        "spec",
+        "scout",
+        "scent",
+        "runledger",
+        "eval",
+        "lens",
+        "casefile",
+        "patchbrief",
+        "changebucket",
+        "shipcheck",
+        "muzzle"
+      ],
+      "inputs": [
+        "card ID",
+        "task file",
+        "target Git repository",
+        "optional verification/browser configuration"
+      ],
+      "outputs": [
+        ".kujo/feature-cards/<card-id>/status.tsv",
+        "briefs",
+        "proof",
+        "reviewer-handoff.md"
+      ],
+      "approval_boundaries": [
+        "implementation command or Codex",
+        "merge/deploy approval",
+        "optional commit"
+      ],
       "state_and_recovery": "repo-local packet; stage results are durable but no resume command",
       "evidence": "status.tsv, logs, tool reports, diff and handoff",
-      "tests": ["feature-card-start smoke", "fixture full run with FEATURE_SKIP_AGENT=1"],
-      "documentation": ["feature-card-workflow/README.md", "feature-card-workflow/HOWTO.md"],
+      "tests": [
+        "feature-card-start smoke",
+        "fixture full run with FEATURE_SKIP_AGENT=1"
+      ],
+      "documentation": [
+        "feature-card-workflow/README.md",
+        "feature-card-workflow/HOWTO.md"
+      ],
       "production_readiness": "production-capable-with-limitations"
     },
     {
@@ -194,15 +528,41 @@
       "status": "production-capable-with-limitations",
       "purpose": "Render deterministic content assets from real Kujo examples and a manifest.",
       "entry": "howl-content-factory/scripts/run-workflow.sh",
-      "skills": [{"name": "kujo-howl-workflows", "path": "skills/kujo-howl-workflows/SKILL.md", "compatibility": "compatible"}],
-      "tools": ["howl"],
-      "inputs": ["showcase manifest", "Kujo examples"],
-      "outputs": ["Markdown", "HTML", "SVG", "branded social SVG", "gallery", "caption"],
-      "approval_boundaries": ["publication is outside scope"],
+      "skills": [
+        {
+          "name": "kujo-howl-workflows",
+          "path": "skills/kujo-howl-workflows/SKILL.md",
+          "compatibility": "compatible"
+        }
+      ],
+      "tools": [
+        "howl"
+      ],
+      "inputs": [
+        "showcase manifest",
+        "Kujo examples"
+      ],
+      "outputs": [
+        "Markdown",
+        "HTML",
+        "SVG",
+        "branded social SVG",
+        "gallery",
+        "caption"
+      ],
+      "approval_boundaries": [
+        "publication is outside scope"
+      ],
       "state_and_recovery": "timestamped generated packet",
       "evidence": "manifest, render outputs including social variant, and status.tsv",
-      "tests": ["bash scripts/run-workflow.sh", "branded social SVG artifact check", "tests/skill_relationship_contracts.sh"],
-      "documentation": ["howl-content-factory/README.md"],
+      "tests": [
+        "bash scripts/run-workflow.sh",
+        "branded social SVG artifact check",
+        "tests/skill_relationship_contracts.sh"
+      ],
+      "documentation": [
+        "howl-content-factory/README.md"
+      ],
       "production_readiness": "production-capable-with-limitations"
     },
     {
@@ -211,15 +571,41 @@
       "status": "production-ready",
       "purpose": "Run a bounded Goal to Context to Act to Evaluate to Record to Stop loop in any repository.",
       "entry": "loop-engineering/scripts/run-workflow.sh",
-      "skills": [{"name": "kujo-loop-engineering-workflows", "path": "skills/kujo-loop-engineering-workflows/SKILL.md", "compatibility": "compatible"}],
-      "tools": ["loop-engineering"],
-      "inputs": ["repo-local loop.yml or Markdown checklist"],
-      "outputs": [".loop-engineering/SUMMARY.md", "ledger.tsv", "iterations", "blockers.md"],
-      "approval_boundaries": ["commit/push opt-in", "deploy and destructive actions blocked by default"],
+      "skills": [
+        {
+          "name": "kujo-loop-engineering-workflows",
+          "path": "skills/kujo-loop-engineering-workflows/SKILL.md",
+          "compatibility": "compatible"
+        }
+      ],
+      "tools": [
+        "loop-engineering"
+      ],
+      "inputs": [
+        "repo-local loop.yml or Markdown checklist"
+      ],
+      "outputs": [
+        ".loop-engineering/SUMMARY.md",
+        "ledger.tsv",
+        "iterations",
+        "blockers.md"
+      ],
+      "approval_boundaries": [
+        "commit/push opt-in",
+        "deploy and destructive actions blocked by default"
+      ],
       "state_and_recovery": "iteration evidence and structured external blockers",
       "evidence": "context, action, diff, eval log, verdict per iteration",
-      "tests": ["config mode smoke", "checklist classification smoke", "shell syntax"],
-      "documentation": ["loop-engineering/README.md", "loop-engineering/HOWTO.md", "loop-engineering/loop.spec.yml"],
+      "tests": [
+        "config mode smoke",
+        "checklist classification smoke",
+        "shell syntax"
+      ],
+      "documentation": [
+        "loop-engineering/README.md",
+        "loop-engineering/HOWTO.md",
+        "loop-engineering/loop.spec.yml"
+      ],
       "production_readiness": "production-ready"
     },
     {
@@ -228,15 +614,40 @@
       "status": "production-capable-with-limitations",
       "purpose": "Generate and validate a constrained MCP server scaffold and safety packet for a repository.",
       "entry": "mcp-agent-gateway-review/scripts/run-workflow.sh",
-      "skills": [{"name": "kujo-mcp-workflows", "path": "skills/kujo-mcp-workflows/SKILL.md", "compatibility": "compatible"}],
-      "tools": ["mcp", "patchbrief", "shipcheck"],
-      "inputs": ["fixture or TARGET_REPO", "no-AI validation mode"],
-      "outputs": ["mcp.manifest.json", "repo-profile.json", "safety-review.md", "validation-report.md", "agent-handoff.md"],
-      "approval_boundaries": ["generated gateway exposure and deployment"],
+      "skills": [
+        {
+          "name": "kujo-mcp-workflows",
+          "path": "skills/kujo-mcp-workflows/SKILL.md",
+          "compatibility": "compatible"
+        }
+      ],
+      "tools": [
+        "mcp",
+        "patchbrief",
+        "shipcheck"
+      ],
+      "inputs": [
+        "fixture or TARGET_REPO",
+        "no-AI validation mode"
+      ],
+      "outputs": [
+        "mcp.manifest.json",
+        "repo-profile.json",
+        "safety-review.md",
+        "validation-report.md",
+        "agent-handoff.md"
+      ],
+      "approval_boundaries": [
+        "generated gateway exposure and deployment"
+      ],
       "state_and_recovery": "timestamped generated scaffold; no deployment action",
       "evidence": "generated manifest, reports and log",
-      "tests": ["bash scripts/run-workflow.sh"],
-      "documentation": ["mcp-agent-gateway-review/README.md"],
+      "tests": [
+        "bash scripts/run-workflow.sh"
+      ],
+      "documentation": [
+        "mcp-agent-gateway-review/README.md"
+      ],
       "production_readiness": "production-capable-with-limitations"
     },
     {
@@ -245,32 +656,38 @@
       "status": "production-capable-with-limitations",
       "purpose": "Ingest an approved local corpus and query it with namespace-scoped citations.",
       "entry": "rag-enterprise-knowledge-gate/scripts/run-workflow.sh",
-      "skills": [{"name": "kujo-rag-workflows", "path": "skills/kujo-rag-workflows/SKILL.md", "compatibility": "compatible-but-under-tested"}],
-      "tools": ["kujo", "rag"],
-      "inputs": ["local corpus", "namespace"],
-      "outputs": ["index JSON", "ingest/query logs", "summary.md"],
-      "approval_boundaries": ["corpus selection and namespace ownership"],
+      "skills": [
+        {
+          "name": "kujo-rag-workflows",
+          "path": "skills/kujo-rag-workflows/SKILL.md",
+          "compatibility": "compatible-but-under-tested"
+        }
+      ],
+      "tools": [
+        "kujo",
+        "rag"
+      ],
+      "inputs": [
+        "local corpus",
+        "namespace"
+      ],
+      "outputs": [
+        "index JSON",
+        "ingest/query logs",
+        "summary.md"
+      ],
+      "approval_boundaries": [
+        "corpus selection and namespace ownership"
+      ],
       "state_and_recovery": "local index in run packet; rerun required after failure",
       "evidence": "index and citation-bearing query output",
-      "tests": ["bash scripts/run-workflow.sh", "tests/skill_relationship_contracts.sh"],
-      "documentation": ["rag-enterprise-knowledge-gate/README.md"],
-      "production_readiness": "production-capable-with-limitations"
-    },
-    {
-      "id": "tribunal-decision-gate",
-      "path": "tribunal-decision-gate",
-      "status": "production-capable-with-limitations",
-      "purpose": "Run an advisory Tribunal mock review and emit a verified, versioned decision receipt.",
-      "entry": "tribunal-decision-gate/scripts/run.sh",
-      "skills": [{"name": "kujo-tribunal-workflows", "path": "skills/kujo-tribunal-workflows/SKILL.md", "compatibility": "compatible"}],
-      "tools": ["tribunal"],
-      "inputs": ["Tribunal product-decision fixture", "KUJO_BIN"],
-      "outputs": ["review.txt", "verify.json", "export.json", "decision-receipt.json"],
-      "approval_boundaries": ["mock receipt is advisory and unsigned; binding production approval requires trust-policy verification"],
-      "state_and_recovery": "Tribunal persists a run; workflow is rerunnable by idempotency key but does not resume a stopped hearing.",
-      "evidence": "verified Tribunal artifact export mapped to contracts/tribunal/decision-receipt.v1.schema.json",
-      "tests": ["tribunal mock review", "tribunal verify", "contract instance validation"],
-      "documentation": ["tribunal-decision-gate/README.md", "contracts/README.md"],
+      "tests": [
+        "bash scripts/run-workflow.sh",
+        "tests/skill_relationship_contracts.sh"
+      ],
+      "documentation": [
+        "rag-enterprise-knowledge-gate/README.md"
+      ],
       "production_readiness": "production-capable-with-limitations"
     },
     {
@@ -279,15 +696,895 @@
       "status": "production-capable-with-limitations",
       "purpose": "Exercise Relay pause/resume, integrity-checked export, and a local persisted handoff receipt.",
       "entry": "relay-lifecycle-handoff/scripts/run.sh",
-      "skills": [{"name": "kujo-relay-workflows", "path": "skills/kujo-relay-workflows/SKILL.md", "compatibility": "compatible"}],
-      "tools": ["relay", "runledger", "packwrite"],
-      "inputs": ["clean Git fixture", "Relay worktree mission fixture", "KUJO_BIN"],
-      "outputs": ["paused.json", "resumed.json", "export.json", "message-envelope.json", "delivery-receipt.json", "cleanup.json"],
-      "approval_boundaries": ["mission approval is fixture-scoped", "external delivery is not implied by local receipt"],
+      "skills": [
+        {
+          "name": "kujo-relay-workflows",
+          "path": "skills/kujo-relay-workflows/SKILL.md",
+          "compatibility": "compatible"
+        }
+      ],
+      "tools": [
+        "relay",
+        "runledger",
+        "packwrite"
+      ],
+      "inputs": [
+        "clean Git fixture",
+        "Relay worktree mission fixture",
+        "KUJO_BIN"
+      ],
+      "outputs": [
+        "paused.json",
+        "resumed.json",
+        "export.json",
+        "message-envelope.json",
+        "delivery-receipt.json",
+        "cleanup.json"
+      ],
+      "approval_boundaries": [
+        "mission approval is fixture-scoped",
+        "external delivery is not implied by local receipt"
+      ],
       "state_and_recovery": "Relay persists a paused run, resumes by run ID, verifies event/receipt integrity, and cleans the isolated worktree.",
       "evidence": "Relay pause/resume/export/cleanup output mapped to contracts/relay/*.v1.schema.json",
-      "tests": ["Relay worktree mission", "pause/resume", "runs export integrity", "contract instance validation"],
-      "documentation": ["relay-lifecycle-handoff/README.md", "contracts/README.md"],
+      "tests": [
+        "Relay worktree mission",
+        "pause/resume",
+        "runs export integrity",
+        "contract instance validation"
+      ],
+      "documentation": [
+        "relay-lifecycle-handoff/README.md",
+        "contracts/README.md"
+      ],
+      "production_readiness": "production-capable-with-limitations"
+    },
+    {
+      "id": "tribunal-decision-gate",
+      "path": "tribunal-decision-gate",
+      "status": "production-capable-with-limitations",
+      "purpose": "Run an advisory Tribunal mock review and emit a verified, versioned decision receipt.",
+      "entry": "tribunal-decision-gate/scripts/run.sh",
+      "skills": [
+        {
+          "name": "kujo-tribunal-workflows",
+          "path": "skills/kujo-tribunal-workflows/SKILL.md",
+          "compatibility": "compatible"
+        }
+      ],
+      "tools": [
+        "tribunal"
+      ],
+      "inputs": [
+        "Tribunal product-decision fixture",
+        "KUJO_BIN"
+      ],
+      "outputs": [
+        "review.txt",
+        "verify.json",
+        "export.json",
+        "decision-receipt.json"
+      ],
+      "approval_boundaries": [
+        "mock receipt is advisory and unsigned; binding production approval requires trust-policy verification"
+      ],
+      "state_and_recovery": "Tribunal persists a run; workflow is rerunnable by idempotency key but does not resume a stopped hearing.",
+      "evidence": "verified Tribunal artifact export mapped to contracts/tribunal/decision-receipt.v1.schema.json",
+      "tests": [
+        "tribunal mock review",
+        "tribunal verify",
+        "contract instance validation"
+      ],
+      "documentation": [
+        "tribunal-decision-gate/README.md",
+        "contracts/README.md"
+      ],
+      "production_readiness": "production-capable-with-limitations"
+    },
+    {
+      "id": "webops-ai-visibility-benchmark",
+      "path": "webops-ai-visibility-benchmark",
+      "status": "experimental",
+      "purpose": "Run a fixed longitudinal query suite across explicitly available AI/search surfaces without fabricated availability.",
+      "entry": "webops-ai-visibility-benchmark/scripts/run.sh",
+      "skills": [
+        {
+          "name": "webops-capability-preflight",
+          "path": "skills/webops-capability-preflight/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-ai-search-visibility",
+          "path": "skills/webops-ai-search-visibility/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-longitudinal-findings",
+          "path": "skills/webops-longitudinal-findings/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-reporting",
+          "path": "skills/webops-reporting/SKILL.md",
+          "compatibility": "compatible"
+        }
+      ],
+      "tools": [
+        "searchbridge",
+        "runledger",
+        "casefile"
+      ],
+      "inputs": [
+        "WebOps site profile",
+        "fixture or live mode",
+        "optional previous findings and permission override"
+      ],
+      "outputs": [
+        "state.json",
+        "capabilities.json",
+        "steps/*.json",
+        "findings.json",
+        "report.md",
+        "run-receipt.json"
+      ],
+      "approval_boundaries": [
+        "Live provider cost and terms; unavailable surfaces are skipped."
+      ],
+      "state_and_recovery": "state.json records every step; rerun with --resume continues after completed steps.",
+      "evidence": "versioned capability, step, finding, report, state, and run receipt artifacts",
+      "tests": [
+        "bash webops-ai-visibility-benchmark/scripts/run.sh --fixture",
+        "python3 tests/test_webops_workflows.py"
+      ],
+      "documentation": [
+        "webops-ai-visibility-benchmark/README.md",
+        "webops-ai-visibility-benchmark/workflow.json"
+      ],
+      "production_readiness": "experimental"
+    },
+    {
+      "id": "webops-content-refresh",
+      "path": "webops-content-refresh",
+      "status": "production-capable-with-limitations",
+      "purpose": "Turn decay and accuracy evidence into a Spec, approved update boundary, verification, and future measurement cue.",
+      "entry": "webops-content-refresh/scripts/run.sh",
+      "skills": [
+        {
+          "name": "webops-content-decay",
+          "path": "skills/webops-content-decay/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-content-accuracy",
+          "path": "skills/webops-content-accuracy/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-search-performance",
+          "path": "skills/webops-search-performance/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-contentgraph-workflows",
+          "path": "skills/kujo-contentgraph-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-spec-workflows",
+          "path": "skills/kujo-spec-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-eval-workflows",
+          "path": "skills/kujo-eval-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-lens-workflows",
+          "path": "skills/kujo-lens-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-search-submission",
+          "path": "skills/webops-search-submission/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-reporting",
+          "path": "skills/webops-reporting/SKILL.md",
+          "compatibility": "compatible"
+        }
+      ],
+      "tools": [
+        "searchbridge",
+        "contentgraph",
+        "spec",
+        "eval",
+        "lens",
+        "runledger"
+      ],
+      "inputs": [
+        "WebOps site profile",
+        "fixture or live mode",
+        "optional previous findings and permission override"
+      ],
+      "outputs": [
+        "state.json",
+        "capabilities.json",
+        "steps/*.json",
+        "findings.json",
+        "report.md",
+        "run-receipt.json"
+      ],
+      "approval_boundaries": [
+        "Content mutation and submission pause for separate role-bounded ACT approval."
+      ],
+      "state_and_recovery": "state.json records every step; rerun with --resume continues after completed steps.",
+      "evidence": "versioned capability, step, finding, report, state, and run receipt artifacts",
+      "tests": [
+        "bash webops-content-refresh/scripts/run.sh --fixture",
+        "python3 tests/test_webops_workflows.py"
+      ],
+      "documentation": [
+        "webops-content-refresh/README.md",
+        "webops-content-refresh/workflow.json"
+      ],
+      "production_readiness": "production-capable-with-limitations"
+    },
+    {
+      "id": "webops-finding-to-fix",
+      "path": "webops-finding-to-fix",
+      "status": "production-capable-with-limitations",
+      "purpose": "Move one stable WebOps finding through Spec, proposal, approval, implementation boundary, Eval, Lens, SiteProbe, and receipt evidence.",
+      "entry": "webops-finding-to-fix/scripts/run.sh",
+      "skills": [
+        {
+          "name": "webops-longitudinal-findings",
+          "path": "skills/webops-longitudinal-findings/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-spec-workflows",
+          "path": "skills/kujo-spec-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-eval-workflows",
+          "path": "skills/kujo-eval-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-lens-workflows",
+          "path": "skills/kujo-lens-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-siteprobe-workflows",
+          "path": "skills/kujo-siteprobe-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-runledger-workflows",
+          "path": "skills/kujo-runledger-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-casefile-workflows",
+          "path": "skills/kujo-casefile-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-patchbrief-workflows",
+          "path": "skills/kujo-patchbrief-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-changebucket-workflows",
+          "path": "skills/kujo-changebucket-workflows/SKILL.md",
+          "compatibility": "compatible"
+        }
+      ],
+      "tools": [
+        "spec",
+        "eval",
+        "lens",
+        "siteprobe",
+        "runledger",
+        "casefile",
+        "patchbrief",
+        "changebucket"
+      ],
+      "inputs": [
+        "WebOps site profile",
+        "fixture or live mode",
+        "optional previous findings and permission override"
+      ],
+      "outputs": [
+        "state.json",
+        "capabilities.json",
+        "steps/*.json",
+        "findings.json",
+        "report.md",
+        "run-receipt.json"
+      ],
+      "approval_boundaries": [
+        "Implementation and any production mutation require explicit role-bounded ACT; fixture mode produces proposal and proof plan."
+      ],
+      "state_and_recovery": "state.json records every step; rerun with --resume continues after completed steps.",
+      "evidence": "versioned capability, step, finding, report, state, and run receipt artifacts",
+      "tests": [
+        "bash webops-finding-to-fix/scripts/run.sh --fixture",
+        "python3 tests/test_webops_workflows.py"
+      ],
+      "documentation": [
+        "webops-finding-to-fix/README.md",
+        "webops-finding-to-fix/workflow.json"
+      ],
+      "production_readiness": "production-capable-with-limitations"
+    },
+    {
+      "id": "webops-monthly-seo-review",
+      "path": "webops-monthly-seo-review",
+      "status": "production-capable-with-limitations",
+      "purpose": "Synthesize monthly specialist SEO evidence without duplicating specialist analysis.",
+      "entry": "webops-monthly-seo-review/scripts/run.sh",
+      "skills": [
+        {
+          "name": "webops-technical-seo",
+          "path": "skills/webops-technical-seo/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-search-performance",
+          "path": "skills/webops-search-performance/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-indexation",
+          "path": "skills/webops-indexation/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-content-decay",
+          "path": "skills/webops-content-decay/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-cannibalization",
+          "path": "skills/webops-cannibalization/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-internal-linking",
+          "path": "skills/webops-internal-linking/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-schema-and-metadata",
+          "path": "skills/webops-schema-and-metadata/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-web-performance",
+          "path": "skills/webops-web-performance/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-backlink-and-mention-analysis",
+          "path": "skills/webops-backlink-and-mention-analysis/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-reporting",
+          "path": "skills/webops-reporting/SKILL.md",
+          "compatibility": "compatible"
+        }
+      ],
+      "tools": [
+        "siteprobe",
+        "searchbridge",
+        "contentgraph",
+        "lens",
+        "runledger"
+      ],
+      "inputs": [
+        "WebOps site profile",
+        "fixture or live mode",
+        "optional previous findings and permission override"
+      ],
+      "outputs": [
+        "state.json",
+        "capabilities.json",
+        "steps/*.json",
+        "findings.json",
+        "report.md",
+        "run-receipt.json"
+      ],
+      "approval_boundaries": [
+        "Synthesis is OBSERVE; proposed fixes route to finding-to-fix."
+      ],
+      "state_and_recovery": "state.json records every step; rerun with --resume continues after completed steps.",
+      "evidence": "versioned capability, step, finding, report, state, and run receipt artifacts",
+      "tests": [
+        "bash webops-monthly-seo-review/scripts/run.sh --fixture",
+        "python3 tests/test_webops_workflows.py"
+      ],
+      "documentation": [
+        "webops-monthly-seo-review/README.md",
+        "webops-monthly-seo-review/workflow.json"
+      ],
+      "production_readiness": "production-capable-with-limitations"
+    },
+    {
+      "id": "webops-post-publish",
+      "path": "webops-post-publish",
+      "status": "production-capable-with-limitations",
+      "purpose": "Verify newly published content, relationships, rendered quality, optional submission, distribution assets, and receipts.",
+      "entry": "webops-post-publish/scripts/run.sh",
+      "skills": [
+        {
+          "name": "kujo-siteprobe-workflows",
+          "path": "skills/kujo-siteprobe-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-schema-and-metadata",
+          "path": "skills/webops-schema-and-metadata/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-internal-linking",
+          "path": "skills/webops-internal-linking/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-lens-workflows",
+          "path": "skills/kujo-lens-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-eval-workflows",
+          "path": "skills/kujo-eval-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-search-submission",
+          "path": "skills/webops-search-submission/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-distribution",
+          "path": "skills/webops-distribution/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-reporting",
+          "path": "skills/webops-reporting/SKILL.md",
+          "compatibility": "compatible"
+        }
+      ],
+      "tools": [
+        "siteprobe",
+        "contentgraph",
+        "lens",
+        "eval",
+        "searchbridge",
+        "howl",
+        "runledger"
+      ],
+      "inputs": [
+        "WebOps site profile",
+        "fixture or live mode",
+        "optional previous findings and permission override"
+      ],
+      "outputs": [
+        "state.json",
+        "capabilities.json",
+        "steps/*.json",
+        "findings.json",
+        "report.md",
+        "run-receipt.json"
+      ],
+      "approval_boundaries": [
+        "Search submission and distribution publishing require explicit ACT; fixture mode creates receipts/assets only."
+      ],
+      "state_and_recovery": "state.json records every step; rerun with --resume continues after completed steps.",
+      "evidence": "versioned capability, step, finding, report, state, and run receipt artifacts",
+      "tests": [
+        "bash webops-post-publish/scripts/run.sh --fixture",
+        "python3 tests/test_webops_workflows.py"
+      ],
+      "documentation": [
+        "webops-post-publish/README.md",
+        "webops-post-publish/workflow.json"
+      ],
+      "production_readiness": "production-capable-with-limitations"
+    },
+    {
+      "id": "webops-quarterly-content-portfolio",
+      "path": "webops-quarterly-content-portfolio",
+      "status": "production-capable-with-limitations",
+      "purpose": "Classify the content portfolio from graph, search, analytics, decay, pruning, and information-architecture evidence.",
+      "entry": "webops-quarterly-content-portfolio/scripts/run.sh",
+      "skills": [
+        {
+          "name": "kujo-contentgraph-workflows",
+          "path": "skills/kujo-contentgraph-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-search-performance",
+          "path": "skills/webops-search-performance/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-analytics-analysis",
+          "path": "skills/webops-analytics-analysis/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-content-decay",
+          "path": "skills/webops-content-decay/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-content-portfolio",
+          "path": "skills/webops-content-portfolio/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-content-pruning",
+          "path": "skills/webops-content-pruning/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-information-architecture",
+          "path": "skills/webops-information-architecture/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-reporting",
+          "path": "skills/webops-reporting/SKILL.md",
+          "compatibility": "compatible"
+        }
+      ],
+      "tools": [
+        "contentgraph",
+        "searchbridge",
+        "siteprobe",
+        "runledger"
+      ],
+      "inputs": [
+        "WebOps site profile",
+        "fixture or live mode",
+        "optional previous findings and permission override"
+      ],
+      "outputs": [
+        "state.json",
+        "capabilities.json",
+        "steps/*.json",
+        "findings.json",
+        "report.md",
+        "run-receipt.json"
+      ],
+      "approval_boundaries": [
+        "Merge, redirect, retire, or URL changes require separate ACT and migration approval."
+      ],
+      "state_and_recovery": "state.json records every step; rerun with --resume continues after completed steps.",
+      "evidence": "versioned capability, step, finding, report, state, and run receipt artifacts",
+      "tests": [
+        "bash webops-quarterly-content-portfolio/scripts/run.sh --fixture",
+        "python3 tests/test_webops_workflows.py"
+      ],
+      "documentation": [
+        "webops-quarterly-content-portfolio/README.md",
+        "webops-quarterly-content-portfolio/workflow.json"
+      ],
+      "production_readiness": "production-capable-with-limitations"
+    },
+    {
+      "id": "webops-site-bootstrap",
+      "path": "webops-site-bootstrap",
+      "status": "production-capable-with-limitations",
+      "purpose": "Establish a credential-free initial website, repository, content-graph, browser, and reporting baseline.",
+      "entry": "webops-site-bootstrap/scripts/run.sh",
+      "skills": [
+        {
+          "name": "webops-site-profile",
+          "path": "skills/webops-site-profile/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-capability-preflight",
+          "path": "skills/webops-capability-preflight/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-siteprobe-workflows",
+          "path": "skills/kujo-siteprobe-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-scout-workflows",
+          "path": "skills/kujo-scout-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-contentgraph-workflows",
+          "path": "skills/kujo-contentgraph-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-rag-workflows",
+          "path": "skills/kujo-rag-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-lens-workflows",
+          "path": "skills/kujo-lens-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-reporting",
+          "path": "skills/webops-reporting/SKILL.md",
+          "compatibility": "compatible"
+        }
+      ],
+      "tools": [
+        "siteprobe",
+        "scout",
+        "contentgraph",
+        "rag",
+        "lens",
+        "runledger"
+      ],
+      "inputs": [
+        "WebOps site profile",
+        "fixture or live mode",
+        "optional previous findings and permission override"
+      ],
+      "outputs": [
+        "state.json",
+        "capabilities.json",
+        "steps/*.json",
+        "findings.json",
+        "report.md",
+        "run-receipt.json"
+      ],
+      "approval_boundaries": [
+        "Repository access is read-only; authenticated browser state is optional and external."
+      ],
+      "state_and_recovery": "state.json records every step; rerun with --resume continues after completed steps.",
+      "evidence": "versioned capability, step, finding, report, state, and run receipt artifacts",
+      "tests": [
+        "bash webops-site-bootstrap/scripts/run.sh --fixture",
+        "python3 tests/test_webops_workflows.py"
+      ],
+      "documentation": [
+        "webops-site-bootstrap/README.md",
+        "webops-site-bootstrap/workflow.json"
+      ],
+      "production_readiness": "production-capable-with-limitations"
+    },
+    {
+      "id": "webops-weekly-content-intelligence",
+      "path": "webops-weekly-content-intelligence",
+      "status": "production-capable-with-limitations",
+      "purpose": "Combine trends, query opportunity, content relationships, gaps, accuracy, and internal-link proposals.",
+      "entry": "webops-weekly-content-intelligence/scripts/run.sh",
+      "skills": [
+        {
+          "name": "webops-search-standards-watch",
+          "path": "skills/webops-search-standards-watch/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-keyword-opportunity",
+          "path": "skills/webops-keyword-opportunity/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-contentgraph-workflows",
+          "path": "skills/kujo-contentgraph-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-content-gap",
+          "path": "skills/webops-content-gap/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-content-accuracy",
+          "path": "skills/webops-content-accuracy/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-internal-linking",
+          "path": "skills/webops-internal-linking/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-reporting",
+          "path": "skills/webops-reporting/SKILL.md",
+          "compatibility": "compatible"
+        }
+      ],
+      "tools": [
+        "contentgraph",
+        "searchbridge",
+        "rag",
+        "siteprobe",
+        "runledger"
+      ],
+      "inputs": [
+        "WebOps site profile",
+        "fixture or live mode",
+        "optional previous findings and permission override"
+      ],
+      "outputs": [
+        "state.json",
+        "capabilities.json",
+        "steps/*.json",
+        "findings.json",
+        "report.md",
+        "run-receipt.json"
+      ],
+      "approval_boundaries": [
+        "Internal-link source changes require a separate ACT run."
+      ],
+      "state_and_recovery": "state.json records every step; rerun with --resume continues after completed steps.",
+      "evidence": "versioned capability, step, finding, report, state, and run receipt artifacts",
+      "tests": [
+        "bash webops-weekly-content-intelligence/scripts/run.sh --fixture",
+        "python3 tests/test_webops_workflows.py"
+      ],
+      "documentation": [
+        "webops-weekly-content-intelligence/README.md",
+        "webops-weekly-content-intelligence/workflow.json"
+      ],
+      "production_readiness": "production-capable-with-limitations"
+    },
+    {
+      "id": "webops-weekly-search-intelligence",
+      "path": "webops-weekly-search-intelligence",
+      "status": "production-capable-with-limitations",
+      "purpose": "Compare measured search evidence, keyword opportunities, and decay signals with capability-level degradation.",
+      "entry": "webops-weekly-search-intelligence/scripts/run.sh",
+      "skills": [
+        {
+          "name": "kujo-searchbridge-workflows",
+          "path": "skills/kujo-searchbridge-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-search-performance",
+          "path": "skills/webops-search-performance/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-keyword-opportunity",
+          "path": "skills/webops-keyword-opportunity/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-content-decay",
+          "path": "skills/webops-content-decay/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-reporting",
+          "path": "skills/webops-reporting/SKILL.md",
+          "compatibility": "compatible"
+        }
+      ],
+      "tools": [
+        "searchbridge",
+        "contentgraph",
+        "runledger"
+      ],
+      "inputs": [
+        "WebOps site profile",
+        "fixture or live mode",
+        "optional previous findings and permission override"
+      ],
+      "outputs": [
+        "state.json",
+        "capabilities.json",
+        "steps/*.json",
+        "findings.json",
+        "report.md",
+        "run-receipt.json"
+      ],
+      "approval_boundaries": [
+        "Provider cost and property access; fixture mode is credential-free."
+      ],
+      "state_and_recovery": "state.json records every step; rerun with --resume continues after completed steps.",
+      "evidence": "versioned capability, step, finding, report, state, and run receipt artifacts",
+      "tests": [
+        "bash webops-weekly-search-intelligence/scripts/run.sh --fixture",
+        "python3 tests/test_webops_workflows.py"
+      ],
+      "documentation": [
+        "webops-weekly-search-intelligence/README.md",
+        "webops-weekly-search-intelligence/workflow.json"
+      ],
+      "production_readiness": "production-capable-with-limitations"
+    },
+    {
+      "id": "webops-weekly-site-health",
+      "path": "webops-weekly-site-health",
+      "status": "production-capable-with-limitations",
+      "purpose": "Compare weekly crawl and rendered site health, links, performance, accessibility, schema, and metadata.",
+      "entry": "webops-weekly-site-health/scripts/run.sh",
+      "skills": [
+        {
+          "name": "kujo-siteprobe-workflows",
+          "path": "skills/kujo-siteprobe-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-lens-workflows",
+          "path": "skills/kujo-lens-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-link-health",
+          "path": "skills/webops-link-health/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-web-performance",
+          "path": "skills/webops-web-performance/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-accessibility-review",
+          "path": "skills/webops-accessibility-review/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-schema-and-metadata",
+          "path": "skills/webops-schema-and-metadata/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "webops-reporting",
+          "path": "skills/webops-reporting/SKILL.md",
+          "compatibility": "compatible"
+        }
+      ],
+      "tools": [
+        "siteprobe",
+        "lens",
+        "searchbridge",
+        "runledger"
+      ],
+      "inputs": [
+        "WebOps site profile",
+        "fixture or live mode",
+        "optional previous findings and permission override"
+      ],
+      "outputs": [
+        "state.json",
+        "capabilities.json",
+        "steps/*.json",
+        "findings.json",
+        "report.md",
+        "run-receipt.json"
+      ],
+      "approval_boundaries": [
+        "No site mutation; optional provider credentials enable performance modules only."
+      ],
+      "state_and_recovery": "state.json records every step; rerun with --resume continues after completed steps.",
+      "evidence": "versioned capability, step, finding, report, state, and run receipt artifacts",
+      "tests": [
+        "bash webops-weekly-site-health/scripts/run.sh --fixture",
+        "python3 tests/test_webops_workflows.py"
+      ],
+      "documentation": [
+        "webops-weekly-site-health/README.md",
+        "webops-weekly-site-health/workflow.json"
+      ],
       "production_readiness": "production-capable-with-limitations"
     },
     {
@@ -296,15 +1593,43 @@
       "status": "production-capable-with-limitations",
       "purpose": "Validate, inspect, and attempt bounded Workcell Docker execution with explicit completion evidence.",
       "entry": "workcell-execution-gate/scripts/run.sh",
-      "skills": [{"name": "kujo-workcell-workflows", "path": "skills/kujo-workcell-workflows/SKILL.md", "compatibility": "compatible"}],
-      "tools": ["workcell"],
-      "inputs": ["clean Git fixture", "Workcell hello definition", "KUJO_BIN"],
-      "outputs": ["validate.json", "inspect.json", "run-result.json", "work-package.json", "completion-receipt.json"],
-      "approval_boundaries": ["Docker daemon and image are trusted local infrastructure; network is none; declared artifacts only"],
+      "skills": [
+        {
+          "name": "kujo-workcell-workflows",
+          "path": "skills/kujo-workcell-workflows/SKILL.md",
+          "compatibility": "compatible"
+        }
+      ],
+      "tools": [
+        "workcell"
+      ],
+      "inputs": [
+        "clean Git fixture",
+        "Workcell hello definition",
+        "KUJO_BIN"
+      ],
+      "outputs": [
+        "validate.json",
+        "inspect.json",
+        "run-result.json",
+        "work-package.json",
+        "completion-receipt.json"
+      ],
+      "approval_boundaries": [
+        "Docker daemon and image are trusted local infrastructure; network is none; declared artifacts only"
+      ],
       "state_and_recovery": "Workcell owns bounded lifecycle, cleanup, and receipt; this workflow does not claim reassignment or multi-worker scheduling.",
       "evidence": "Workcell validate/inspect/run output mapped to contracts/workcell/*.v1.schema.json",
-      "tests": ["Workcell validate", "Workcell inspect security policy", "Docker run", "contract instance validation"],
-      "documentation": ["workcell-execution-gate/README.md", "contracts/README.md"],
+      "tests": [
+        "Workcell validate",
+        "Workcell inspect security policy",
+        "Docker run",
+        "contract instance validation"
+      ],
+      "documentation": [
+        "workcell-execution-gate/README.md",
+        "contracts/README.md"
+      ],
       "production_readiness": "production-capable-with-limitations"
     }
   ]

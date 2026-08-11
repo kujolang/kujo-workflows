@@ -1,6 +1,6 @@
 # Launch Checklist
 
-Current launch scope: `locally verified support/distribution technical preview` (`0.1.0`). Repository-owned validation and representative local workflows pass on the development host. Hosted runner behavior, live external-provider workflows, and clean-machine installation on a separate host are not complete.
+Current launch scope: `locally verified support/distribution technical preview` (`0.2.0`). Repository-owned validation and WebOps fixture workflows pass on the development host. Hosted runner behavior, live external-provider workflows, and clean-machine installation on a separate host are not complete.
 
 ## Self-Contained Gates
 

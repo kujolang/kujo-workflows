@@ -1,0 +1,56 @@
+{
+  "schema": "webops.workflow/v1",
+  "id": "webops-content-refresh",
+  "version": "0.1.0",
+  "purpose": "Turn decay and accuracy evidence into a Spec, approved update boundary, verification, and future measurement cue.",
+  "default_permission": "PROPOSE",
+  "fixture_mode": true,
+  "live_mode": true,
+  "agents": [
+    "Content Decay Analyst",
+    "Content Accuracy Reviewer",
+    "Search Performance Analyst",
+    "ContentGraph",
+    "Spec",
+    "Authorized Content Update",
+    "Eval",
+    "Site QA Operator",
+    "Search Submission Operator",
+    "WebOps Reporter"
+  ],
+  "tools": [
+    "searchbridge",
+    "contentgraph",
+    "spec",
+    "eval",
+    "lens",
+    "runledger"
+  ],
+  "skills": [
+    "webops-content-decay",
+    "webops-content-accuracy",
+    "webops-search-performance",
+    "kujo-contentgraph-workflows",
+    "kujo-spec-workflows",
+    "kujo-eval-workflows",
+    "kujo-lens-workflows",
+    "webops-search-submission",
+    "webops-reporting"
+  ],
+  "credentials": [
+    "Optional measurement/submission providers."
+  ],
+  "approval_boundaries": [
+    "Content mutation and submission pause for separate role-bounded ACT approval."
+  ],
+  "state_and_recovery": "state.json records every step; rerun with --resume continues after completed steps.",
+  "outputs": [
+    "state.json",
+    "capabilities.json",
+    "steps/*.json",
+    "findings.json",
+    "report.md",
+    "run-receipt.json"
+  ],
+  "readiness": "production-capable-with-limitations"
+}

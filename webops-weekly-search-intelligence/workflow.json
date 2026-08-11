@@ -1,0 +1,44 @@
+{
+  "schema": "webops.workflow/v1",
+  "id": "webops-weekly-search-intelligence",
+  "version": "0.1.0",
+  "purpose": "Compare measured search evidence, keyword opportunities, and decay signals with capability-level degradation.",
+  "default_permission": "OBSERVE",
+  "fixture_mode": true,
+  "live_mode": true,
+  "agents": [
+    "SearchBridge",
+    "Search Performance Analyst",
+    "Keyword Opportunity Analyst",
+    "Content Decay Analyst",
+    "WebOps Reporter"
+  ],
+  "tools": [
+    "searchbridge",
+    "contentgraph",
+    "runledger"
+  ],
+  "skills": [
+    "kujo-searchbridge-workflows",
+    "webops-search-performance",
+    "webops-keyword-opportunity",
+    "webops-content-decay",
+    "webops-reporting"
+  ],
+  "credentials": [
+    "Optional Search Console, keyword, and analytics environment credentials for live mode."
+  ],
+  "approval_boundaries": [
+    "Provider cost and property access; fixture mode is credential-free."
+  ],
+  "state_and_recovery": "state.json records every step; rerun with --resume continues after completed steps.",
+  "outputs": [
+    "state.json",
+    "capabilities.json",
+    "steps/*.json",
+    "findings.json",
+    "report.md",
+    "run-receipt.json"
+  ],
+  "readiness": "production-capable-with-limitations"
+}

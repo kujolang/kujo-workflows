@@ -47,7 +47,14 @@ def main() -> int:
     for path in schemas:
         schema = json.loads(path.read_text())
         Draft202012Validator.check_schema(schema)
-        contract = schema["properties"]["contract"]["const"]
+        contract_property = schema.get("properties", {}).get("contract", {})
+        contract = contract_property.get("const") if isinstance(contract_property, dict) else None
+        # Some catalog schemas (for example WebOps findings and site profiles)
+        # use their own `schema` discriminator and fixture suites. They still
+        # receive meta-schema validation here, while contract/example pairing
+        # remains scoped to the workflow receipt schemas.
+        if not isinstance(contract, str):
+            continue
         by_contract[contract] = (schema, Draft202012Validator(schema))
 
     failures: list[str] = []

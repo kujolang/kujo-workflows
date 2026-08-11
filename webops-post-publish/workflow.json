@@ -1,0 +1,54 @@
+{
+  "schema": "webops.workflow/v1",
+  "id": "webops-post-publish",
+  "version": "0.1.0",
+  "purpose": "Verify newly published content, relationships, rendered quality, optional submission, distribution assets, and receipts.",
+  "default_permission": "PROPOSE",
+  "fixture_mode": true,
+  "live_mode": true,
+  "agents": [
+    "SiteProbe",
+    "Metadata Auditor",
+    "Schema Auditor",
+    "Internal Link Specialist",
+    "Site QA Operator",
+    "Search Submission Operator",
+    "Distribution Operator",
+    "WebOps Reporter"
+  ],
+  "tools": [
+    "siteprobe",
+    "contentgraph",
+    "lens",
+    "eval",
+    "searchbridge",
+    "howl",
+    "runledger"
+  ],
+  "skills": [
+    "kujo-siteprobe-workflows",
+    "webops-schema-and-metadata",
+    "webops-internal-linking",
+    "kujo-lens-workflows",
+    "kujo-eval-workflows",
+    "webops-search-submission",
+    "webops-distribution",
+    "webops-reporting"
+  ],
+  "credentials": [
+    "Optional submission and distribution credentials for explicit ACT mode."
+  ],
+  "approval_boundaries": [
+    "Search submission and distribution publishing require explicit ACT; fixture mode creates receipts/assets only."
+  ],
+  "state_and_recovery": "state.json records every step; rerun with --resume continues after completed steps.",
+  "outputs": [
+    "state.json",
+    "capabilities.json",
+    "steps/*.json",
+    "findings.json",
+    "report.md",
+    "run-receipt.json"
+  ],
+  "readiness": "production-capable-with-limitations"
+}

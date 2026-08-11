@@ -1,0 +1,41 @@
+{
+  "schema": "webops.workflow/v1",
+  "id": "webops-ai-visibility-benchmark",
+  "version": "0.1.0",
+  "purpose": "Run a fixed longitudinal query suite across explicitly available AI/search surfaces without fabricated availability.",
+  "default_permission": "OBSERVE",
+  "fixture_mode": true,
+  "live_mode": true,
+  "agents": [
+    "Capability Preflight",
+    "AI Search Visibility Analyst",
+    "WebOps Reporter"
+  ],
+  "tools": [
+    "searchbridge",
+    "runledger",
+    "casefile"
+  ],
+  "skills": [
+    "webops-capability-preflight",
+    "webops-ai-search-visibility",
+    "webops-longitudinal-findings",
+    "webops-reporting"
+  ],
+  "credentials": [
+    "Surface/provider credentials are optional and explicit; fixture surfaces require none."
+  ],
+  "approval_boundaries": [
+    "Live provider cost and terms; unavailable surfaces are skipped."
+  ],
+  "state_and_recovery": "state.json records every step; rerun with --resume continues after completed steps.",
+  "outputs": [
+    "state.json",
+    "capabilities.json",
+    "steps/*.json",
+    "findings.json",
+    "report.md",
+    "run-receipt.json"
+  ],
+  "readiness": "experimental"
+}

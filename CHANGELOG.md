@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.2.0] - 2026-08-11
+
+- Add ten fixture-first, resumable WebOps workflow kits.
+- Add generalized WebOps site-profile, finding, history, permission, capability, and run-evidence contracts.
+- Add cross-repository validation for 28 agents, 83 skills, three website-intelligence tools, workflows, and public-site source content.
+
 All notable changes to Kujo Workflows are documented here.
 
 The format follows Keep a Changelog and Semantic Versioning.

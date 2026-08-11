@@ -1,6 +1,6 @@
 {
   "name": "@kujolang/kujo-workflows",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "description": "Repository-backed local workflow kits for Kujo ecosystem tools.",
   "license": "MIT",

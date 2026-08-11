@@ -1,0 +1,51 @@
+{
+  "schema": "webops.workflow/v1",
+  "id": "webops-site-bootstrap",
+  "version": "0.1.0",
+  "purpose": "Establish a credential-free initial website, repository, content-graph, browser, and reporting baseline.",
+  "default_permission": "OBSERVE",
+  "fixture_mode": true,
+  "live_mode": true,
+  "agents": [
+    "Site Profile",
+    "Capability Preflight",
+    "SiteProbe",
+    "Scout",
+    "ContentGraph",
+    "RAG",
+    "Site QA Operator",
+    "WebOps Reporter"
+  ],
+  "tools": [
+    "siteprobe",
+    "scout",
+    "contentgraph",
+    "rag",
+    "lens",
+    "runledger"
+  ],
+  "skills": [
+    "webops-site-profile",
+    "webops-capability-preflight",
+    "kujo-siteprobe-workflows",
+    "kujo-scout-workflows",
+    "kujo-contentgraph-workflows",
+    "kujo-rag-workflows",
+    "kujo-lens-workflows",
+    "webops-reporting"
+  ],
+  "credentials": [],
+  "approval_boundaries": [
+    "Repository access is read-only; authenticated browser state is optional and external."
+  ],
+  "state_and_recovery": "state.json records every step; rerun with --resume continues after completed steps.",
+  "outputs": [
+    "state.json",
+    "capabilities.json",
+    "steps/*.json",
+    "findings.json",
+    "report.md",
+    "run-receipt.json"
+  ],
+  "readiness": "production-capable-with-limitations"
+}

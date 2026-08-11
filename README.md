@@ -1,13 +1,13 @@
 # Kujo Workflows
 
-[![Version](https://img.shields.io/badge/version-0.1.0-black)](https://github.com/kujolang/kujo-workflows)
+[![Version](https://img.shields.io/badge/version-0.2.0-black)](https://github.com/kujolang/kujo-workflows)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
 [![built with Kujo](https://img.shields.io/badge/built%20with-Kujo-white.svg)](https://github.com/kujolang/kujo)
 [![CI](https://github.com/kujolang/kujo-workflows/actions/workflows/validate.yml/badge.svg)](https://github.com/kujolang/kujo-workflows/actions/workflows/validate.yml)
 
 Repository-backed, local-first workflow kits for the [Kujo programming language](https://kujolang.ai) and its agency and AI tooling ecosystem. Each kit demonstrates one concrete outcome and leaves behind inspectable evidence instead of relying on an opaque hosted runner.
 
-Current release scope: **locally verified support/distribution technical preview** (`0.1.0`). Hosted runners, live-provider coverage, clean-machine installation on a separate host, and production or enterprise readiness are not claimed.
+Current release scope: **locally verified support/distribution technical preview** (`0.2.0`). Hosted runners, live-provider coverage, clean-machine installation on a separate host, and production or enterprise readiness are not claimed.
 
 ## Why Use These Workflows?
 
@@ -76,6 +76,16 @@ All commands below run from the repository root.
 | [`casefile-incident-evidence-packet/`](casefile-incident-evidence-packet/) | Limited | Developers, support teams | CaseFile captures a failing command as a reproducible evidence bundle. | `(cd casefile-incident-evidence-packet && bash scripts/run-workflow.sh)` |
 | [`howl-content-factory/`](howl-content-factory/) | Limited | Developers, agency owners | Howl turns real Kujo examples into Markdown, HTML, SVG, galleries, and captions. | `(cd howl-content-factory && bash scripts/run-workflow.sh)` |
 | [`loop-engineering/`](loop-engineering/) | Ready | Agent builders | A bounded Goal → Context → Agent → Evaluation → Stop loop runs portably and stops safely. | `(cd loop-engineering && bash scripts/run-workflow.sh --demo)` |
+| [`webops-site-bootstrap/`](webops-site-bootstrap/) | Limited | Website operators | A site profile becomes validated crawl, graph, browser-capability, and reporting baseline evidence. | `(cd webops-site-bootstrap && bash scripts/run.sh --fixture)` |
+| [`webops-weekly-site-health/`](webops-weekly-site-health/) | Limited | Website operators | Weekly crawl, link, performance, accessibility, schema, metadata, and reporting stages run with honest degradation. | `(cd webops-weekly-site-health && bash scripts/run.sh --fixture)` |
+| [`webops-weekly-search-intelligence/`](webops-weekly-search-intelligence/) | Limited | Search teams | Search, keyword, and decay modules consume normalized fixture/provider capabilities independently. | `(cd webops-weekly-search-intelligence && bash scripts/run.sh --fixture)` |
+| [`webops-weekly-content-intelligence/`](webops-weekly-content-intelligence/) | Limited | Content teams | Trend, opportunity, content graph, gap, accuracy, and linking stages produce proposals. | `(cd webops-weekly-content-intelligence && bash scripts/run.sh --fixture)` |
+| [`webops-post-publish/`](webops-post-publish/) | Limited | Publishers | New content moves through targeted QA, graph, optional submission, distribution assets, and receipts. | `(cd webops-post-publish && bash scripts/run.sh --fixture)` |
+| [`webops-content-refresh/`](webops-content-refresh/) | Limited | Content maintainers | Decay evidence becomes a Spec, approval boundary, verification plan, and future measurement cue. | `(cd webops-content-refresh && bash scripts/run.sh --fixture)` |
+| [`webops-monthly-seo-review/`](webops-monthly-seo-review/) | Limited | SEO leads | Monthly specialist evidence is synthesized without reimplementing specialist analysis. | `(cd webops-monthly-seo-review && bash scripts/run.sh --fixture)` |
+| [`webops-quarterly-content-portfolio/`](webops-quarterly-content-portfolio/) | Limited | Content strategists | Graph, measurement, portfolio, pruning, and IA evidence produce reviewed states. | `(cd webops-quarterly-content-portfolio && bash scripts/run.sh --fixture)` |
+| [`webops-ai-visibility-benchmark/`](webops-ai-visibility-benchmark/) | Experimental | AI-search analysts | A fixed query-suite contract tracks only explicitly available surfaces. | `(cd webops-ai-visibility-benchmark && bash scripts/run.sh --fixture)` |
+| [`webops-finding-to-fix/`](webops-finding-to-fix/) | Limited | Maintainers | A stable finding moves through Spec, approval, implementation boundary, Eval, Lens, SiteProbe, and receipt stages. | `(cd webops-finding-to-fix && bash scripts/run.sh --fixture)` |
 | [`docsgen-repo-contract-runner/`](docsgen-repo-contract-runner/) | Limited | Developers, agent operators | DocsGen scans a chosen repo and writes an auditable documentation contract packet. | `(cd docsgen-repo-contract-runner && TARGET_REPO=/path/to/repo bash scripts/run-workflow.sh)` |
 | [`tribunal-decision-gate/`](tribunal-decision-gate/) | Limited | Governance, release, security teams | Tribunal mock review becomes a verified advisory decision receipt. | `bash tribunal-decision-gate/scripts/run.sh` |
 | [`relay-lifecycle-handoff/`](relay-lifecycle-handoff/) | Limited | Workflow operators | Relay pause/resume and integrity-checked export become correlated handoff receipts. | `bash relay-lifecycle-handoff/scripts/run.sh` |
@@ -122,18 +132,18 @@ See the current [launch checklist](docs/launch-checklist.md) and [release-readin
 - [`examples/`](examples/) identifies low-risk starting points.
 - [`scripts/`](scripts/) contains repository validators.
 - [`tests/`](tests/) contains portable release and integration checks.
-- [`kujo-workflows.spec.yml`](kujo-workflows.spec.yml) is the canonical `0.1.0` acceptance contract.
+- [`kujo-workflows.spec.yml`](kujo-workflows.spec.yml) is the canonical `0.2.0` acceptance contract.
 
 ## Documentation
 
 - [`contracts/README.md`](contracts/README.md) — versioned evidence contracts and compatibility rules.
 - [`docs/audit/README.md`](docs/audit/README.md) — catalog, compatibility, and weekly drift evidence.
 - [`docs/launch-checklist.md`](docs/launch-checklist.md) — verified launch gates and remaining external proof.
-- [`docs/specs/showcase-release-readiness.md`](docs/specs/showcase-release-readiness.md) — rendered `0.1.0` acceptance contract.
+- [`docs/specs/showcase-release-readiness.md`](docs/specs/showcase-release-readiness.md) — rendered `0.2.0` acceptance contract.
 
 ## Release and Support Status
 
-This repository is the MIT-licensed `0.1.0` technical preview of the Kujo workflow-kit distribution. The release covers the checked-in local workflows, documentation, versioned evidence contracts, and repository-owned validation gates. It does not publish a package, container image, hosted runner, or workflow service.
+This repository is the MIT-licensed `0.2.0` technical preview of the Kujo workflow-kit distribution. The release covers the checked-in local workflows, WebOps contracts, documentation, versioned evidence contracts, and repository-owned validation gates. It does not publish a package, container image, hosted runner, or workflow service.
 
 For contribution, support, conduct, and vulnerability-reporting guidance, see [CONTRIBUTING.md](CONTRIBUTING.md), [SUPPORT.md](SUPPORT.md), [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), and [SECURITY.md](SECURITY.md).
 
