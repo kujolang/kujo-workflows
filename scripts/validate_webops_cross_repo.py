@@ -8,12 +8,25 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]; REPOS=ROOT.parent
 AGENTS=REPOS/"kujo-agents/webops/webops-catalog.json"; SKILLS=REPOS/"kujo-skills/skills"
 TOOL_MAP={"SiteProbe":"siteprobe","SearchBridge":"searchbridge","ContentGraph":"contentgraph","RAG":"rag","RunLedger":"runledger","CaseFile":"casefile","Lens":"lens","Eval":"eval","Dispatch":"dispatch","Howl":"howl","CMS":"cms","SSG":"ssg"}
+TOOLCHAIN_REPOS=("kujo-agents","kujo-skills","kujo-workflows","agents.kujolang.ai")
 
 def frontmatter_name(path:Path):
     match=re.search(r"^name:\s*([^\n]+)$",path.read_text(),re.M); return match.group(1).strip().strip('"\'') if match else ""
 
 def main():
     errors=[]; catalog=json.loads(AGENTS.read_text()); agent_slugs={x["slug"] for x in catalog["agents"]}
+    contracts=[]
+    for repo in TOOLCHAIN_REPOS:
+        path=REPOS/repo/"docs/webops-toolchain-contract.json"
+        if not path.is_file(): errors.append(f"{repo}: missing WebOps toolchain contract"); continue
+        contracts.append((repo,json.loads(path.read_text())))
+    if contracts:
+        baseline=contracts[0][1]
+        for repo,contract in contracts[1:]:
+            if contract!=baseline: errors.append(f"{repo}: WebOps toolchain contract drift")
+        for tool,repo in (("SiteProbe","siteprobe"),("SearchBridge","searchbridge"),("ContentGraph","contentgraph")):
+            actual=(REPOS/repo/"VERSION").read_text().strip()
+            if baseline.get("tools",{}).get(tool,{}).get("version")!=actual: errors.append(f"{tool}: contract/version mismatch")
     skill_names={frontmatter_name(x) for x in SKILLS.glob("*/SKILL.md")}
     manifests={p.parent.name:json.loads(p.read_text()) for p in ROOT.glob("webops-*/workflow.json")}
     for agent in catalog["agents"]:

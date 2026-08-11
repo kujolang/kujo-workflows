@@ -5,6 +5,8 @@
 - Add ten fixture-first, resumable WebOps workflow kits.
 - Add generalized WebOps site-profile, finding, history, permission, capability, and run-evidence contracts.
 - Add cross-repository validation for 28 agents, 83 skills, three website-intelligence tools, workflows, and public-site source content.
+- Add synchronized WebOps tool schema/version contracts and first-release
+  qualification evidence against the immutable zero-finding public-site baseline.
 
 All notable changes to Kujo Workflows are documented here.
 

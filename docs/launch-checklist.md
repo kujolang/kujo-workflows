@@ -2,6 +2,10 @@
 
 Current launch scope: `locally verified support/distribution technical preview` (`0.2.0`). Repository-owned validation and WebOps fixture workflows pass on the development host. Hosted runner behavior, live external-provider workflows, and clean-machine installation on a separate host are not complete.
 
+The synchronized three-tool contract is `docs/webops-toolchain-contract.json`.
+Its release evidence is
+`docs/evidence/WEBOPS_TOOLCHAIN_RELEASE_QUALIFICATION_2026-08-11.md`.
+
 ## Self-Contained Gates
 
 These commands run from the repository root without sibling tool checkouts, except for the optional Spec CLI command:
