@@ -303,7 +303,7 @@ class Handler(BaseHTTPRequestHandler):
             self.send_error(HTTPStatus.NOT_FOUND); return
         if not candidate.is_file():
             self.send_error(HTTPStatus.NOT_FOUND); return
-        types = {".html": "text/html", ".css": "text/css", ".js": "text/javascript", ".woff2": "font/woff2", ".json": "application/json"}
+        types = {".html": "text/html", ".css": "text/css", ".js": "text/javascript", ".svg": "image/svg+xml", ".woff2": "font/woff2", ".json": "application/json"}
         data = candidate.read_bytes()
         self.send_response(HTTPStatus.OK)
         self.send_header("Content-Type", types.get(candidate.suffix, "application/octet-stream") + "; charset=utf-8")

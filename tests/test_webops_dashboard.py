@@ -64,6 +64,27 @@ class WebOpsDashboardTests(unittest.TestCase):
         self.assertIn(".map(path=>api(path))", source)
         self.assertNotIn(".map(api)", source)
 
+    def test_dashboard_mobile_navigation_uses_kujo_branding(self):
+        public = ROOT / "webops-dashboard" / "public"
+        html = (public / "index.html").read_text()
+        css = (public / "assets" / "dashboard.css").read_text()
+        script = (public / "assets" / "dashboard.js").read_text()
+        logo = (public / "assets" / "kujo-logomark.svg").read_text()
+        server = (ROOT / "webops-dashboard" / "dashboard.py").read_text()
+
+        self.assertIn('/assets/kujo-logomark.svg', html)
+        self.assertNotIn('>W/<', html)
+        self.assertIn('data-mobile-menu-toggle', html)
+        self.assertIn('id="mobile-navigation"', html)
+        self.assertIn('d="M4 6h16"', html)
+        self.assertIn('.mobile-navigation-shell', css)
+        self.assertIn('.desktop-navigation,.desktop-theme-button{display:none}', css)
+        self.assertIn('enhanceMobileNavigation', script)
+        self.assertIn('event.key==="Escape"', script)
+        self.assertIn('<svg', logo)
+        self.assertIn('viewBox="0 0 1527 1536"', logo)
+        self.assertIn('".svg": "image/svg+xml"', server)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
