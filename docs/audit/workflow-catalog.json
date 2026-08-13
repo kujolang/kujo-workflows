@@ -1,6 +1,6 @@
 {
   "schema": "kujo.workflow-catalog/v1",
-  "audit_id": "kujo-workflows-webops-2026-08-11",
+  "audit_id": "kujo-workflows-codebase-cleanup-2026-08-12",
   "source_repositories": {
     "workflows": "../kujo-workflows",
     "skills": "../kujo-skills",
@@ -1584,6 +1584,100 @@
       "documentation": [
         "webops-weekly-site-health/README.md",
         "webops-weekly-site-health/workflow.json"
+      ],
+      "production_readiness": "production-capable-with-limitations"
+    },
+    {
+      "id": "codebase-cleanup",
+      "path": "codebase-cleanup",
+      "status": "production-capable-with-limitations",
+      "purpose": "Reduce unnecessary repository code and complexity through evidence-classified analysis, reviewer-approved mechanical cleanup, verification rollback, and structured reporting.",
+      "entry": "codebase-cleanup/scripts/run-workflow.sh",
+      "skills": [
+        {
+          "name": "kujo-scout-workflows",
+          "path": "skills/kujo-scout-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-fence-workflows",
+          "path": "skills/kujo-fence-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-concord-workflows",
+          "path": "skills/kujo-concord-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-kennel-workflows",
+          "path": "skills/kujo-kennel-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-changebucket-workflows",
+          "path": "skills/kujo-changebucket-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-patchbrief-workflows",
+          "path": "skills/kujo-patchbrief-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-casefile-workflows",
+          "path": "skills/kujo-casefile-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-runledger-workflows",
+          "path": "skills/kujo-runledger-workflows/SKILL.md",
+          "compatibility": "compatible"
+        },
+        {
+          "name": "kujo-shipcheck-workflows",
+          "path": "skills/kujo-shipcheck-workflows/SKILL.md",
+          "compatibility": "compatible"
+        }
+      ],
+      "tools": [
+        "scout",
+        "fence",
+        "concord",
+        "kennel",
+        "changebucket",
+        "patchbrief",
+        "casefile",
+        "runledger",
+        "shipcheck"
+      ],
+      "inputs": [
+        "target Git repository",
+        "optional scope and cleanup category controls",
+        "repository-owned verification commands",
+        "optional reviewer-approved cleanup plan"
+      ],
+      "outputs": [
+        ".cleanup-runs/<timestamp>/REPORT.md",
+        ".cleanup-runs/<timestamp>/report.json",
+        ".cleanup-runs/<timestamp>/cleanup-plan.json",
+        "optional companion-tool evidence logs"
+      ],
+      "approval_boundaries": [
+        "analysis is read-only; mutation requires explicit stable finding IDs from a matching repository fingerprint",
+        "only PROVEN supported operations auto-apply; public API, compatibility, dependency, architecture, and uncertain candidates require human judgment",
+        "new verification failures roll back the complete cleanup batch"
+      ],
+      "state_and_recovery": "timestamped analysis/apply packets; exact-content guards reject stale candidates; verification regressions restore all files changed by the batch",
+      "evidence": "classified findings, preserved complexity, stable IDs, before/after metrics, command exit/output hashes, integration dispositions, and Markdown/JSON reports",
+      "tests": [
+        "python3 -m unittest discover -s tests -p 'test_codebase_cleanup.py'",
+        "analysis-only dogfood against kujo-workflows",
+        "tests/release-readiness.sh"
+      ],
+      "documentation": [
+        "codebase-cleanup/README.md",
+        "codebase-cleanup/HOWTO.md"
       ],
       "production_readiness": "production-capable-with-limitations"
     },
