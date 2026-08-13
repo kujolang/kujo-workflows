@@ -11,6 +11,9 @@ __pycache__/
 # Loop Engineering
 /.loop-engineering/
 
+# Codebase Cleanup
+/.cleanup-runs/
+
 # RunLedger
 /.runledger/
 /RUNLEDGER_REPORT.md
