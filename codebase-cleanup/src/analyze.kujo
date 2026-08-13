@@ -1,0 +1,322 @@
+from src.common import array_has, collect_files, confidence_rank, finding, file_segment, is_test_path, join_strings, parent_dir, read_text, regex_literal, relative_path, source_extension, text_extension
+
+func corpus_for(files) {
+    mut corpus := ""
+    mut i := 0
+    while i < len(files) {
+        if text_extension(files[i]) {
+            content := read_text(files[i])
+            if len(content) <= 2000000 { corpus = corpus + "\n" + content }
+        }
+        i = i + 1
+    }
+    return corpus
+}
+
+func function_records(path, relative, content) {
+    lines := split(replace(content, "\r\n", "\n"), "\n")
+    mut records := []
+    mut i := 0
+    while i < len(lines) {
+        line := lines[i]
+        matches := regex_find_all(line, "^def\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*\\(")
+        if len(matches) == 0 { matches = regex_find_all(line, "^async\\s+def\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*\\(") }
+        if len(matches) > 0 {
+            name := regex_replace(matches[0], "^(?:async\\s+)?def\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*\\($", "$1")
+            mut end_index := i + 1
+            while end_index < len(lines) {
+                candidate := lines[end_index]
+                if trim(candidate) != "" && regex_match(candidate, "^[^ \\t#@]") { break }
+                end_index = end_index + 1
+            }
+            end_line := end_index
+            segment := file_segment(lines, i + 1, end_line)
+            mut body_lines := []
+            mut j := i + 1
+            while j < end_index {
+                cleaned := trim(lines[j])
+                if cleaned != "" && starts_with(cleaned, "# cleanup: intentional-duplication") == false {
+                    body_lines = push(body_lines, cleaned)
+                }
+                j = j + 1
+            }
+            decorated := i > 0 && starts_with(trim(lines[i - 1]), "@")
+            records = push(records, {
+                "name": name, "start_line": i + 1, "end_line": end_line,
+                "segment": segment, "segment_sha256": sha256(segment),
+                "body": join_strings(body_lines, "\n"),
+                "intentional": contains(segment, "# cleanup: intentional-duplication") == 1,
+                "decorated": decorated, "path": relative
+            })
+            i = end_index
+            continue
+        }
+        i = i + 1
+    }
+    return records
+}
+
+func analyze_python(root, files, corpus) {
+    mut findings := []
+    mut fi := 0
+    while fi < len(files) {
+        path := files[fi]
+        if to_lower(path_extension(path)) != "py" { fi = fi + 1; continue }
+        relative := relative_path(path, root)
+        content := read_text(path)
+        records := function_records(path, relative, content)
+        mut ri := 0
+        while ri < len(records) {
+            record := records[ri]
+            name := record["name"]
+            mentions := len(regex_find_all(corpus, "\\b" + name + "\\b"))
+            private := starts_with(name, "_") && starts_with(name, "__") == false
+            exported := contains(content, "__all__") == 1 && contains(content, "'" + name + "'") == 1
+            dynamic := record["decorated"] || exported || contains(content, "\"" + name + "\"") == 1
+            if mentions == 1 && record["intentional"] == false {
+                if private && dynamic == false && is_test_path(relative) == false {
+                    operation := {
+                        "type": "remove-lines", "start_line": record["start_line"],
+                        "end_line": record["end_line"], "content_sha256": record["segment_sha256"]
+                    }
+                    findings = push(findings, finding(
+                        "dead-code", "PROVEN", relative, name,
+                        "Private top-level function " + name + " has no repository, export, decorator, or dynamic reference.",
+                        ["definition:" + relative + ":" + to_string(record["start_line"]), "repository_mentions:1", "dynamic_surfaces:none"],
+                        "low; deletion still requires an approved plan and verification", "remove", operation
+                    ))
+                } else {
+                    findings = push(findings, finding(
+                        "dead-code", "UNKNOWN", relative, name,
+                        "No direct caller was found for " + name + ", but deletion is not proven.",
+                        ["definition:" + relative + ":" + to_string(record["start_line"]), "guard:public, dynamic, export, decorator, or test surface"],
+                        "high; repository text analysis may miss framework, plugin, CLI, FFI, macro, or serialization entry points",
+                        "preserve pending maintainer evidence", {}
+                    ))
+                }
+            }
+            body_lines := split(record["body"], "\n")
+            if len(body_lines) == 1 && regex_match(body_lines[0], "^(return\\s+)?[A-Za-z_][A-Za-z0-9_.]*\\(") {
+                findings = push(findings, finding(
+                    "unnecessary-abstraction", "LIKELY", relative, name,
+                    name + " is a one-statement forwarding wrapper.",
+                    ["definition:" + relative + ":" + to_string(record["start_line"]), "body_shape:single forwarding call"],
+                    "medium; wrapper may preserve API, policy, naming, mocking, or isolation", "review boundary before inlining", {}
+                ))
+            }
+            if record["intentional"] {
+                findings = push(findings, finding(
+                    "duplication", "INTENTIONAL", relative, name,
+                    "Duplication is explicitly marked intentional.",
+                    ["definition:" + relative + ":" + to_string(record["start_line"]), "marker:cleanup: intentional-duplication"],
+                    "none while rationale remains valid", "preserve", {}
+                ))
+            }
+            ri = ri + 1
+        }
+        mut a := 0
+        while a < len(records) {
+            mut b := a + 1
+            while b < len(records) {
+                left := records[a]
+                right := records[b]
+                if left["body"] != "" && left["body"] == right["body"] && left["intentional"] == false && right["intentional"] == false {
+                    names := left["name"] + "," + right["name"]
+                    both_private := starts_with(left["name"], "_") && starts_with(left["name"], "__") == false && starts_with(right["name"], "_") && starts_with(right["name"], "__") == false
+                    confidence := "LIKELY"
+                    action := "consolidate after intent review"
+                    operation := {}
+                    if both_private {
+                        confidence = "PROVEN"
+                        action = "redirect local references to " + left["name"] + " and remove " + right["name"]
+                        operation = {
+                            "type": "consolidate-python-functions", "keeper": left["name"], "duplicate": right["name"],
+                            "start_line": right["start_line"], "end_line": right["end_line"], "content_sha256": right["segment_sha256"]
+                        }
+                    }
+                    findings = push(findings, finding(
+                        "duplication", confidence, relative, names,
+                        "Top-level functions " + left["name"] + " and " + right["name"] + " have identical normalized implementations.",
+                        ["definitions:" + relative + ":" + to_string(left["start_line"]) + "," + relative + ":" + to_string(right["start_line"]), "normalized_bodies:identical"],
+                        "low when private and exact; otherwise intent may differ", action, operation
+                    ))
+                }
+                b = b + 1
+            }
+            a = a + 1
+        }
+        fi = fi + 1
+    }
+    return findings
+}
+
+func analyze_dependencies(root, files, corpus) {
+    mut findings := []
+    package_path := path_join(root, "package.json")
+    if path_is_file(package_path) == false { return findings }
+    mut doc := {}
+    try { doc = parse_json(read_text(package_path)) } except e { return findings }
+    sections := ["dependencies", "devDependencies", "optionalDependencies"]
+    mut si := 0
+    while si < len(sections) {
+        section := sections[si]
+        if has_key(doc, section) && type(doc[section]) == "dict" {
+            names := sort(keys(doc[section]))
+            mut ni := 0
+            while ni < len(names) {
+                name := names[ni]
+                corpus_without_manifest := replace(corpus, read_text(package_path), "")
+                if len(regex_find_all(corpus_without_manifest, "\\b" + regex_literal(name) + "\\b")) == 0 {
+                    findings = push(findings, finding(
+                        "dependencies", "LIKELY", "package.json", name,
+                        "Direct " + section + " entry " + name + " has no repository text reference.",
+                        ["manifest:package.json#" + section + "." + name, "repository_text_references:0"],
+                        "medium; dependency may be a binary, loader, peer, plugin, or packaging hook",
+                        "confirm build and package-manager semantics, then remove", {}
+                    ))
+                }
+                ni = ni + 1
+            }
+        }
+        si = si + 1
+    }
+    return findings
+}
+
+func analyze_heuristics(root, files, corpus) {
+    mut findings := []
+    mut fi := 0
+    while fi < len(files) {
+        path := files[fi]
+        relative := relative_path(path, root)
+        content := read_text(path)
+        lines := split(replace(content, "\r\n", "\n"), "\n")
+        if source_extension(path) {
+            mut li := 0
+            while li < len(lines) {
+                line := lines[li]
+                lower := to_lower(line)
+                trimmed := trim(line)
+                is_comment := starts_with(trimmed, "#") || starts_with(trimmed, "//") || starts_with(trimmed, "/*") || starts_with(trimmed, "*")
+                if is_comment && (contains(lower, "deprecated") == 1 || contains(lower, "compatibility shim") == 1 || contains(lower, "legacy fallback") == 1 || contains(lower, "temporary migration") == 1) {
+                    findings = push(findings, finding("legacy-compatibility", "UNKNOWN", relative, "line:" + to_string(li + 1), "Legacy or compatibility path requires support-policy evidence.", ["marker:" + relative + ":" + to_string(li + 1), trim(line)], "high; old-looking behavior may remain supported", "preserve until owners and support window confirm removal", {}))
+                }
+                if is_comment && (contains(lower, "plugin hook") == 1 || contains(lower, "extension hook") == 1 || contains(lower, "future use") == 1 || contains(lower, "just in case") == 1) {
+                    findings = push(findings, finding("over-engineering", "LIKELY", relative, "line:" + to_string(li + 1), "Potential speculative extension surface detected.", ["marker:" + relative + ":" + to_string(li + 1), trim(line)], "medium; extension may have external consumers", "verify consumers before simplifying", {}))
+                }
+                env_matches := regex_find_all(line, "(?:env_or|os\\.environ(?:\\.get)?)\\(?[\"']([A-Z][A-Z0-9_]*)")
+                mut ei := 0
+                while ei < len(env_matches) {
+                    name := regex_replace(env_matches[ei], "^[\\s\\S]*[\"']([A-Z][A-Z0-9_]*)$", "$1")
+                    if len(regex_find_all(corpus, "\\b" + name + "\\b")) == 1 {
+                        findings = push(findings, finding("configuration", "LIKELY", relative, name, "Environment option " + name + " is referenced at one repository location.", ["reference:" + relative + ":" + to_string(li + 1), "repository_reference_count:1"], "medium; deployment configuration may vary externally", "verify documented and deployed consumers", {}))
+                    }
+                    ei = ei + 1
+                }
+                li = li + 1
+            }
+        }
+        if is_test_path(relative) && contains(content, "TODO") == 1 && (contains(to_lower(content), "skip") == 1 || contains(to_lower(content), "xfail") == 1) {
+            findings = push(findings, finding("tests", "LIKELY", relative, "stale-skip", "Test file contains TODO plus skip/xfail markers.", ["file:" + relative], "medium; skipped coverage can represent a known contract", "review whether behavior was superseded", {}))
+        }
+        if to_lower(path_extension(path)) == "md" {
+            refs := regex_find_all(content, "`([^`\\n]+/[^`\\n]+)`")
+            mut ri := 0
+            while ri < len(refs) {
+                token := substring(refs[ri], 1, len(refs[ri]) - 1)
+                if contains(token, " ") == 0 && starts_with(token, "http") == false && contains(token, "*") == 0 && contains(token, "<") == 0 {
+                    clean := replace(token, ":", "")
+                    if path_exists(path_join(root, clean)) == false && path_exists(path_join(parent_dir(path), clean)) == false {
+                        findings = push(findings, finding("documentation", "LIKELY", relative, clean, "Documentation references path " + clean + ", which does not exist.", ["document:" + relative, "missing_path:" + clean], "low to medium; example paths may be illustrative", "correct, qualify, or remove stale reference", {}))
+                    }
+                }
+                ri = ri + 1
+            }
+        }
+        fi = fi + 1
+    }
+    if path_is_file(path_join(root, "fence.toml")) == false {
+        findings = push(findings, finding("architecture", "UNKNOWN", ".", "boundary-model", "No repository-owned Fence boundary model exists, so architecture cleanup is not inferred.", ["fence.toml:absent"], "high; guessed layering creates false positives", "preserve structure or add a reviewed Fence contract", {}))
+    }
+    return findings
+}
+
+export func metrics(root, files) {
+    mut source_files := 0
+    mut total_loc := 0
+    mut production_loc := 0
+    mut test_loc := 0
+    mut test_files := 0
+    mut modules := []
+    mut i := 0
+    while i < len(files) {
+        path := files[i]
+        if source_extension(path) {
+            content := read_text(path)
+            lines := split(content, "\n")
+            mut count := 0
+            mut li := 0
+            while li < len(lines) { if trim(lines[li]) != "" { count = count + 1 }; li = li + 1 }
+            source_files = source_files + 1
+            total_loc = total_loc + count
+            relative := relative_path(path, root)
+            if is_test_path(relative) { test_loc = test_loc + count; test_files = test_files + 1 }
+            else { production_loc = production_loc + count }
+            top := split(relative, "/")[0]
+            if array_has(modules, top) == false { modules = push(modules, top) }
+        }
+        i = i + 1
+    }
+    mut deps := 0
+    package_path := path_join(root, "package.json")
+    if path_is_file(package_path) {
+        try {
+            doc := parse_json(read_text(package_path))
+            sections := ["dependencies", "devDependencies", "optionalDependencies"]
+            mut si := 0
+            while si < len(sections) { if has_key(doc, sections[si]) && type(doc[sections[si]]) == "dict" { deps = deps + len(keys(doc[sections[si]])) }; si = si + 1 }
+        } except e { deps = 0 }
+    }
+    return {"source_files": source_files, "total_relevant_loc": total_loc, "production_loc": production_loc, "test_loc": test_loc, "direct_dependency_count": deps, "module_or_package_count": len(modules), "test_file_count": test_files}
+}
+
+export func repository_fingerprint(root, files) {
+    mut material := ""
+    mut i := 0
+    while i < len(files) {
+        relative := relative_path(files[i], root)
+        material = material + relative + "::" + sha256_file(files[i]) + "\n"
+        i = i + 1
+    }
+    return sha256(material)
+}
+
+func append_all(target, additions) {
+    mut result := target
+    mut i := 0
+    while i < len(additions) { result = push(result, additions[i]); i = i + 1 }
+    return result
+}
+
+export func analyze(root, scope, categories, minimum_confidence, changed_files) {
+    all_files := collect_files(root, scope)
+    mut files := []
+    mut i := 0
+    while i < len(all_files) {
+        relative := relative_path(all_files[i], root)
+        if len(changed_files) == 0 || array_has(changed_files, relative) { files = push(files, all_files[i]) }
+        i = i + 1
+    }
+    corpus := corpus_for(files)
+    mut candidates := analyze_python(root, files, corpus)
+    candidates = append_all(candidates, analyze_dependencies(root, files, corpus))
+    candidates = append_all(candidates, analyze_heuristics(root, files, corpus))
+    mut filtered := []
+    i = 0
+    while i < len(candidates) {
+        candidate := candidates[i]
+        if array_has(categories, candidate["category"]) && confidence_rank(candidate["confidence"]) >= confidence_rank(minimum_confidence) { filtered = push(filtered, candidate) }
+        i = i + 1
+    }
+    return {"findings": filtered, "metrics": metrics(root, files), "files": files, "fingerprint": repository_fingerprint(root, files)}
+}

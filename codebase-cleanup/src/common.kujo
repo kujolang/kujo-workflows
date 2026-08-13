@@ -1,0 +1,214 @@
+export SCHEMA := "kujo.codebase-cleanup/v1"
+
+export CATEGORIES := [
+    "dead-code", "duplication", "unnecessary-abstraction", "over-engineering",
+    "legacy-compatibility", "dependencies", "configuration", "tests",
+    "documentation", "architecture"
+]
+
+export func array_has(items, expected) {
+    mut i := 0
+    while i < len(items) {
+        if items[i] == expected { return true }
+        i = i + 1
+    }
+    return false
+}
+
+export func dict_get(value, key, fallback) {
+    if has_key(value, key) { return value[key] }
+    return fallback
+}
+
+export func join_strings(items, separator) {
+    if len(items) == 0 { return "" }
+    mut result := to_string(items[0])
+    mut i := 1
+    while i < len(items) {
+        result = result + separator + to_string(items[i])
+        i = i + 1
+    }
+    return result
+}
+
+export func shell_quote(value) {
+    return "'" + replace(to_string(value), "'", "'\"'\"'") + "'"
+}
+
+export func flag_value(argv, name, fallback) {
+    mut i := 0
+    while i < len(argv) {
+        token := to_string(argv[i])
+        if token == name {
+            if i + 1 < len(argv) { return to_string(argv[i + 1]) }
+            return fallback
+        }
+        prefix := name + "="
+        if starts_with(token, prefix) { return substring(token, len(prefix), len(token)) }
+        i = i + 1
+    }
+    return fallback
+}
+
+export func flag_values(argv, name) {
+    mut values := []
+    mut i := 0
+    while i < len(argv) {
+        token := to_string(argv[i])
+        if token == name && i + 1 < len(argv) {
+            values = push(values, to_string(argv[i + 1]))
+            i = i + 2
+            continue
+        }
+        prefix := name + "="
+        if starts_with(token, prefix) { values = push(values, substring(token, len(prefix), len(token))) }
+        i = i + 1
+    }
+    return values
+}
+
+export func has_flag(argv, name) {
+    mut i := 0
+    while i < len(argv) {
+        if argv[i] == name || starts_with(to_string(argv[i]), name + "=") { return true }
+        i = i + 1
+    }
+    return false
+}
+
+export func confidence_rank(value) {
+    if value == "PROVEN" { return 3 }
+    if value == "LIKELY" { return 2 }
+    if value == "INTENTIONAL" { return 1 }
+    return 0
+}
+
+export func stable_id(category, path, symbol, evidence) {
+    digest := sha256(category + "::" + path + "::" + symbol + "::" + join_strings(evidence, "|"))
+    return "CC-" + upper(replace(category, "-", "_")) + "-" + substring(digest, 0, 12)
+}
+
+export func finding(category, confidence, path, symbol, summary, evidence, risk, action, operation) {
+    value := {
+        "id": stable_id(category, path, symbol, evidence),
+        "category": category,
+        "confidence": confidence,
+        "path": path,
+        "symbol": symbol,
+        "summary": summary,
+        "evidence": evidence,
+        "risk": risk,
+        "recommended_action": action,
+        "affected_behavior": "none identified",
+        "public_api_impact": "none identified",
+        "related_tests": [],
+        "documentation_impact": "none identified"
+    }
+    if type(operation) == "dict" && len(keys(operation)) > 0 { value["operation"] = operation }
+    return value
+}
+
+export func parent_dir(path) {
+    normalized := replace(path, "\\", "/")
+    mut at := -1
+    mut i := 0
+    while i < len(normalized) {
+        if substring(normalized, i, i + 1) == "/" { at = i }
+        i = i + 1
+    }
+    if at < 0 { return "." }
+    if at == 0 { return "/" }
+    return substring(normalized, 0, at)
+}
+
+export func regex_literal(value) {
+    mut result := to_string(value)
+    tokens := ["\\", ".", "+", "*", "?", "(", ")", "[", "]", "{", "}", "^", "$", "|"]
+    mut i := 0
+    while i < len(tokens) {
+        result = replace(result, tokens[i], "\\" + tokens[i])
+        i = i + 1
+    }
+    return result
+}
+
+export func relative_path(path, root) {
+    normalized_path := replace(path_absolute(path), "\\", "/")
+    normalized_root := replace(path_absolute(root), "\\", "/")
+    prefix := normalized_root + "/"
+    if starts_with(normalized_path, prefix) { return substring(normalized_path, len(prefix), len(normalized_path)) }
+    if normalized_path == normalized_root { return "." }
+    return normalized_path
+}
+
+export func is_test_path(path) {
+    lower := to_lower("/" + replace(path, "\\", "/") + "/")
+    return contains(lower, "/tests/") == 1 || contains(lower, "/test/") == 1 || contains(lower, "/spec/") == 1 || contains(lower, "/fixtures/") == 1 || starts_with(to_lower(path), "test_")
+}
+
+export func source_extension(path) {
+    ext := to_lower(path_extension(path))
+    return array_has(["py", "js", "jsx", "ts", "tsx", "kujo", "rs", "go", "java", "rb", "php"], ext)
+}
+
+export func text_extension(path) {
+    ext := to_lower(path_extension(path))
+    return source_extension(path) || array_has(["md", "json", "toml", "yaml", "yml", "sh", "txt"], ext)
+}
+
+export func ignored_name(name) {
+    return array_has([
+        ".git", ".cleanup-runs", ".runs", ".work", ".workcell", ".suites",
+        "outputs", "results", "tmp", "node_modules", "vendor", "dist", "build",
+        "target", ".venv", "venv", "__pycache__", ".pytest_cache", ".mypy_cache", "coverage"
+    ], name)
+}
+
+export func collect_files(root, scope) {
+    mut found := []
+    mut stack := [scope]
+    while len(stack) > 0 {
+        popped := pop(stack)
+        stack = popped[0]
+        dir := popped[1]
+        mut entries := []
+        try { entries = sort(list_dir(dir)) } except e { entries = [] }
+        mut i := 0
+        while i < len(entries) {
+            name := entries[i]
+            full := replace(path_join(dir, name), "\\", "/")
+            if ignored_name(name) == false {
+                if path_is_dir(full) { stack = push(stack, full) }
+                else if path_is_file(full) { found = push(found, full) }
+            }
+            i = i + 1
+        }
+    }
+    return sort(found)
+}
+
+export func read_text(path) {
+    try { return read_file(path) } except e { return "" }
+}
+
+export func file_segment(lines, start_line, end_line) {
+    mut selected := []
+    mut i := start_line - 1
+    while i < end_line && i < len(lines) {
+        selected = push(selected, lines[i])
+        i = i + 1
+    }
+    return join_strings(selected, "\n")
+}
+
+export func run_command(command, cwd, timeout_ms) {
+    result := spawn_process(["sh", "-c", command], {"cwd": cwd, "timeout_ms": timeout_ms, "max_output_bytes": 2097152})
+    output := to_string(result.stdout) + to_string(result.stderr)
+    return {
+        "command": command,
+        "exit_code": result.exitcode,
+        "output_sha256": sha256(output),
+        "output_tail": substring(output, max(0, len(output) - 2000), len(output)),
+        "passed": result.exitcode == 0
+    }
+}

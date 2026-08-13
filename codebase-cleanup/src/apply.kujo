@@ -1,0 +1,58 @@
+from src.common import array_has, file_segment, join_strings, read_text
+
+func remove_lines(content, start_line, end_line, expected_hash) {
+    lines := split(replace(content, "\r\n", "\n"), "\n")
+    selected := file_segment(lines, start_line, end_line)
+    if sha256(selected) != expected_hash { return {"ok": false, "error": "candidate content changed after analysis", "content": content} }
+    mut kept := []
+    mut i := 0
+    while i < len(lines) {
+        line_number := i + 1
+        if line_number < start_line || line_number > end_line { kept = push(kept, lines[i]) }
+        i = i + 1
+    }
+    return {"ok": true, "error": "", "content": join_strings(kept, "\n")}
+}
+
+func rename_identifier(content, old_name, new_name) {
+    # Guarded identifier-boundary replacement; comments/strings containing the
+    # private duplicate name are preserved by refusing such candidates in review.
+    return regex_replace(content, "\\b" + old_name + "\\b", new_name)
+}
+
+export func apply_approved(root, findings, approved_ids) {
+    mut originals := {}
+    mut applied := []
+    mut ai := 0
+    while ai < len(approved_ids) {
+        id := approved_ids[ai]
+        mut matched := {}
+        mut found := false
+        mut fi := 0
+        while fi < len(findings) {
+            if findings[fi]["id"] == id { matched = findings[fi]; found = true; break }
+            fi = fi + 1
+        }
+        if found == false { return {"ok": false, "error": "approved finding is absent from current analysis", "applied": applied, "originals": originals} }
+        if matched["confidence"] != "PROVEN" || has_key(matched, "operation") == 0 { return {"ok": false, "error": "refusing to apply non-PROVEN or unsupported finding " + id, "applied": applied, "originals": originals} }
+        path := path_join(root, matched["path"])
+        content := read_text(path)
+        if has_key(originals, path) == 0 { originals[path] := content }
+        operation := matched["operation"]
+        result := remove_lines(content, operation["start_line"], operation["end_line"], operation["content_sha256"])
+        if result["ok"] == false { return {"ok": false, "error": result["error"], "applied": applied, "originals": originals} }
+        updated := result["content"]
+        if operation["type"] == "consolidate-python-functions" { updated = rename_identifier(updated, operation["duplicate"], operation["keeper"]) }
+        else if operation["type"] != "remove-lines" { return {"ok": false, "error": "unsupported operation " + operation["type"], "applied": applied, "originals": originals} }
+        write_file(path, updated, true)
+        applied = push(applied, {"id": id, "path": matched["path"], "operation": operation["type"], "status": "applied"})
+        ai = ai + 1
+    }
+    return {"ok": true, "error": "", "applied": applied, "originals": originals}
+}
+
+export func restore_originals(originals) {
+    paths := keys(originals)
+    mut i := 0
+    while i < len(paths) { write_file(paths[i], originals[paths[i]], true); i = i + 1 }
+}

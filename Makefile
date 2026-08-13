@@ -13,6 +13,7 @@ format:
 
 test:
 	python3 -m unittest discover -s tests -p 'test_*.py'
+	bash tests/test_codebase_cleanup.sh
 
 release:
 	bash tests/release-readiness.sh

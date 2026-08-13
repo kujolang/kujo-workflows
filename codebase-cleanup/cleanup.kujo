@@ -1,0 +1,201 @@
+from src.common import CATEGORIES, SCHEMA, array_has, flag_value, flag_values, has_flag, join_strings, relative_path, run_command, shell_quote
+from src.analyze import analyze
+from src.apply import apply_approved, restore_originals
+from src.report import write_outputs
+
+func print_help() {
+    print("Codebase Cleanup — evidence-first repository reduction")
+    print("")
+    print("Usage:")
+    print("  kujo run cleanup.kujo -- [options]")
+    print("")
+    print("Options:")
+    print("  --repo PATH                 target repository (default: current directory)")
+    print("  --path PATH                 repository-relative scope")
+    print("  --changed                   analyze changed and untracked files only")
+    print("  --category NAME             repeatable cleanup category")
+    print("  --minimum-confidence LEVEL  UNKNOWN|INTENTIONAL|LIKELY|PROVEN")
+    print("  --verify-cmd COMMAND        repeatable repository-owned verification")
+    print("  --output PATH               evidence output directory")
+    print("  --apply-plan PATH           apply explicitly approved PROVEN IDs")
+    print("  --run-integrations          run applicable read-only Kujo companions")
+}
+
+func parse_categories(argv) {
+    values := flag_values(argv, "--category")
+    if len(values) == 0 { return CATEGORIES }
+    mut i := 0
+    while i < len(values) {
+        if array_has(CATEGORIES, values[i]) == false {
+            print("ERROR: unsupported cleanup category: " + values[i])
+            exit(2)
+        }
+        i = i + 1
+    }
+    return values
+}
+
+func changed_files(root) {
+    tracked := spawn_process(["git", "diff", "--name-only", "HEAD", "--"], {"cwd": root, "timeout_ms": 10000})
+    untracked := spawn_process(["git", "ls-files", "--others", "--exclude-standard"], {"cwd": root, "timeout_ms": 10000})
+    combined := split(trim(to_string(tracked.stdout) + "\n" + to_string(untracked.stdout)), "\n")
+    mut result := []
+    mut i := 0
+    while i < len(combined) { if trim(combined[i]) != "" && array_has(result, trim(combined[i])) == false { result = push(result, trim(combined[i])) }; i = i + 1 }
+    if len(result) == 0 { return ["__NO_CHANGED_FILES__"] }
+    return result
+}
+
+func run_verification(commands, root) {
+    mut results := []
+    mut i := 0
+    while i < len(commands) {
+        results = push(results, run_command(commands[i], root, 600000))
+        i = i + 1
+    }
+    return results
+}
+
+func classify_verification(baseline, final) {
+    mut preexisting := []
+    mut regressions := []
+    mut i := 0
+    while i < len(baseline) && i < len(final) {
+        before := baseline[i]
+        after := final[i]
+        if before["passed"] == false { preexisting = push(preexisting, {"command": before["command"], "baseline_exit_code": before["exit_code"], "final_exit_code": after["exit_code"]}) }
+        if before["passed"] && after["passed"] == false { regressions = push(regressions, {"command": before["command"], "baseline_exit_code": before["exit_code"], "final_exit_code": after["exit_code"]}) }
+        i = i + 1
+    }
+    return {"passed": len(regressions) == 0, "pre_existing_failures": preexisting, "cleanup_regressions": regressions, "baseline": baseline, "final": final}
+}
+
+func tool_integration(root, repos, kujo, name, applicable, command, role) {
+    available := path_is_file(kujo) && path_is_dir(path_join(repos, name))
+    if name == "changebucket" { available = path_is_file(path_join(repos, "changebucket/bin/changebucket")) }
+    return {"tool": name, "available": available, "applicable": applicable, "argv": command, "command": join_strings(command, " "), "role": role}
+}
+
+func integrations(root, output) {
+    repos := env_or("KUJO_REPOS", parent_repo(root))
+    kujo := env_or("KUJO_BIN", path_join(repos, "kujo/target/release/kujo"))
+    evidence := path_join(output, "integrations")
+    return [
+        tool_integration(root, repos, kujo, "scout", true, [kujo, "run", path_join(repos, "scout/scout.kujo"), "--", root, "-o", path_join(evidence, "scout")], "repository inventory and entry-point context"),
+        tool_integration(root, repos, kujo, "fence", path_is_file(path_join(root, "fence.toml")), [kujo, "run", path_join(repos, "fence/fence.kujo"), "--", "check", "--format", "json"], "repository-owned architecture boundary check"),
+        tool_integration(root, repos, kujo, "concord", true, [kujo, "run", path_join(repos, "concord/concord.kujo"), "--", "scan", "--dir", root, "--format", "json"], "documentation, CLI, manifest, and spec drift"),
+        tool_integration(root, repos, kujo, "kennel", path_is_file(path_join(root, "kennel.toml")) || path_is_file(path_join(root, "kujo.toml")), [kujo, "run", path_join(repos, "kennel/kennel.kujo"), "--interpreter", "--", "validate", "--project-dir", root], "Kujo package manifest validation"),
+        tool_integration(root, repos, kujo, "changebucket", path_is_dir(path_join(root, ".git")), [path_join(repos, "changebucket/bin/changebucket"), "--repo", root, "--json"], "diff footprint and blast-radius evidence"),
+        tool_integration(root, repos, kujo, "patchbrief", path_is_dir(path_join(root, ".git")), [kujo, "run", path_join(repos, "patchbrief/patchbrief.kujo"), "--", "summarize", "--format", "json", "--pretty"], "diff risk and reviewer handoff"),
+        tool_integration(root, repos, kujo, "shipcheck", true, [kujo, "run", path_join(repos, "shipcheck/shipcheck.kujo"), "scan", "--dir", root, "--format", "json"], "release-readiness inspection"),
+        {"tool": "casefile", "available": path_is_dir(path_join(repos, "casefile")), "applicable": "on-verification-failure", "argv": [], "command": "", "role": "capture actual failing-command evidence only"},
+        {"tool": "runledger", "available": path_is_dir(path_join(repos, "runledger")), "applicable": "host-adapter", "argv": [], "command": "", "role": "record usage when the host owns a RunLedger task"},
+        {"tool": "dispatch", "available": path_is_dir(path_join(repos, "dispatch")), "applicable": false, "argv": [], "command": "", "role": "Dispatch cleanup manages run retention, not repository source cleanup"}
+    ]
+}
+
+func parent_repo(root) {
+    # Workflows convention: sibling tools live under the target's parent when
+    # the workflow itself is dogfooded; KUJO_REPOS overrides arbitrary repos.
+    absolute := replace(path_absolute(root), "\\", "/")
+    parts := split(absolute, "/")
+    if len(parts) > 1 {
+        mut result := ""
+        mut i := 0
+        while i < len(parts) - 1 { if parts[i] != "" { result = result + "/" + parts[i] }; i = i + 1 }
+        return result
+    }
+    return "."
+}
+
+func run_integrations(items, root, output) {
+    evidence := path_join(output, "integrations")
+    if path_is_dir(evidence) == false { create_dir(evidence) }
+    mut i := 0
+    while i < len(items) {
+        item := items[i]
+        if item["available"] == true && item["applicable"] == true && len(item["argv"]) > 0 {
+            process := spawn_process(item["argv"], {"cwd": root, "timeout_ms": 20000, "max_output_bytes": 2097152})
+            output_text := to_string(process.stdout) + to_string(process.stderr)
+            write_file(path_join(evidence, item["tool"] + ".log"), output_text, true)
+            status := "failed"
+            if process.exitcode == 0 { status = "passed" }
+            item["execution"] := {"status": status, "exit_code": process.exitcode, "command": item["command"], "output_sha256": sha256(output_text)}
+        } else { item["execution"] := {"status": "skipped", "reason": "unavailable or not applicable"} }
+        items[i] := item
+        i = i + 1
+    }
+    return items
+}
+
+func main() {
+    argv := args()
+    if has_flag(argv, "--help") { print_help(); return }
+    root := path_absolute(flag_value(argv, "--repo", "."))
+    scope_arg := flag_value(argv, "--path", ".")
+    scope := path_absolute(path_join(root, scope_arg))
+    if path_is_dir(root) == false || path_is_dir(scope) == false || starts_with(replace(scope, "\\", "/"), replace(root, "\\", "/")) == false {
+        print("ERROR: --repo and repository-contained --path must be directories")
+        exit(2)
+    }
+    categories := parse_categories(argv)
+    minimum := flag_value(argv, "--minimum-confidence", "UNKNOWN")
+    if array_has(["UNKNOWN", "INTENTIONAL", "LIKELY", "PROVEN"], minimum) == false { print("ERROR: invalid confidence: " + minimum); exit(2) }
+    changed := []
+    if has_flag(argv, "--changed") { changed = changed_files(root) }
+    commands := flag_values(argv, "--verify-cmd")
+    output := flag_value(argv, "--output", "")
+    if output == "" {
+        stamp := trim(to_string(spawn_process(["date", "-u", "+%Y%m%dT%H%M%SZ"], {"timeout_ms": 3000}).stdout))
+        output = path_join(root, ".cleanup-runs/" + stamp)
+    } else {
+        if starts_with(output, "/") == false { output = path_join(path_absolute("."), output) }
+    }
+
+    baseline := run_verification(commands, root)
+    analysis := analyze(root, scope, categories, minimum, changed)
+    before := analysis["metrics"]
+    applied := []
+    originals := {}
+    apply_path := flag_value(argv, "--apply-plan", "")
+    mode := "analysis-only"
+    if apply_path != "" {
+        mode = "apply"
+        mut plan := {}
+        try { plan = parse_json(read_file(path_absolute(apply_path))) } except e { print("ERROR: cannot read cleanup plan"); exit(2) }
+        if plan["schema"] != SCHEMA || plan["repository_fingerprint"] != analysis["fingerprint"] { print("ERROR: plan schema or repository fingerprint does not match current analysis"); exit(2) }
+        approved := plan["approved_finding_ids"]
+        if type(approved) != "array" || len(approved) == 0 { print("ERROR: plan must approve at least one finding"); exit(2) }
+        apply_result := apply_approved(root, analysis["findings"], approved)
+        originals = apply_result["originals"]
+        if apply_result["ok"] == false { restore_originals(originals); print("ERROR: " + apply_result["error"]); exit(2) }
+        applied = apply_result["applied"]
+    }
+    final := run_verification(commands, root)
+    verification := classify_verification(baseline, final)
+    if len(applied) > 0 && verification["passed"] == false {
+        restore_originals(originals)
+        mut rolled_back := []
+        mut i := 0
+        while i < len(applied) { item := applied[i]; item["status"] = "rolled-back-verification-regression"; rolled_back = push(rolled_back, item); i = i + 1 }
+        applied = rolled_back
+        final = run_verification(commands, root)
+        verification = classify_verification(baseline, final)
+        verification["rollback_performed"] = true
+    }
+    final_analysis := analyze(root, scope, categories, minimum, changed)
+    tools := integrations(root, output)
+    if has_flag(argv, "--run-integrations") { tools = run_integrations(tools, root, output) }
+    report := {
+        "schema": SCHEMA, "mode": mode, "scope": relative_path(scope, root),
+        "categories_investigated": categories, "repository_fingerprint": final_analysis["fingerprint"],
+        "metrics": {"before": before, "after": final_analysis["metrics"]},
+        "findings": analysis["findings"], "applied": applied,
+        "verification": verification, "integrations": tools
+    }
+    write_outputs(output, report)
+    print(path_join(output, "REPORT.md"))
+    if verification["passed"] == false { exit(1) }
+}
+
+main()

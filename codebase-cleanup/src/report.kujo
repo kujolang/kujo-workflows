@@ -1,0 +1,114 @@
+from src.common import join_strings
+
+func count_confidence(findings, expected) {
+    mut count := 0
+    mut i := 0
+    while i < len(findings) { if findings[i]["confidence"] == expected { count = count + 1 }; i = i + 1 }
+    return count
+}
+
+func completed_ids(applied) {
+    mut ids := []
+    mut i := 0
+    while i < len(applied) { if applied[i]["status"] == "applied" { ids = push(ids, applied[i]["id"]) }; i = i + 1 }
+    return ids
+}
+
+func has_id(ids, expected) {
+    mut i := 0
+    while i < len(ids) { if ids[i] == expected { return true }; i = i + 1 }
+    return false
+}
+
+export func markdown_report(report) {
+    findings := report["findings"]
+    applied := report["applied"]
+    completed := completed_ids(applied)
+    before := report["metrics"]["before"]
+    after := report["metrics"]["after"]
+    mut out := "# Codebase Cleanup Report\n\n## Summary\n\n"
+    out = out + "- opportunities discovered: " + to_string(len(findings)) + "\n"
+    out = out + "- opportunities completed: " + to_string(len(completed)) + "\n"
+    out = out + "- opportunities intentionally preserved: " + to_string(count_confidence(findings, "INTENTIONAL")) + "\n"
+    out = out + "- remaining candidates: " + to_string(count_confidence(findings, "LIKELY") + count_confidence(findings, "UNKNOWN")) + "\n"
+    out = out + "- source files: " + to_string(before["source_files"]) + " → " + to_string(after["source_files"]) + "\n"
+    out = out + "- relevant LOC: " + to_string(before["total_relevant_loc"]) + " → " + to_string(after["total_relevant_loc"]) + "\n"
+    out = out + "- direct dependencies: " + to_string(before["direct_dependency_count"]) + " → " + to_string(after["direct_dependency_count"]) + "\n"
+    verdict := "FAIL"
+    if report["verification"]["passed"] { verdict = "PASS" }
+    out = out + "- verification: " + verdict + "\n\n## Changes\n\n"
+    mut i := 0
+    while i < len(findings) {
+        f := findings[i]
+        if has_id(completed, f["id"]) {
+            out = out + "### " + f["id"] + " — " + f["summary"] + "\n\n"
+            out = out + "- Category: " + f["category"] + "\n- Files: `" + f["path"] + "`\n"
+            out = out + "- Evidence: " + join_strings(f["evidence"], "; ") + "\n- Change: " + f["recommended_action"] + "\n- Behavioral risk: " + f["risk"] + "\n\n"
+        }
+        i = i + 1
+    }
+    out = out + "## Preserved Complexity\n\n"
+    mut preserved := 0
+    i = 0
+    while i < len(findings) {
+        f := findings[i]
+        if f["confidence"] == "INTENTIONAL" || f["confidence"] == "UNKNOWN" {
+            out = out + "- **" + f["id"] + "** `" + f["path"] + "` — " + f["summary"] + " " + f["recommended_action"] + ".\n"
+            preserved = preserved + 1
+        }
+        i = i + 1
+    }
+    if preserved == 0 { out = out + "- none\n" }
+    out = out + "\n## Verification\n\n### Baseline\n\n"
+    baseline := report["verification"]["baseline"]
+    i = 0
+    while i < len(baseline) { out = out + "- `" + baseline[i]["command"] + "` — exit " + to_string(baseline[i]["exit_code"]) + "\n"; i = i + 1 }
+    if len(baseline) == 0 { out = out + "- no commands configured\n" }
+    out = out + "\n### Final\n\n"
+    final := report["verification"]["final"]
+    i = 0
+    while i < len(final) { out = out + "- `" + final[i]["command"] + "` — exit " + to_string(final[i]["exit_code"]) + "\n"; i = i + 1 }
+    if len(final) == 0 { out = out + "- no commands configured\n" }
+    out = out + "\n## Remaining Candidates\n\n"
+    mut remaining := 0
+    i = 0
+    while i < len(findings) {
+        f := findings[i]
+        if has_id(completed, f["id"]) == false && f["confidence"] != "INTENTIONAL" {
+            out = out + "- **" + f["confidence"] + " " + f["id"] + "** `" + f["path"] + "` — " + f["summary"] + "\n"
+            remaining = remaining + 1
+        }
+        i = i + 1
+    }
+    if remaining == 0 { out = out + "- none\n" }
+    out = out + "\n## Tool Integration Disposition\n\n"
+    integrations := report["integrations"]
+    i = 0
+    while i < len(integrations) {
+        item := integrations[i]
+        availability := "unavailable"
+        if item["available"] { availability = "available" }
+        execution := "not requested"
+        if has_key(item, "execution") { execution = item["execution"]["status"] }
+        out = out + "- **" + item["tool"] + "** (" + availability + ", applicable: " + to_string(item["applicable"]) + ", execution: " + execution + "): " + item["role"] + "\n"
+        i = i + 1
+    }
+    return out
+}
+
+export func write_outputs(output, report) {
+    if path_is_dir(output) == false { create_dir(output) }
+    write_file(path_join(output, "report.json"), to_json_pretty(report) + "\n", true)
+    write_file(path_join(output, "REPORT.md"), markdown_report(report), true)
+    mut candidates := []
+    if report["mode"] == "analysis-only" {
+        mut i := 0
+        while i < len(report["findings"]) {
+            f := report["findings"][i]
+            if f["confidence"] == "PROVEN" && has_key(f, "operation") { candidates = push(candidates, f) }
+            i = i + 1
+        }
+    }
+    plan := {"schema": report["schema"], "repository_fingerprint": report["repository_fingerprint"], "approved_finding_ids": [], "candidates": candidates}
+    write_file(path_join(output, "cleanup-plan.json"), to_json_pretty(plan) + "\n", true)
+}

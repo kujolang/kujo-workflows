@@ -1,0 +1,151 @@
+from src.analyze import analyze
+from src.apply import apply_approved, restore_originals
+from src.common import CATEGORIES, read_text
+
+mut passed := 0
+mut failed := 0
+
+func check(condition, label) {
+    if condition { passed = passed + 1 }
+    else { failed = failed + 1; print("FAIL: " + label) }
+}
+
+func fixture(files) {
+    root := "/tmp/kujo-codebase-cleanup-" + uuid_v4()
+    create_dir(root)
+    names := keys(files)
+    mut i := 0
+    while i < len(names) {
+        path := path_join(root, names[i])
+        parent := parent_path(path)
+        if path_is_dir(parent) == false { create_dir(parent) }
+        write_file(path, files[names[i]])
+        i = i + 1
+    }
+    return root
+}
+
+func parent_path(path) {
+    normalized := replace(path, "\\", "/")
+    mut at := -1
+    mut i := 0
+    while i < len(normalized) { if substring(normalized, i, i + 1) == "/" { at = i }; i = i + 1 }
+    if at <= 0 { return "." }
+    return substring(normalized, 0, at)
+}
+
+func cleanup(root) {
+    spawn_process(["rm", "-rf", root], {"timeout_ms": 5000})
+}
+
+func find_one(findings, category, symbol) {
+    mut i := 0
+    while i < len(findings) {
+        if findings[i]["category"] == category && findings[i]["symbol"] == symbol { return findings[i] }
+        i = i + 1
+    }
+    return {}
+}
+
+func scan(root, minimum) {
+    return analyze(root, root, CATEGORIES, minimum, [])
+}
+
+root1 := fixture({"app.py": "def _unused():\n    return 1\n\ndef live():\n    return 2\n\nprint(live())\n"})
+r1 := scan(root1, "UNKNOWN")
+dead := find_one(r1["findings"], "dead-code", "_unused")
+check(len(keys(dead)) > 0 && dead["confidence"] == "PROVEN", "clearly unused private code is PROVEN")
+apply1 := apply_approved(root1, r1["findings"], [dead["id"]])
+check(apply1["ok"] && contains(read_text(path_join(root1, "app.py")), "_unused") == 0, "PROVEN dead code is safely removed")
+cleanup(root1)
+
+root2 := fixture({"app.py": "def _first(x):\n    return x + 1\n\ndef _second(x):\n    return x + 1\n\ndef live():\n    return _second(2)\n\nprint(live())\n"})
+r2 := scan(root2, "UNKNOWN")
+dup := find_one(r2["findings"], "duplication", "_first,_second")
+check(len(keys(dup)) > 0 && dup["confidence"] == "PROVEN", "exact private duplication is PROVEN")
+apply2 := apply_approved(root2, r2["findings"], [dup["id"]])
+updated2 := read_text(path_join(root2, "app.py"))
+check(apply2["ok"] && contains(updated2, "def _second") == 0 && contains(updated2, "return _first(2)") == 1, "duplicate implementation consolidates and redirects calls")
+cleanup(root2)
+
+root3 := fixture({"app.py": "def _one(x):\n    # cleanup: intentional-duplication -- protocol isolation\n    return x + 1\n\ndef _two(x):\n    return x + 1\n"})
+r3 := scan(root3, "UNKNOWN")
+intentional := find_one(r3["findings"], "duplication", "_one")
+check(len(keys(intentional)) > 0 && intentional["confidence"] == "INTENTIONAL" && has_key(intentional, "operation") == 0, "intentional duplication is preserved")
+cleanup(root3)
+
+root4 := fixture({"app.py": "REGISTRY = {}\ndef route(fn):\n    REGISTRY[fn.__name__] = fn\n    return fn\n\n@route\ndef endpoint():\n    return 1\n\ndef public_api():\n    return 2\n\n__all__ = ['public_api']\n"})
+r4 := scan(root4, "UNKNOWN")
+endpoint := find_one(r4["findings"], "dead-code", "endpoint")
+check(len(keys(endpoint)) > 0 && endpoint["confidence"] == "UNKNOWN", "decorated dynamic entry is not classified PROVEN")
+public_proven := false
+mut p4i := 0
+while p4i < len(r4["findings"]) { if r4["findings"][p4i]["symbol"] == "public_api" && r4["findings"][p4i]["confidence"] == "PROVEN" { public_proven = true }; p4i = p4i + 1 }
+check(public_proven == false, "exported public API is never classified PROVEN")
+cleanup(root4)
+
+root5 := fixture({"package.json": "{\"dependencies\":{\"left-pad\":\"1.3.0\"}}\n", "index.js": "console.log('ok')\n"})
+r5 := scan(root5, "UNKNOWN")
+dependency := find_one(r5["findings"], "dependencies", "left-pad")
+check(len(keys(dependency)) > 0 && dependency["confidence"] == "LIKELY" && has_key(dependency, "operation") == 0, "unused dependency is detected but not auto-removable")
+cleanup(root5)
+
+root6 := fixture({"README.md": "Run `scripts/removed.sh` to verify.\n", "app.py": "print('ok')\n"})
+r6 := scan(root6, "UNKNOWN")
+drift := find_one(r6["findings"], "documentation", "scripts/removed.sh")
+check(len(keys(drift)) > 0 && drift["confidence"] == "LIKELY", "documentation/config drift is detected")
+cleanup(root6)
+
+root7 := fixture({"app.py": "def public(value):\n    return value + 1\n\nprint(public(1))\n", "README.md": "Small fixture.\n", "fence.toml": "version = 1\n"})
+r7 := scan(root7, "LIKELY")
+check(len(r7["findings"]) == 0, "perfectly clean repository returns zero actionable findings")
+cleanup(root7)
+
+root8 := fixture({"app.py": "def _unused():\n    return 1\n"})
+before8 := read_text(path_join(root8, "app.py"))
+r8a := scan(root8, "UNKNOWN")
+after8 := read_text(path_join(root8, "app.py"))
+r8b := scan(root8, "UNKNOWN")
+check(before8 == after8, "analysis-only mode does not modify files")
+check(to_json(r8a["findings"]) == to_json(r8b["findings"]), "finding evidence is deterministic")
+cleanup(root8)
+
+root9 := fixture({"one/app.py": "def _unused():\n    return 1\n", "two/app.py": "def _other():\n    return 2\n"})
+r9 := analyze(root9, path_join(root9, "one"), ["dead-code"], "PROVEN", [])
+check(len(r9["findings"]) == 1 && r9["findings"][0]["path"] == "one/app.py", "scope, category, and confidence controls are honored")
+changed9 := analyze(root9, root9, CATEGORIES, "UNKNOWN", ["one/app.py"])
+check(len(changed9["files"]) == 1 && ends_with(changed9["files"][0], "one/app.py"), "changed-file analysis only scans selected files")
+cleanup(root9)
+
+root10 := fixture({"app.py": "def _unused():\n    return 1\n"})
+r10 := scan(root10, "UNKNOWN")
+dead10 := find_one(r10["findings"], "dead-code", "_unused")
+write_file(path_join(root10, "app.py"), "# changed after analysis\n" + read_text(path_join(root10, "app.py")), true)
+apply10 := apply_approved(root10, r10["findings"], [dead10["id"]])
+check(apply10["ok"] == false && contains(read_text(path_join(root10, "app.py")), "_unused") == 1, "stale cleanup evidence cannot silently change behavior")
+cleanup(root10)
+
+kujo_bin := env_or("KUJO_BIN", "kujo")
+entrypoint := path_absolute("cleanup.kujo")
+root11 := fixture({"app.py": "def _unused():\n    return 1\n\nprint('ok')\n"})
+r11 := scan(root11, "UNKNOWN")
+dead11 := find_one(r11["findings"], "dead-code", "_unused")
+plan11 := {"schema": "kujo.codebase-cleanup/v1", "repository_fingerprint": r11["fingerprint"], "approved_finding_ids": [dead11["id"]], "candidates": [dead11]}
+plan_path11 := "/tmp/kujo-cleanup-plan-" + uuid_v4() + ".json"
+write_file(plan_path11, to_json_pretty(plan11))
+output11 := path_join(root11, ".cleanup-runs/apply")
+run11 := spawn_process([kujo_bin, "run", entrypoint, "--", "--repo", root11, "--output", output11, "--verify-cmd", "grep -q _unused app.py", "--apply-plan", plan_path11], {"timeout_ms": 30000})
+report11 := parse_json(read_text(path_join(output11, "report.json")))
+check(run11.exitcode == 0 && report11["verification"]["rollback_performed"] && contains(read_text(path_join(root11, "app.py")), "_unused") == 1, "new verification failure rolls the cleanup batch back")
+delete_file(plan_path11)
+cleanup(root11)
+
+root12 := fixture({"app.py": "print('ok')\n"})
+output12 := path_join(root12, ".cleanup-runs/analysis")
+run12 := spawn_process([kujo_bin, "run", entrypoint, "--", "--repo", root12, "--output", output12, "--verify-cmd", "exit 7"], {"timeout_ms": 30000})
+report12 := parse_json(read_text(path_join(output12, "report.json")))
+check(run12.exitcode == 0 && len(report12["verification"]["pre_existing_failures"]) == 1 && len(report12["verification"]["cleanup_regressions"]) == 0, "pre-existing failures are distinguished from cleanup regressions")
+cleanup(root12)
+
+print("Codebase Cleanup Kujo tests: " + to_string(passed) + " passed, " + to_string(failed) + " failed")
+if failed > 0 { exit(1) }
