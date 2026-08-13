@@ -59,6 +59,11 @@ class WebOpsDashboardTests(unittest.TestCase):
                 dashboard.sync_catalogs(db)
                 self.assertFalse(dashboard.import_run(db, incomplete))
 
+    def test_dashboard_fetch_map_does_not_forward_array_callback_arguments(self):
+        source = (ROOT / "webops-dashboard" / "public" / "assets" / "dashboard.js").read_text()
+        self.assertIn(".map(path=>api(path))", source)
+        self.assertNotIn(".map(api)", source)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
