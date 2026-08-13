@@ -1671,7 +1671,7 @@
       "state_and_recovery": "timestamped analysis/apply packets; exact-content guards reject stale candidates; verification regressions restore all files changed by the batch",
       "evidence": "classified findings, preserved complexity, stable IDs, before/after metrics, command exit/output hashes, integration dispositions, and Markdown/JSON reports",
       "tests": [
-        "python3 -m unittest discover -s tests -p 'test_codebase_cleanup.py'",
+        "bash tests/test_codebase_cleanup.sh",
         "analysis-only dogfood against kujo-workflows",
         "tests/release-readiness.sh"
       ],

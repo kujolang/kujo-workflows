@@ -6,6 +6,9 @@ investigates entropy across code, dependencies, configuration, tests,
 documentation, and architecture. Analysis is the default. Mutation requires a
 reviewer-approved plan containing stable finding IDs, and only `PROVEN`
 candidates with supported mechanical operations can be applied automatically.
+The analyzer, safety engine, applicator, metrics, reports, companion-tool
+orchestration, and tests are implemented in Kujo; the Bash entrypoint only
+locates the Kujo runtime.
 
 The workflow rewards removed concepts, not rearranged code. Zero actionable
 findings is a valid result.
@@ -17,7 +20,7 @@ Analyze a repository without modifying it:
 ```bash
 bash codebase-cleanup/scripts/run-workflow.sh \
   --repo /path/to/repository \
-  --verify-cmd "python3 -m unittest discover -s tests -p 'test_*.py'"
+  --verify-cmd "make test"
 ```
 
 The command prints the path to `REPORT.md`. By default, evidence is written to
@@ -51,8 +54,8 @@ reported separately and are not mislabeled as cleanup regressions.
    languages, metrics, dynamic/export surfaces, and available Kujo companions.
 2. **Baseline** runs every explicit `--verify-cmd` before modification and stores
    exit status plus output hashes.
-3. **Analysis** investigates all ten cleanup categories with language-aware AST
-   checks and conservative repository-wide heuristics.
+3. **Analysis** investigates all ten cleanup categories with Kujo-native
+   structural scanners and conservative repository-wide heuristics.
 4. **Classification** records evidence, confidence, behavioral risk, public API
    impact, related tests, documentation impact, and a stable finding ID.
 5. **Cleanup** accepts only explicitly approved `PROVEN` operations from a plan
@@ -70,8 +73,8 @@ reported separately and are not mislabeled as cleanup regressions.
 
 | Category | Investigation | Automatic mutation |
 | --- | --- | --- |
-| Dead code | private Python functions, unused imports, unreferenced public/dynamic candidates | exact private top-level function removal when all guards pass |
-| Duplication | normalized exact Python function bodies, intentional markers | consolidation of exactly duplicated private functions with local call redirection |
+| Dead code | private top-level functions, unreferenced public/dynamic candidates | exact private Python function removal when all guards pass |
+| Duplication | normalized exact function bodies, intentional markers | consolidation of exactly duplicated private Python functions with local call redirection |
 | Unnecessary abstraction | one-statement forwarding wrappers | review only |
 | Over-engineering | speculative extension/future-use markers | review only |
 | Legacy and compatibility | deprecation, shim, migration, and fallback markers | never without support-policy evidence |
@@ -81,10 +84,11 @@ reported separately and are not mislabeled as cleanup regressions.
 | Documentation | references to missing repository paths | review only |
 | Architecture | repository-owned Fence model and companion evidence | never based on guessed boundaries |
 
-The initial language-aware mutation engine is intentionally narrow. Other
-languages still receive inventory, metrics, text evidence, dependency, drift,
-and companion-tool coverage, but no deletion is claimed `PROVEN` from generic
-text search alone.
+The Kujo-native analyzer recognizes the initial Python mutation surface because
+that syntax can currently be bounded without an external parser. Other languages
+still receive inventory, metrics, text evidence, dependency, drift, and
+companion-tool coverage, but no deletion is claimed `PROVEN` from generic text
+search alone.
 
 ## Safety Model
 

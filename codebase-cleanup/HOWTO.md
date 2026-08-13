@@ -10,8 +10,8 @@ credential boundaries.
 ```bash
 bash /path/to/kujo-workflows/codebase-cleanup/scripts/run-workflow.sh \
   --repo "$PWD" \
-  --verify-cmd "python3 scripts/validate_catalog.py --json" \
-  --verify-cmd "python3 -m unittest discover -s tests -p 'test_*.py'" \
+  --verify-cmd "make lint" \
+  --verify-cmd "make test" \
   --output .cleanup-runs/review-1
 ```
 
@@ -80,7 +80,9 @@ unchanged inputs.
 
 ## Limitations
 
-- Python has the first language-aware deletion and exact-duplication applicator.
+- The workflow implementation and test suite are Kujo-native. Python source is
+  the first language syntax supported for guarded deletion and exact-duplication
+  application; this does not invoke Python to perform analysis.
 - JavaScript package dependency detection is conservative repository text search,
   not a package-manager graph proof.
 - Generic unreachable branches, semantic near-duplication, public API counts,
