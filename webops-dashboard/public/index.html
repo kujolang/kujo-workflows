@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en" data-theme="kujo-dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Visual WebOps reports for Kujo agents and workflows">
+  <title>WebOps Control Surface</title>
+  <link rel="stylesheet" href="/sitekit/sitekit.css">
+  <link rel="stylesheet" href="/assets/dither-charts.css">
+  <link rel="stylesheet" href="/assets/dashboard.css">
+  <script src="/assets/dither-charts.js"></script>
+  <script src="/sitekit/sitekit.js" defer></script>
+  <script src="/assets/dashboard.js" defer></script>
+</head>
+<body>
+  <a class="sk-skip-link" href="#main">Skip to report</a>
+  <header class="sk-header dashboard-header">
+    <div class="dashboard-brand"><span aria-hidden="true">W/</span><strong>WebOps</strong><small>CONTROL SURFACE</small></div>
+    <nav class="sk-navigation" aria-label="Report views">
+      <ul>
+        <li><button type="button" class="nav-button is-active" data-view="overview">Overview</button></li>
+        <li><button type="button" class="nav-button" data-view="findings">Findings</button></li>
+        <li><button type="button" class="nav-button" data-view="runs">Runs</button></li>
+        <li><button type="button" class="nav-button" data-view="workflows">Workflows</button></li>
+        <li><button type="button" class="nav-button" data-view="agents">Agents</button></li>
+      </ul>
+    </nav>
+    <button class="sk-button" type="button" data-sk-theme-toggle aria-pressed="true">Theme</button>
+  </header>
+
+  <main id="main" class="dashboard-shell">
+    <section class="dashboard-intro" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow">REPORTING LAYER / LIVE WEBSITE EVIDENCE</p>
+        <h1 id="page-title">Website intelligence without the file hunt.</h1>
+        <p>Run a bounded WebOps workflow, then read its evidence as priorities, trends, capability gaps, and accountable agent handoffs.</p>
+      </div>
+      <form id="run-form" class="run-panel" aria-labelledby="run-title">
+        <h2 id="run-title">Run website report</h2>
+        <label>Website URL<input name="target" type="url" value="https://robertdevore.com" required></label>
+        <label>Workflow<select name="workflow" id="run-workflow" required></select></label>
+        <label>Permission<select name="permission"><option>OBSERVE</option><option>PROPOSE</option></select></label>
+        <button class="sk-button" type="submit">Run report</button>
+        <p id="run-status" class="form-status" role="status" aria-live="polite">Runs stay local and never grant ACT.</p>
+      </form>
+    </section>
+
+    <section class="sk-command-strip metrics" aria-label="WebOps totals">
+      <ul>
+        <li><span>RUNS</span><strong id="metric-runs">0</strong></li>
+        <li><span>OPEN FINDINGS</span><strong id="metric-findings">0</strong></li>
+        <li><span>WORKFLOWS</span><strong id="metric-workflows">0</strong></li>
+        <li><span>AGENTS</span><strong id="metric-agents">0</strong></li>
+        <li><span>APPROVAL GATES</span><strong id="metric-approvals">0</strong></li>
+      </ul>
+    </section>
+
+    <section id="view-overview" class="view-panel is-active" aria-labelledby="overview-title">
+      <div class="section-heading"><div><p class="eyebrow">CURRENT SIGNAL</p><h2 id="overview-title">Report overview</h2></div><p id="latest-run">No runs imported yet.</p></div>
+      <div class="chart-grid">
+        <article class="sk-card chart-card"><header><div><p class="chart-kicker">ISSUE MIX</p><h3>Open findings by severity</h3></div></header><div id="chartSeverity" class="chart" role="img" aria-label="Open findings by severity chart"></div></article>
+        <article class="sk-card chart-card"><header><div><p class="chart-kicker">EXECUTION</p><h3>Step outcomes</h3></div></header><div id="chartSteps" class="chart" role="img" aria-label="Workflow step outcome chart"></div></article>
+        <article class="sk-card chart-card chart-wide"><header><div><p class="chart-kicker">HISTORY</p><h3>Finding volume over time</h3></div></header><div id="chartTrend" class="chart" role="img" aria-label="Finding trend chart"></div></article>
+        <article class="sk-card chart-card chart-wide"><header><div><p class="chart-kicker">COVERAGE</p><h3>Runs by workflow</h3></div></header><div id="chartCoverage" class="chart chart-tall" role="img" aria-label="Workflow coverage chart"></div></article>
+      </div>
+      <section class="table-section" aria-labelledby="priority-title"><div class="section-heading"><div><p class="eyebrow">TRIAGE QUEUE</p><h2 id="priority-title">Priority findings</h2></div><button class="text-button" data-view-jump="findings">View all findings →</button></div><div class="table-wrap"><table class="sk-table"><caption>Highest priority open findings</caption><thead><tr><th scope="col">State</th><th scope="col">Check</th><th scope="col">Target</th><th scope="col">Workflow</th><th scope="col">Severity</th></tr></thead><tbody id="priority-body"></tbody></table></div></section>
+    </section>
+
+    <section id="view-findings" class="view-panel" aria-labelledby="findings-title">
+      <div class="section-heading"><div><p class="eyebrow">EVIDENCE-BACKED QUEUE</p><h2 id="findings-title">Findings</h2></div><label class="filter-label">Filter findings<input id="finding-filter" type="search" placeholder="Check, URL, workflow…"></label></div>
+      <div class="table-wrap"><table class="sk-table"><caption>All imported WebOps findings</caption><thead><tr><th scope="col">State</th><th scope="col">Check</th><th scope="col">Target</th><th scope="col">Agent</th><th scope="col">Workflow</th><th scope="col">Severity</th><th scope="col">Seen</th></tr></thead><tbody id="findings-body"></tbody></table></div>
+    </section>
+
+    <section id="view-runs" class="view-panel" aria-labelledby="runs-title"><div class="section-heading"><div><p class="eyebrow">AUDIT TRAIL</p><h2 id="runs-title">Workflow runs</h2></div></div><div class="table-wrap"><table class="sk-table"><caption>Imported WebOps workflow runs</caption><thead><tr><th scope="col">Completed</th><th scope="col">Website</th><th scope="col">Workflow</th><th scope="col">Verdict</th><th scope="col">Permission</th><th scope="col">Steps</th><th scope="col">Limits</th></tr></thead><tbody id="runs-body"></tbody></table></div></section>
+
+    <section id="view-workflows" class="view-panel" aria-labelledby="workflows-title"><div class="section-heading"><div><p class="eyebrow">COMPOSITIONS</p><h2 id="workflows-title">WebOps workflows</h2></div></div><div id="workflow-grid" class="object-grid"></div></section>
+
+    <section id="view-agents" class="view-panel" aria-labelledby="agents-title"><div class="section-heading"><div><p class="eyebrow">SPECIALIST ROSTER</p><h2 id="agents-title">WebOps agents</h2></div><label class="filter-label">Filter agents<input id="agent-filter" type="search" placeholder="Name, category, purpose…"></label></div><div id="agent-grid" class="object-grid"></div></section>
+  </main>
+  <footer class="sk-footer dashboard-footer"><p>Kujo WebOps / SiteKit / Dither Kit</p><p>Machine-readable evidence remains authoritative.</p></footer>
+</body>
+</html>

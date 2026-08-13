@@ -9,6 +9,19 @@ Repository-backed, local-first workflow kits for the [Kujo programming language]
 
 Current release scope: **locally verified support/distribution technical preview** (`0.2.0`). Hosted runners, live-provider coverage, clean-machine installation on a separate host, and production or enterprise readiness are not claimed.
 
+## Visual WebOps Reports
+
+[`webops-dashboard/`](webops-dashboard/) is the local SQLite-backed reporting
+surface for all ten WebOps workflows and the 28-role WebOps catalog. It imports
+run packets without replacing their audit evidence, presents SiteKit tables and
+filters, renders Dither Kit charts, and can start bounded `OBSERVE` or `PROPOSE`
+website reports from the browser. It never grants `ACT`.
+
+```bash
+python3 webops-dashboard/dashboard.py sync
+python3 webops-dashboard/dashboard.py serve --open
+```
+
 ## Why Use These Workflows?
 
 - Start from bounded, runnable examples instead of assembling a multi-tool workflow from scratch.

@@ -1,4 +1,6 @@
 .DS_Store
+/.webops/
+webops-dashboard/ui/node_modules/
 agency-runner/.tmp/
 __pycache__/
 *.py[cod]
