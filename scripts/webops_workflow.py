@@ -22,6 +22,13 @@ def now(): return datetime.now(timezone.utc).replace(microsecond=0).isoformat().
 def dump(path,value): path.parent.mkdir(parents=True,exist_ok=True); path.write_text(json.dumps(value,indent=2,sort_keys=True)+"\n",encoding="utf-8")
 def load(path): return json.loads(path.read_text(encoding="utf-8"))
 
+def tool_prefix(repo:str,legacy:str,launcher:str)->list[str]|None:
+    legacy_path=REPOS/repo/legacy
+    if legacy_path.is_file(): return ["python3",str(legacy_path)]
+    launcher_path=REPOS/repo/launcher
+    if launcher_path.is_file(): return [str(launcher_path)]
+    return None
+
 class FixtureHandler(BaseHTTPRequestHandler):
     def log_message(self,*_args): pass
     def do_GET(self):
@@ -93,16 +100,32 @@ def normalize_findings(probe_dir:Path,previous:Path|None)->list[dict[str,Any]]:
 
 def capability_receipt(profile:dict[str,Any],fixture:bool)->dict[str,Any]:
     provider=None
-    bridge=REPOS/"searchbridge"/"bridge"/"searchbridge.py"
-    if bridge.is_file():
-        result=subprocess.run(["python3",str(bridge),"capabilities"],cwd=REPOS/"searchbridge",text=True,capture_output=True)
-        if result.returncode==0: provider=json.loads(result.stdout)
+    bridge=tool_prefix("searchbridge","bridge/searchbridge.py","searchbridge")
+    if bridge:
+        result=subprocess.run([*bridge,"capabilities"],cwd=REPOS/"searchbridge",text=True,capture_output=True)
+        if result.returncode==0 and result.stdout.strip(): provider=json.loads(result.stdout)
     caps=[]
     for name,value in profile.get("capabilities",{}).items(): caps.append({"capability":name,"available":value is True or value=="fixture" or (value=="optional" and fixture),"source":"site-profile"})
     if fixture:
         for name in ("search-performance-provider","analytics-provider","keyword-data-provider","backlink-data-provider","url-inspection-provider","page-performance-provider","field-performance-provider","search-submission-provider"):
             caps.append({"capability":name,"available":True,"source":"deterministic-fixture"})
     return {"schema":"webops.capability-receipt/v1","generated_at":now(),"fixture":fixture,"capabilities":caps,"searchbridge_live":provider}
+
+def configured_live_search_capabilities(profile:dict[str,Any])->list[str]:
+    """Return only provider modules that the site profile explicitly enables."""
+    integration_map={
+        "search_console":"search-performance",
+        "analytics":"analytics",
+        "page_performance":"pagespeed",
+        "field_performance":"crux",
+        "backlink_provider":"backlinks",
+    }
+    enabled=[]
+    for integration,command in integration_map.items():
+        value=profile.get("integrations",{}).get(integration)
+        if value not in (None,False,"", "unavailable", "optional", "fixture"):
+            enabled.append(command)
+    return enabled
 
 def embedded_fixture_artifacts(tool:str,out:Path,base_url:str)->list[str]:
     """Write bounded standalone evidence when sibling tool checkouts are absent."""
@@ -144,9 +167,10 @@ def execute(args:argparse.Namespace)->int:
         if "siteprobe" in manifest["tools"]:
             name="SiteProbe"
             if name not in completed:
-                bridge=REPOS/"siteprobe/bridge/siteprobe.py"
-                if bridge.is_file():
-                    cmd=["python3",str(bridge),"crawl",base_url,"--out",str(probe),"--max-pages","30","--max-depth","3","--max-output-bytes","10485760","--max-report-tokens","1000","--json"]
+                bridge=tool_prefix("siteprobe","bridge/siteprobe.py","siteprobe")
+                if bridge:
+                    cmd=[*bridge,"crawl",base_url,"--out",str(probe),"--max-pages","30","--max-depth","3","--max-output-bytes","10485760","--max-report-tokens","1000","--json"]
+                    if args.fixture: cmd.append("--allow-private-network")
                     receipt=run(cmd,REPOS/"siteprobe",out/"logs/siteprobe.log"); status="completed" if receipt["exit_code"]==0 else "failed"; evidence=[str(probe),receipt["log"]]; detail=""
                 elif args.fixture: status="completed"; evidence=embedded_fixture_artifacts("siteprobe",probe,base_url); detail="Sibling SiteProbe checkout unavailable; used bounded embedded fixture."
                 else: status="failed"; evidence=[]; detail="SiteProbe checkout unavailable."
@@ -156,33 +180,46 @@ def execute(args:argparse.Namespace)->int:
         if "searchbridge" in manifest["tools"]:
             name="SearchBridge"
             if name not in completed:
-                bridge=REPOS/"searchbridge/bridge/searchbridge.py"
-                if bridge.is_file():
+                bridge=tool_prefix("searchbridge","bridge/searchbridge.py","searchbridge")
+                live_commands=configured_live_search_capabilities(profile) if not args.fixture else []
+                if bridge and (args.fixture or live_commands):
                     search.mkdir(exist_ok=True); commands=[("search-performance","search-performance.json"),("analytics","analytics.json"),("pagespeed","pagespeed.json"),("crux","crux.json"),("backlinks","backlinks.json")]; evidence=[]
                     for command,filename in commands:
-                        cli=["python3",str(bridge),command,"--fixture","--offline","--limit","100","--max-output-bytes","1048576","--max-output-tokens","250000","--out",str(search/filename)]
+                        if not args.fixture and command not in live_commands: continue
+                        cli=[*bridge,command,"--limit","100","--max-output-bytes","1048576","--max-output-tokens","250000","--out",str(search/filename)]
+                        if args.fixture: cli.extend(["--fixture","--offline"])
                         if command=="backlinks": cli.extend(["--provider","ahrefs"])
                         receipt=run(cli,REPOS/"searchbridge",out/f"logs/searchbridge-{command}.log")
                         if receipt["exit_code"]!=0: raise RuntimeError(f"SearchBridge {command} failed")
                         evidence.append(str(search/filename))
                     detail=""
                 elif args.fixture: evidence=embedded_fixture_artifacts("searchbridge",search,base_url); detail="Sibling SearchBridge checkout unavailable; used bounded embedded fixtures."
-                else: raise RuntimeError("SearchBridge checkout unavailable")
-                step=step_receipt(out,index,name,"completed",evidence,detail); state["steps"].append(step); dump(state_path,state)
+                else:
+                    evidence=[]
+                    detail="No live SearchBridge provider is explicitly configured; provider-backed evidence was not fabricated."
+                status="completed" if evidence else "skipped-degraded"
+                step=step_receipt(out,index,name,status,evidence,detail); state["steps"].append(step); dump(state_path,state)
             index+=1
         if "contentgraph" in manifest["tools"]:
             name="ContentGraph"
             if name not in completed:
-                bridge=REPOS/"contentgraph/bridge/contentgraph.py"
-                if bridge.is_file():
-                    cmd=["python3",str(bridge),"build","--out",str(graph),"--max-nodes","1000","--max-output-bytes","67108864","--max-report-tokens","1000","--json"]
-                    if (probe/"pages.jsonl").is_file(): cmd.extend(["--siteprobe",str(probe)])
+                bridge=tool_prefix("contentgraph","bridge/contentgraph.py","contentgraph")
+                source_available=(probe/"pages.jsonl").is_file()
+                if bridge and (args.fixture or source_available):
+                    cmd=[*bridge,"build","--out",str(graph),"--max-nodes","1000","--max-output-bytes","67108864","--max-report-tokens","1000","--json"]
+                    if source_available: cmd.extend(["--siteprobe",str(probe)])
                     else: cmd.extend(["--source",str(ROOT/"fixtures/webops/site")])
                     performance=search/"search-performance.json"
                     if performance.is_file(): cmd.extend(["--searchbridge",str(performance)])
-                    receipt=run(cmd,REPOS/"contentgraph",out/"logs/contentgraph.log"); status="completed" if receipt["exit_code"]==0 else "failed"; evidence=[str(graph),receipt["log"]]; detail=""
+                    receipt=run(cmd,REPOS/"contentgraph",out/"logs/contentgraph.log")
+                    if receipt["exit_code"]==0:
+                        status="completed"; evidence=[str(graph),receipt["log"]]; detail=""
+                    elif args.fixture:
+                        status="failed"; evidence=[receipt["log"]]; detail="ContentGraph fixture build failed."
+                    else:
+                        status="skipped-degraded"; evidence=[receipt["log"]]; detail="Live crawl evidence was preserved, but ContentGraph rejected the adapter input; graph findings were omitted."
                 elif args.fixture: status="completed"; evidence=embedded_fixture_artifacts("contentgraph",graph,base_url); detail="Sibling ContentGraph checkout unavailable; used bounded embedded fixture."
-                else: status="failed"; evidence=[]; detail="ContentGraph checkout unavailable."
+                else: status="skipped-degraded"; evidence=[]; detail="No live crawl corpus is available; ContentGraph fixture evidence was not substituted."
                 step=step_receipt(out,index,name,status,evidence,detail); state["steps"].append(step); dump(state_path,state)
                 if status=="failed": raise RuntimeError("ContentGraph failed")
             index+=1

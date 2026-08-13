@@ -34,4 +34,28 @@ class WebOpsWorkflowTests(unittest.TestCase):
             ids1={x["id"] for x in json.loads((first/"findings.json").read_text())["findings"]}; ids2={x["id"] for x in json.loads((second/"findings.json").read_text())["findings"]}; self.assertEqual(ids1,ids2)
             resume=subprocess.run(["bash",str(folder/"scripts/run.sh"),"--fixture","--out",str(first),"--resume"],cwd=ROOT,text=True,capture_output=True); self.assertEqual(0,resume.returncode,resume.stderr)
 
+    def test_live_mode_never_substitutes_search_fixtures(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path=Path(tmp)
+            profile=tmp_path/"profile.json"
+            profile.write_text(json.dumps({
+                "schema":"webops.site-profile/v1",
+                "site":{"id":"local-live","url":"http://127.0.0.1:9"},
+                "capabilities":{"website":True},
+                "integrations":{},
+                "permissions":{"default":"OBSERVE"},
+                "credential_references":{},
+            }))
+            out=tmp_path/"run"
+            result=subprocess.run([
+                "bash",str(ROOT/"webops-ai-visibility-benchmark/scripts/run.sh"),
+                "--live","--site-profile",str(profile),"--out",str(out),
+            ],cwd=ROOT,text=True,capture_output=True)
+            self.assertEqual(0,result.returncode,result.stderr+result.stdout)
+            state=json.loads((out/"state.json").read_text())
+            search=next(step for step in state["steps"] if step["step"]=="SearchBridge")
+            self.assertEqual("skipped-degraded",search["status"])
+            self.assertIn("not fabricated",search["detail"])
+            self.assertFalse((out/"search").exists())
+
 if __name__=="__main__": unittest.main(verbosity=2)
