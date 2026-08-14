@@ -52,6 +52,29 @@ func capability_available(request, name) {
     return false
 }
 
+func inspect_tool_contract(ctx, name) {
+    expected := get(get(ctx["compatibility"], "tools", {}), name, null)
+    if type(expected) != "dict" { return {"ok": false, "code": "incompatible_tool_contract", "error": "compatibility matrix has no entry for " + name} }
+    repository := path_join(ctx["repos"], name)
+    commit_process := spawn_process(["git", "-C", repository, "rev-parse", "HEAD"], {"cwd": ctx["root"], "timeout_ms": 10000, "max_output_bytes": 4096})
+    status_process := spawn_process(["git", "-C", repository, "status", "--porcelain"], {"cwd": ctx["root"], "timeout_ms": 10000, "max_output_bytes": 65536})
+    checkout_commit := trim(to_string(commit_process.stdout))
+    if commit_process.exitcode != 0 || status_process.exitcode != 0 || checkout_commit != expected["commit"] || trim(to_string(status_process.stdout)) != "" {
+        return {"ok": false, "code": "incompatible_tool_checkout", "error": name + " is not the clean tested commit", "expected_commit": expected["commit"], "checkout_commit": checkout_commit}
+    }
+    binary := path_join(repository, "bin/" + name)
+    process := spawn_process(["env", "KUJO_BIN=" + ctx["kujo"], binary, "version", "--json"], {"cwd": ctx["root"], "timeout_ms": 30000, "max_output_bytes": 1048576})
+    reported := null
+    try { reported = parse_json(trim(to_string(process.stdout))) } except error { reported = null }
+    if process.exitcode != 0 || type(reported) != "dict" || get(reported, "ok", false) != true {
+        return {"ok": false, "code": "incompatible_tool_contract", "error": name + " version preflight failed"}
+    }
+    if get(reported, "tool_version", "") != expected["version"] || get(reported, "contract_version", "") != expected["contract_version"] {
+        return {"ok": false, "code": "incompatible_tool_contract", "error": name + " does not match the tested tool and contract versions", "reported": reported, "expected": expected}
+    }
+    return {"ok": true, "tool_version": reported["tool_version"], "contract_version": reported["contract_version"], "tested_commit": expected["commit"], "verified_commit": checkout_commit}
+}
+
 func validate_input_references(request) {
     references := get(request["input"], "fixture_record_references", [])
     if type(references) != "array" { return {"ok": false, "code": "invalid_record_reference", "error": "fixture_record_references must be an array"} }
@@ -74,7 +97,13 @@ func preflight(ctx) {
         available := capability_available(ctx["request"], name)
         if name == "kujo" { available = available && path_is_file(ctx["kujo"]) }
         if name == "dispatch" || name == "agents-sdk" || has(ctx["config"]["tools"], name) { available = available && path_is_dir(path_join(ctx["repos"], name)) }
-        required = push(required, {"name": name, "available": available, "required": true})
+        entry := {"name": name, "available": available, "required": true}
+        if available && name != "dispatch" && name != "agents-sdk" && name != "kujo" && has(ctx["config"]["tools"], name) {
+            inspected := inspect_tool_contract(ctx, name)
+            entry["contract_preflight"] = inspected
+            if !inspected["ok"] { available = false; entry["available"] = false; entry["failure_code"] = inspected["code"] }
+        }
+        required = push(required, entry)
         if !available { missing = push(missing, name) }
     }
     mut optional := []
@@ -151,6 +180,10 @@ func tool_call(ctx, op, index) {
     receipt := {"tool": tool, "command": op["command"], "record_id": op["id"], "exit_code": process.exitcode, "result": parsed, "fixture": true}
     write_json(receipt_path, receipt)
     if process.exitcode != 0 || type(parsed) != "dict" || get(parsed, "ok", false) != true { return {"ok": false, "code": "tool_failed", "error": tool + " " + op["command"] + " failed", "receipt": receipt_path} }
+    expected := get(get(ctx["compatibility"], "tools", {}), tool, {})
+    if get(parsed, "tool_version", "") != get(expected, "version", "") || get(parsed, "contract_version", "") != get(expected, "contract_version", "") {
+        return {"ok": false, "code": "incompatible_tool_contract", "error": tool + " returned an incompatible tool or contract version", "receipt": receipt_path}
+    }
     result_data := get(parsed, "data", {})
     actual_id := op["id"]
     if type(get(result_data, "record", null)) == "dict" { actual_id = get(result_data["record"], "id", actual_id) }
@@ -159,7 +192,7 @@ func tool_call(ctx, op, index) {
     if type(get(result_data, "storage", null)) == "dict" { record_path = get(result_data["storage"], "path", record_path) }
     checksum := ""
     if path_is_file(record_path) { checksum = sha256_file(record_path) }
-    ref := stable_ref(tool, actual_id, "1.0.0", "0.1.0", record_path, checksum)
+    ref := stable_ref(tool, actual_id, parsed["contract_version"], parsed["tool_version"], record_path, checksum)
     append_record_reference(ctx, ref)
     return {"ok": true, "ref": ref, "receipt": receipt_path}
 }
@@ -439,6 +472,8 @@ export func run_workflow(workflow_id) {
     config_result := read_json_object(path_join(workflow_dir, "workflow.json"))
     if !config_result["ok"] { eprint("workflow.json is invalid"); exit(2) }
     config := config_result["value"]
+    compatibility_result := read_json_object(path_join(root, "docs/publishing-house/compatibility-matrix.json"))
+    if !compatibility_result["ok"] { eprint("compatibility matrix is invalid"); exit(2) }
     request_path := flag_value(argv, "--request", "fixtures/request.fixture.json")
     request_result := read_json_object(request_path)
     if !request_result["ok"] { print(to_json_pretty(envelope(false, null, request_result["error"], request_result["code"]))); exit(1) }
@@ -455,7 +490,7 @@ export func run_workflow(workflow_id) {
     tool_state_root := flag_value(argv, "--tool-state-root", path_join(run_dir, "tool-state"))
     ctx := {
         "root":root,"workflow_dir":workflow_dir,"workflow_id":workflow_id,"config":config,"request":request,"run_dir":run_dir,
-        "repos":repos,"kujo":kujo,"tool_state_root":tool_state_root,"json":has_flag(argv,"--json"),"fixture_approval":flag_value(argv,"--fixture-approval",""),
+        "repos":repos,"kujo":kujo,"compatibility":compatibility_result["value"],"tool_state_root":tool_state_root,"json":has_flag(argv,"--json"),"fixture_approval":flag_value(argv,"--fixture-approval",""),
         "refs":[],"agent_receipts":[],"artifact_checksums":[],"external_effect_occurred":false,
         "state":{"schema_name":"publishing-house.workflow-state","schema_version":CONTRACT_VERSION,"workflow_id":workflow_id,"workflow_version":VERSION,"run_id":request["run_id"],"correlation_id":request["correlation_id"],"status":"running","completed_steps":[],"retry_count":0,"max_retries":2}
     }

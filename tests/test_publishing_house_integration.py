@@ -25,6 +25,7 @@ class PublishingHouseIntegrationTests(unittest.TestCase):
             self.assertEqual(proof["workflow_count"], 8)
             self.assertEqual(proof["package_checksum"], proof["publication_checksum"])
             self.assertEqual(proof["network_calls"], 0)
+            self.assertEqual(proof["tool_contract_preflights_checked"], 22)
             self.assertEqual(proof["revision_loop"], "passed")
             self.assertEqual(proof["approval_pause_resume"], "passed")
             self.assertEqual(proof["idempotency"], "passed")

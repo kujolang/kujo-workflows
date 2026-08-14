@@ -68,8 +68,11 @@ runtime dependency.
 
 Fixture mode is offline, deterministic, repeatable, credential-free, and
 external-effect-free. It runs the current tool CLIs, Dispatch workflow, and
-Agents SDK no-network fixture boundary. Generated run directories are ignored
-unless deliberately promoted as reviewed evidence.
+Agents SDK no-network fixture boundary. Capability preflight verifies that each
+tool checkout is clean and matches the exact commit, tool version, and contract
+version in the compatibility matrix; drift fails closed before tool mutation.
+Generated run directories are ignored unless deliberately promoted as reviewed
+evidence.
 
 Live mode must be selected explicitly. It performs capability and permission
 preflight, requires configured compatible adapters, rejects secret-shaped

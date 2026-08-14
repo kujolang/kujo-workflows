@@ -745,7 +745,18 @@ def build_spec(profile: dict[str, Any], recipe: dict[str, Any], raw_task: str) -
         "relevant_systems": profile.get("source", {}).get("roots", []),
         "likely_files": recipe.get("likely_files", {}).get(profile.get("type"), profile.get("source", {}).get("roots", [])),
         "acceptance_criteria": recipe.get("assertions", []) + ["Final status is needs-review with a complete handoff packet."],
-        "eval_requirements": [{"description": item, "check_type": "manual_or_project_command", "params": {}} for item in recipe.get("eval_suggestions", [])],
+        # Recipe suggestions intentionally require an operator to choose the
+        # applicable project command. Keep them as typed manual requirements
+        # instead of inventing a command or emitting a check type outside the
+        # current Spec contract.
+        "eval_requirements": [
+            {
+                "description": item,
+                "params": {"selection": "operator_required"},
+                "tags": ["manual", "project-command"],
+            }
+            for item in recipe.get("eval_suggestions", [])
+        ],
         "risks": [
             {"risk": "Selectors or CMS routes may differ from the recipe skeleton.", "severity": "medium", "mitigation": "Use Lens inspect and update run-local flow before proof."},
             {"risk": "Logged-in flows may mutate content.", "severity": "medium", "mitigation": "Use test roles and reset hooks from the site profile."},

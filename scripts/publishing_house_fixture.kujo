@@ -32,16 +32,20 @@ func main(){
         if get(receipt,"outcome","")!="completed"{eprint(workflow+" did not complete");exit(1)}
         replay:=spawn_process(command,{"cwd":workflow_dir,"timeout_ms":60000,"max_output_bytes":1048576})
         if replay.exitcode!=0||contains(to_string(replay.stdout),"idempotent_replay")==0{eprint(workflow+" idempotent replay failed");exit(1)}
-        runs=push(runs,{"workflow":workflow,"receipt":path_join(run_dir,"completion-receipt.json"),"summary":path_join(run_dir,"run-summary.json")})
+        runs=push(runs,{"workflow":workflow,"run_dir":run_dir,"receipt":path_join(run_dir,"completion-receipt.json"),"summary":path_join(run_dir,"run-summary.json")})
     }
     refs_checked:=0
     agents_checked:=0
     dispatch_checked:=0
+    contract_preflights_checked:=0
+    compatibility:=read_object(path_join(root,"docs/publishing-house/compatibility-matrix.json"))
     for run in runs {
         summary:=read_object(run["summary"])
-        for ref in get(summary,"tool_record_references",[]){if !path_is_file(ref["path"])||sha256_file(ref["path"])!=ref["checksum"]{eprint("record reference failed: "+get(ref,"record_id","unknown"));exit(1)};refs_checked=refs_checked+1}
+        for ref in get(summary,"tool_record_references",[]){expected:=get(get(compatibility,"tools",{}),ref["tool"],{});if ref["tool_version"]!=get(expected,"version","")||ref["schema_version"]!=get(expected,"contract_version","")||!path_is_file(ref["path"])||sha256_file(ref["path"])!=ref["checksum"]{eprint("record reference failed: "+get(ref,"record_id","unknown"));exit(1)};refs_checked=refs_checked+1}
         for agent_path in get(summary,"agent_step_receipts",[]){agent:=read_object(agent_path);if get(agent,"outcome","")!="completed"||get(get(agent,"agents_sdk",{}),"requires_network",true)!=false{eprint("agent receipt failed");exit(1)};agents_checked=agents_checked+1}
         for dispatch in get(summary,"dispatch_artifacts",[]){if !path_is_file(dispatch["state"])||!path_is_file(dispatch["trace"]){eprint("Dispatch artifacts missing");exit(1)};dispatch_checked=dispatch_checked+1}
+        capability:=read_object(path_join(run["run_dir"],"capability-receipt.json"))
+        for entry in get(capability,"required",[]){if type(get(entry,"contract_preflight",null))=="dict"{if get(entry["contract_preflight"],"ok",false)!=true{eprint("tool contract preflight failed");exit(1)};contract_preflights_checked=contract_preflights_checked+1}}
     }
     approval_dir:=path_join(output,"publishing-house-approval-publication")
     checksums:=read_object(path_join(approval_dir,"artifact-checksums.json"))
@@ -57,12 +61,12 @@ func main(){
     proof:={
         "schema_name":"publishing-house.integration-proof","schema_version":"1.0.0","fixture":true,"offline":true,"network_calls":0,
         "correlation_id":"correlation-publishing-house-fixture","workflow_count":len(runs),"workflows":runs,"record_references_checked":refs_checked,
-        "agent_receipts_checked":agents_checked,"dispatch_runs_checked":dispatch_checked,"revision_loop":"passed","approval_pause_resume":"passed",
+        "agent_receipts_checked":agents_checked,"dispatch_runs_checked":dispatch_checked,"tool_contract_preflights_checked":contract_preflights_checked,"revision_loop":"passed","approval_pause_resume":"passed",
         "idempotency":"passed","package_checksum":values[0]["checksum"],"publication_checksum":values[1]["checksum"],
         "external_effect":"bounded local fixture copy only","live_publication":false,"credentials_required":false
     }
     proof_path:=path_join(output,"integration-proof.json")
     write_json(proof_path,proof)
-    print(to_json_pretty({"ok":true,"proof":proof_path,"workflow_count":len(runs),"record_references_checked":refs_checked,"agent_receipts_checked":agents_checked}))
+    print(to_json_pretty({"ok":true,"proof":proof_path,"workflow_count":len(runs),"record_references_checked":refs_checked,"tool_contract_preflights_checked":contract_preflights_checked,"agent_receipts_checked":agents_checked}))
 }
 main()

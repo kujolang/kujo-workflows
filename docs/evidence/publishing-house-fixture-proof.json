@@ -9,6 +9,7 @@
   "record_references_checked": 36,
   "agent_receipts_checked": 26,
   "dispatch_runs_checked": 8,
+  "tool_contract_preflights_checked": 22,
   "revision_loop": "passed",
   "approval_pause_resume": "passed",
   "idempotency": "passed",

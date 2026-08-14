@@ -2,7 +2,9 @@
 
 Captured: 2026-08-14
 
-The portable all-eight fixture completed with 8 workflow completion receipts, 36 checksum-verified tool record references, 26 offline Agents SDK step receipts, and 8 Dispatch state/trace sets.
+The portable all-eight fixture completed with 8 workflow completion receipts,
+36 checksum-verified tool record references, 22 exact tool-contract preflights,
+26 offline Agents SDK step receipts, and 8 Dispatch state/trace sets.
 
 Verified boundaries:
 
