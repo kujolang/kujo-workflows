@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kujolang.ai/contracts/publishing-house/approval-pause.v1",
+  "title": "publishing-house.approval-pause/v1",
+  "type": "object",
+  "required": [
+    "contract",
+    "schema_name",
+    "schema_version",
+    "workflow_id",
+    "workflow_version",
+    "run_id",
+    "created_at",
+    "package_id",
+    "package_version",
+    "checksum",
+    "destination",
+    "requested_action",
+    "approval_owner",
+    "fixture",
+    "current_state",
+    "next_action"
+  ],
+  "properties": {
+    "contract": {
+      "const": "publishing-house.approval-pause/v1"
+    },
+    "schema_name": {
+      "const": "publishing-house.approval-pause"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "workflow_id": {
+      "type": "string"
+    },
+    "workflow_version": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "package_id": {
+      "type": "string"
+    },
+    "package_version": {
+      "type": "string"
+    },
+    "checksum": {
+      "type": "string"
+    },
+    "destination": {
+      "type": "string"
+    },
+    "requested_action": {
+      "type": "string"
+    },
+    "approval_owner": {
+      "type": "string"
+    },
+    "fixture": {
+      "type": "boolean"
+    },
+    "current_state": {
+      "const": "paused"
+    },
+    "next_action": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

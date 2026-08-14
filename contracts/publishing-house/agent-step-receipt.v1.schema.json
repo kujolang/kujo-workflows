@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kujolang.ai/contracts/publishing-house/agent-step-receipt.v1",
+  "title": "publishing-house.agent-step-receipt/v1",
+  "type": "object",
+  "required": [
+    "contract",
+    "schema_name",
+    "schema_version",
+    "workflow_id",
+    "workflow_version",
+    "run_id",
+    "assignment_id",
+    "canonical_role",
+    "role_contract",
+    "skill_contract",
+    "maximum_permission",
+    "current_permission",
+    "input_record_references",
+    "allowed_tools",
+    "expected_output",
+    "stop_condition",
+    "next_owner",
+    "outcome",
+    "artifact_references",
+    "agents_sdk"
+  ],
+  "properties": {
+    "contract": {
+      "const": "publishing-house.agent-step-receipt/v1"
+    },
+    "schema_name": {
+      "const": "publishing-house.agent-step-receipt"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "workflow_id": {
+      "type": "string"
+    },
+    "workflow_version": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "assignment_id": {
+      "type": "string"
+    },
+    "canonical_role": {
+      "type": "string"
+    },
+    "role_contract": {
+      "type": "string"
+    },
+    "skill_contract": {
+      "type": "string"
+    },
+    "maximum_permission": {
+      "type": "string"
+    },
+    "current_permission": {
+      "type": "string"
+    },
+    "input_record_references": {
+      "type": "array"
+    },
+    "allowed_tools": {
+      "type": "array"
+    },
+    "expected_output": {
+      "type": "string"
+    },
+    "stop_condition": {
+      "type": "string"
+    },
+    "next_owner": {
+      "type": "string"
+    },
+    "outcome": {
+      "type": "string"
+    },
+    "artifact_references": {
+      "type": "array"
+    },
+    "agents_sdk": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": true
+}

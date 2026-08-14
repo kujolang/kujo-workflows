@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kujolang.ai/contracts/publishing-house/capability-receipt.v1",
+  "title": "publishing-house.capability-receipt/v1",
+  "type": "object",
+  "required": [
+    "contract",
+    "schema_name",
+    "schema_version",
+    "workflow_id",
+    "workflow_version",
+    "run_id",
+    "created_at",
+    "required",
+    "optional",
+    "permission_mode",
+    "mode",
+    "outcome"
+  ],
+  "properties": {
+    "contract": {
+      "const": "publishing-house.capability-receipt/v1"
+    },
+    "schema_name": {
+      "const": "publishing-house.capability-receipt"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "workflow_id": {
+      "type": "string"
+    },
+    "workflow_version": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "required": {
+      "type": "array"
+    },
+    "optional": {
+      "type": "array"
+    },
+    "permission_mode": {
+      "type": "string"
+    },
+    "mode": {
+      "type": "string"
+    },
+    "outcome": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

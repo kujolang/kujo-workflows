@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kujolang.ai/contracts/publishing-house/workflow-blocker.v1",
+  "title": "publishing-house.workflow-blocker/v1",
+  "type": "object",
+  "required": [
+    "contract",
+    "schema_name",
+    "schema_version",
+    "workflow_id",
+    "workflow_version",
+    "run_id",
+    "created_at",
+    "state",
+    "code",
+    "message",
+    "required_capability",
+    "next_action",
+    "retryable",
+    "external_effect_occurred"
+  ],
+  "properties": {
+    "contract": {
+      "const": "publishing-house.workflow-blocker/v1"
+    },
+    "schema_name": {
+      "const": "publishing-house.workflow-blocker"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "workflow_id": {
+      "type": "string"
+    },
+    "workflow_version": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "state": {
+      "enum": [
+        "unavailable",
+        "unsupported",
+        "blocked",
+        "rejected",
+        "skipped",
+        "failed"
+      ]
+    },
+    "code": {
+      "type": "string"
+    },
+    "message": {
+      "type": "string"
+    },
+    "required_capability": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "next_action": {
+      "type": "string"
+    },
+    "retryable": {
+      "type": "boolean"
+    },
+    "external_effect_occurred": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": true
+}

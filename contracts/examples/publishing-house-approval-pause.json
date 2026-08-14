@@ -1,0 +1,18 @@
+{
+  "contract": "publishing-house.approval-pause/v1",
+  "schema_name": "publishing-house.approval-pause",
+  "schema_version": "1.0.0",
+  "workflow_id": "publishing-house-approval-publication",
+  "workflow_version": "0.1.0",
+  "run_id": "run-fixture",
+  "created_at": "2026-08-14T14:00:00Z",
+  "package_id": "package-fixture",
+  "package_version": "2",
+  "checksum": "abc123",
+  "destination": "fixture-local",
+  "requested_action": "publish",
+  "approval_owner": "fixture-human-approver",
+  "fixture": true,
+  "current_state": "paused",
+  "next_action": "resume with exact VersionSeal decision"
+}

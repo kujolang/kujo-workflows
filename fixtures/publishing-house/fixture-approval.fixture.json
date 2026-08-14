@@ -1,0 +1,11 @@
+{
+  "schema_name": "publishing-house.fixture-human-approval",
+  "schema_version": "1.0.0",
+  "fixture": true,
+  "human_actor": "fixture-human-approver",
+  "decision": "approved",
+  "destination": "fixture-local",
+  "action": "publish",
+  "approved_at": "2026-08-14T15:00:00Z",
+  "warning": "Fixture data only; this is not evidence of a real live human approval."
+}

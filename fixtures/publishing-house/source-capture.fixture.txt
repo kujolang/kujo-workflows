@@ -1,0 +1,1 @@
+Fixture observation: the local Publishing House proof runs its baseline path without a network provider and binds approval to the SHA-256 checksum of the exact package bytes.

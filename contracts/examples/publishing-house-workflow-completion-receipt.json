@@ -1,0 +1,26 @@
+{
+  "contract": "publishing-house.workflow-completion-receipt/v1",
+  "schema_name": "publishing-house.workflow-completion-receipt",
+  "schema_version": "1.0.0",
+  "workflow_id": "publishing-house-daily-desk",
+  "workflow_version": "0.1.0",
+  "run_id": "run-fixture",
+  "correlation_id": "correlation-fixture",
+  "created_at": "2026-08-14T12:00:00Z",
+  "actor": "fixture-operator",
+  "permission_mode": "PROPOSE",
+  "outcome": "completed",
+  "summary_reference": {
+    "path": "run-summary.json",
+    "checksum": "abc123"
+  },
+  "receipt_references": [],
+  "external_effect_declared": false,
+  "external_effect_occurred": false,
+  "idempotency_key": "idempotency-fixture",
+  "provenance": [
+    {
+      "kind": "fixture"
+    }
+  ]
+}

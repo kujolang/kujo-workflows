@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kujolang.ai/contracts/publishing-house/workflow-run-summary.v1",
+  "title": "publishing-house.workflow-run-summary/v1",
+  "type": "object",
+  "required": [
+    "contract",
+    "schema_name",
+    "schema_version",
+    "workflow_id",
+    "workflow_version",
+    "run_id",
+    "correlation_id",
+    "created_at",
+    "actor",
+    "permission_mode",
+    "current_state",
+    "next_action",
+    "tool_record_references",
+    "artifact_checksums",
+    "agent_step_receipts",
+    "dispatch_artifacts",
+    "external_effect_declared",
+    "external_effect_occurred",
+    "provenance"
+  ],
+  "properties": {
+    "contract": {
+      "const": "publishing-house.workflow-run-summary/v1"
+    },
+    "schema_name": {
+      "const": "publishing-house.workflow-run-summary"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "workflow_id": {
+      "type": "string"
+    },
+    "workflow_version": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "correlation_id": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "actor": {
+      "type": "string"
+    },
+    "permission_mode": {
+      "type": "string"
+    },
+    "current_state": {
+      "type": "string"
+    },
+    "next_action": {
+      "type": "string"
+    },
+    "tool_record_references": {
+      "type": "array"
+    },
+    "artifact_checksums": {
+      "type": "array"
+    },
+    "agent_step_receipts": {
+      "type": "array"
+    },
+    "dispatch_artifacts": {
+      "type": "array"
+    },
+    "external_effect_declared": {
+      "type": "boolean"
+    },
+    "external_effect_occurred": {
+      "type": "boolean"
+    },
+    "provenance": {
+      "type": "array"
+    }
+  },
+  "additionalProperties": true
+}

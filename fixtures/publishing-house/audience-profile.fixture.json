@@ -1,0 +1,11 @@
+{
+  "schema_name": "publishing-house.audience-profile",
+  "schema_version": "1.0.0",
+  "audience_id": "small-editorial-teams",
+  "identity": "Small editorial teams evaluating local workflow systems",
+  "needs": ["repeatable review", "clear approval boundaries", "offline evidence"],
+  "existing_knowledge": "Understands content operations but not checksum-bound approval.",
+  "desired_movement": "Can evaluate a local publishing workflow using its receipts.",
+  "accessibility_needs": ["plain language", "text alternatives"],
+  "provenance": [{"kind": "fixture", "source": "fixtures/publishing-house/audience-profile.fixture.json"}]
+}

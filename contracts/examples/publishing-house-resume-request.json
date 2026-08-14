@@ -1,0 +1,16 @@
+{
+  "contract": "publishing-house.resume-request/v1",
+  "schema_name": "publishing-house.resume-request",
+  "schema_version": "1.0.0",
+  "workflow_id": "publishing-house-approval-publication",
+  "workflow_version": "0.1.0",
+  "run_id": "run-fixture",
+  "correlation_id": "correlation-fixture",
+  "resumed_at": "2026-08-14T15:00:00Z",
+  "actor": "fixture-human-approver",
+  "decision_record_reference": {
+    "tool": "versionseal",
+    "record_id": "approve-fixture"
+  },
+  "expected_pause_checksum": "abc123"
+}

@@ -1,0 +1,93 @@
+export func get(value, key, fallback) {
+    if type(value) == "dict" && has_key(value, key) == 1 { return value[key] }
+    return fallback
+}
+
+export func has(items, expected) {
+    for item in items { if item == expected { return true } }
+    return false
+}
+
+export func flag_value(argv, name, fallback) {
+    mut i := 0
+    while i < len(argv) {
+        token := to_string(argv[i])
+        if token == name && i + 1 < len(argv) { return to_string(argv[i + 1]) }
+        if starts_with(token, name + "=") { return substring(token, len(name) + 1, len(token)) }
+        i = i + 1
+    }
+    return fallback
+}
+
+export func has_flag(argv, name) {
+    for token in argv { if token == name { return true } }
+    return false
+}
+
+export func parent_dir(path) {
+    normalized := replace(path, "\\", "/")
+    mut at := -1
+    mut i := 0
+    while i < len(normalized) {
+        if substring(normalized, i, i + 1) == "/" { at = i }
+        i = i + 1
+    }
+    if at < 0 { return "." }
+    if at == 0 { return "/" }
+    return substring(normalized, 0, at)
+}
+
+export func ensure_dir(path) {
+    if path_is_dir(path) { return true }
+    result := spawn_process(["mkdir", "-p", path], {"timeout_ms": 5000, "max_output_bytes": 4096})
+    return result.exitcode == 0 && path_is_dir(path)
+}
+
+export func safe_path(path) {
+    if type(path) != "string" || trim(path) == "" { return false }
+    normalized := replace(path, "\\", "/")
+    if normalized == "/" || contains(normalized, "../") || ends_with(normalized, "/..") { return false }
+    if file_exists(path) && path_is_symlink(path) { return false }
+    return true
+}
+
+export func read_json_object(path) {
+    if !safe_path(path) || !path_is_file(path) || path_is_symlink(path) { return {"ok": false, "code": "unsafe_path", "error": "input must be a safe regular file"} }
+    if file_size(path) > 1048576 { return {"ok": false, "code": "input_too_large", "error": "input exceeds 1 MiB"} }
+    try {
+        value := parse_json(read_file(path))
+        if type(value) != "dict" { return {"ok": false, "code": "invalid_json", "error": "JSON root must be an object"} }
+        return {"ok": true, "value": value}
+    } except error {
+        return {"ok": false, "code": "invalid_json", "error": "input is not valid JSON"}
+    }
+}
+
+export func write_json(path, value) {
+    ensure_dir(parent_dir(path))
+    write_file_atomic(path, to_json_pretty(value) + "\n", true)
+}
+
+export func permission_rank(mode) {
+    if mode == "OBSERVE" { return 1 }
+    if mode == "PROPOSE" { return 2 }
+    if mode == "ACT" { return 3 }
+    return 0
+}
+
+export func secret_path(value, prefix) {
+    if type(value) == "dict" {
+        for key in keys(value) {
+            lowered := to_lower(to_string(key))
+            if contains(lowered, "password") || contains(lowered, "secret") || contains(lowered, "api_key") || contains(lowered, "authorization") || lowered == "token" { return prefix + to_string(key) }
+            found := secret_path(value[key], prefix + to_string(key) + ".")
+            if found != "" { return found }
+        }
+    }
+    if type(value) == "array" { for item in value { found := secret_path(item, prefix); if found != "" { return found } } }
+    return ""
+}
+
+export func stable_ref(tool, record_id, schema_version, tool_version, path, checksum) {
+    return {"tool": tool, "record_id": record_id, "schema_version": schema_version, "tool_version": tool_version, "path": path, "checksum": checksum}
+}

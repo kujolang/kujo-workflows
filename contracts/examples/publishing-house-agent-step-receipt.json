@@ -1,0 +1,27 @@
+{
+  "contract": "publishing-house.agent-step-receipt/v1",
+  "schema_name": "publishing-house.agent-step-receipt",
+  "schema_version": "1.0.0",
+  "workflow_id": "publishing-house-daily-desk",
+  "workflow_version": "0.1.0",
+  "run_id": "run-fixture",
+  "assignment_id": "assignment-fixture",
+  "canonical_role": "Managing Editor",
+  "role_contract": "publishing-house/managing-editor/AGENT.md",
+  "skill_contract": "publishing-house/managing-editor/SKILL.md",
+  "maximum_permission": "PROPOSE",
+  "current_permission": "PROPOSE",
+  "input_record_references": [],
+  "allowed_tools": [
+    "storydesk"
+  ],
+  "expected_output": "routing receipt",
+  "stop_condition": "routing recorded",
+  "next_owner": "Commissioning Editor",
+  "outcome": "completed",
+  "artifact_references": [],
+  "agents_sdk": {
+    "contract_version": "0.1.0",
+    "requires_network": false
+  }
+}

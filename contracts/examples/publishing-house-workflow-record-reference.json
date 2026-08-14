@@ -1,0 +1,10 @@
+{
+  "contract": "publishing-house.workflow-record-reference/v1",
+  "schema_name": "publishing-house.workflow-record-reference",
+  "schema_version": "1.0.0",
+  "tool": "storydesk",
+  "record_id": "brief-fixture",
+  "tool_version": "0.1.0",
+  "path": ".runs/run/tool-state/storydesk/records/brief-fixture.json",
+  "checksum": "abc123"
+}

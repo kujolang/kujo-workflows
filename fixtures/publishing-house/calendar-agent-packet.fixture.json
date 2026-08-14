@@ -1,0 +1,14 @@
+{
+  "run": {"id": "calendar-run-fixture", "date": "2026-08-14"},
+  "entries": [
+    {
+      "id": "item-local-workflow-proof",
+      "date": "2026-08-14",
+      "channel": "editorial",
+      "title": "The checksum is the editorial boundary",
+      "detail": "Explain why exact package identity matters.",
+      "agent": {"status": "idea", "priority": "high", "suggestedTools": ["StoryDesk"], "promptContext": "Commission a defensible flagship feature."},
+      "editorial": {"campaignId": "campaign-trustworthy-local-publishing", "contentTier": "flagship", "evidenceStatus": "planned"}
+    }
+  ]
+}

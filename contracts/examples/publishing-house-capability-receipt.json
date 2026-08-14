@@ -1,0 +1,24 @@
+{
+  "contract": "publishing-house.capability-receipt/v1",
+  "schema_name": "publishing-house.capability-receipt",
+  "schema_version": "1.0.0",
+  "workflow_id": "publishing-house-daily-desk",
+  "workflow_version": "0.1.0",
+  "run_id": "run-fixture",
+  "created_at": "2026-08-14T12:00:00Z",
+  "required": [
+    {
+      "name": "storydesk",
+      "available": true
+    }
+  ],
+  "optional": [
+    {
+      "name": "watchdog",
+      "available": false
+    }
+  ],
+  "permission_mode": "PROPOSE",
+  "mode": "fixture",
+  "outcome": "completed"
+}

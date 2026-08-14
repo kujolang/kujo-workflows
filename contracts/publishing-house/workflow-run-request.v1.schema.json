@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kujolang.ai/contracts/publishing-house/workflow-run-request.v1",
+  "title": "publishing-house.workflow-run-request/v1",
+  "type": "object",
+  "required": [
+    "contract",
+    "schema_name",
+    "schema_version",
+    "workflow_id",
+    "workflow_version",
+    "run_id",
+    "correlation_id",
+    "created_at",
+    "actor",
+    "permission_mode",
+    "mode",
+    "profiles",
+    "capabilities",
+    "input",
+    "external_effects_allowed"
+  ],
+  "properties": {
+    "contract": {
+      "const": "publishing-house.workflow-run-request/v1"
+    },
+    "schema_name": {
+      "const": "publishing-house.workflow-run-request"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "workflow_id": {
+      "type": "string"
+    },
+    "workflow_version": {
+      "const": "0.1.0"
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "correlation_id": {
+      "type": "string"
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "actor": {
+      "type": "string"
+    },
+    "permission_mode": {
+      "enum": [
+        "OBSERVE",
+        "PROPOSE",
+        "ACT"
+      ]
+    },
+    "mode": {
+      "enum": [
+        "fixture",
+        "live"
+      ]
+    },
+    "profiles": {
+      "type": "object"
+    },
+    "capabilities": {
+      "type": "array"
+    },
+    "input": {
+      "type": "object"
+    },
+    "external_effects_allowed": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": true
+}

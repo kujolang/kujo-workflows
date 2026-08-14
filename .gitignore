@@ -5,6 +5,7 @@ agency-runner/.tmp/
 __pycache__/
 *.py[cod]
 .runs/
+publishing-house-*/.runs/
 .loop-engineering/
 # Kujo ecosystem local artifact ignore block.
 # Keep this block repo-local by default. Promote intentionally reviewed examples

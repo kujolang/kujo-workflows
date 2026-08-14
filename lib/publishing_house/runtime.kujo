@@ -1,0 +1,502 @@
+from lib.publishing_house.common import get, has, flag_value, has_flag, parent_dir, ensure_dir, safe_path, read_json_object, write_json, permission_rank, secret_path, stable_ref
+
+VERSION := "0.1.0"
+CONTRACT_VERSION := "1.0.0"
+FIXTURE_TIMES := ["2026-08-14T12:00:00Z","2026-08-14T12:05:00Z","2026-08-14T12:10:00Z","2026-08-14T12:15:00Z","2026-08-14T12:20:00Z","2026-08-14T12:25:00Z","2026-08-14T12:30:00Z","2026-08-14T12:35:00Z","2026-08-14T12:40:00Z","2026-08-14T12:45:00Z","2026-08-14T12:50:00Z","2026-08-14T12:55:00Z"]
+
+func envelope(ok, data, error, code) {
+    return {"ok": ok, "data": data, "error": error, "error_code": code, "workflow_contract_version": CONTRACT_VERSION}
+}
+
+func emit(ctx, ok, data, error, code) {
+    output := envelope(ok, data, error, code)
+    if ctx["json"] { print(to_json_pretty(output)) }
+    else if ok { print(ctx["config"]["name"] + ": " + get(data, "outcome", get(data, "current_state", "completed")) + "\n" + get(data, "path", ctx["run_dir"])) }
+    else { eprint(ctx["config"]["name"] + ": " + error + " [" + code + "]") }
+}
+
+func blocker(ctx, state, code, message, capability, next_action, retryable) {
+    value := {
+        "contract": "publishing-house.workflow-blocker/v1", "schema_name": "publishing-house.workflow-blocker", "schema_version": CONTRACT_VERSION,
+        "workflow_id": ctx["workflow_id"], "workflow_version": VERSION, "run_id": ctx["request"]["run_id"], "created_at": ctx["request"]["created_at"],
+        "state": state, "code": code, "message": message, "required_capability": capability, "next_action": next_action,
+        "retryable": retryable, "external_effect_occurred": false
+    }
+    write_json(path_join(ctx["run_dir"], "blocker.json"), value)
+    state_value := ctx["state"]
+    state_value["status"] = state
+    state_value["blocker"] = value
+    ctx["state"] = state_value
+    write_json(path_join(ctx["run_dir"], "state.json"), ctx["state"])
+    return {"ok": false, "error": message, "code": code, "blocker": value}
+}
+
+func validate_request(workflow_id, config, request) {
+    required := ["schema_name","schema_version","workflow_id","workflow_version","run_id","correlation_id","created_at","actor","permission_mode","mode","profiles","capabilities","input","external_effects_allowed"]
+    for key in required { if has_key(request, key) == 0 { return {"ok": false, "code": "missing_required_field", "error": "missing required field: " + key} } }
+    if request["schema_name"] != "publishing-house.workflow-run-request" || request["schema_version"] != CONTRACT_VERSION { return {"ok": false, "code": "incompatible_schema", "error": "workflow request schema must be publishing-house.workflow-run-request 1.0.0"} }
+    if request["workflow_id"] != workflow_id || request["workflow_version"] != VERSION { return {"ok": false, "code": "workflow_mismatch", "error": "workflow identity or version mismatch"} }
+    if !has(["OBSERVE","PROPOSE","ACT"], request["permission_mode"]) { return {"ok": false, "code": "invalid_permission", "error": "permission_mode must be OBSERVE, PROPOSE, or ACT"} }
+    if permission_rank(request["permission_mode"]) > permission_rank(config["maximum_permission"]) { return {"ok": false, "code": "permission_broadened", "error": "request exceeds workflow maximum permission"} }
+    if request["mode"] != "fixture" && request["mode"] != "live" { return {"ok": false, "code": "invalid_mode", "error": "mode must be fixture or live"} }
+    if type(request["profiles"]) != "dict" || type(request["capabilities"]) != "array" || type(request["input"]) != "dict" { return {"ok": false, "code": "invalid_shape", "error": "profiles, capabilities, and input have invalid shapes"} }
+    sensitive := secret_path(request, "")
+    if sensitive != "" { return {"ok": false, "code": "secret_rejected", "error": "secret-shaped field rejected: " + sensitive} }
+    return {"ok": true}
+}
+
+func capability_available(request, name) {
+    for capability in request["capabilities"] {
+        if type(capability) == "dict" && get(capability, "name", "") == name { return get(capability, "available", false) == true }
+    }
+    return false
+}
+
+func validate_input_references(request) {
+    references := get(request["input"], "fixture_record_references", [])
+    if type(references) != "array" { return {"ok": false, "code": "invalid_record_reference", "error": "fixture_record_references must be an array"} }
+    for reference in references {
+        if type(reference) != "dict" || get(reference, "schema_version", "") != CONTRACT_VERSION || get(reference, "record_id", "") == "" || get(reference, "path", "") == "" || get(reference, "checksum", "") == "" {
+            return {"ok": false, "code": "invalid_record_reference", "error": "record reference is incomplete or incompatible"}
+        }
+        reference_path := reference["path"]
+        if !safe_path(reference_path) { return {"ok": false, "code": "unsafe_path", "error": "record reference path is unsafe"} }
+        if !path_is_file(reference_path) { return {"ok": false, "code": "invalid_record_reference", "error": "record reference does not resolve"} }
+        if sha256_file(reference_path) != reference["checksum"] { return {"ok": false, "code": "checksum_drift", "error": "record reference checksum drift"} }
+    }
+    return {"ok": true}
+}
+
+func preflight(ctx) {
+    mut required := []
+    mut missing := []
+    for name in ctx["config"]["required_capabilities"] {
+        available := capability_available(ctx["request"], name)
+        if name == "kujo" { available = available && path_is_file(ctx["kujo"]) }
+        if name == "dispatch" || name == "agents-sdk" || has(ctx["config"]["tools"], name) { available = available && path_is_dir(path_join(ctx["repos"], name)) }
+        required = push(required, {"name": name, "available": available, "required": true})
+        if !available { missing = push(missing, name) }
+    }
+    mut optional := []
+    for name in ctx["config"]["optional_capabilities"] { optional = push(optional, {"name": name, "available": capability_available(ctx["request"], name), "required": false}) }
+    receipt := {
+        "contract": "publishing-house.capability-receipt/v1", "schema_name": "publishing-house.capability-receipt", "schema_version": CONTRACT_VERSION,
+        "workflow_id": ctx["workflow_id"], "workflow_version": VERSION, "run_id": ctx["request"]["run_id"], "created_at": ctx["request"]["created_at"],
+        "required": required, "optional": optional, "permission_mode": ctx["request"]["permission_mode"], "mode": ctx["request"]["mode"], "outcome": "completed"
+    }
+    if len(missing) > 0 { receipt["outcome"] = "blocked"; receipt["missing"] = missing }
+    write_json(path_join(ctx["run_dir"], "capability-receipt.json"), receipt)
+    if len(missing) > 0 { return blocker(ctx, "unavailable", "missing_required_capability", "required capability unavailable: " + join(missing, ", "), join(missing, ","), "install or declare the required local capability", false) }
+    if ctx["request"]["mode"] == "live" { return blocker(ctx, "unavailable", "live_adapter_unavailable", "live mode requires explicitly configured provider adapters; fixture fallback is forbidden", "live-adapter", "configure and validate the required live adapters", false) }
+    return {"ok": true}
+}
+
+func normalize_daily_packet(ctx) {
+    source := get(ctx["request"]["input"], "source_packet", "")
+    loaded := read_json_object(source)
+    if !loaded["ok"] { return loaded }
+    packet := loaded["value"]
+    if get(packet, "schema_name", "") == "publishing-house.normalized-daily-packet" && get(packet, "schema_version", "") == CONTRACT_VERSION {
+        write_json(path_join(ctx["run_dir"], "validated-daily-packet.json"), packet)
+        return {"ok": true, "value": packet}
+    }
+    if type(get(packet, "entries", null)) == "array" {
+        items := []
+        for entry in packet["entries"] {
+            items = push(items, {
+                "item_id": get(entry, "id", ""), "status": get(get(entry, "agent", {}), "status", "idea"),
+                "priority": get(get(entry, "agent", {}), "priority", "normal"), "title": get(entry, "title", ""), "detail": get(entry, "detail", ""),
+                "campaign_id": get(get(entry, "editorial", {}), "campaignId", ""), "format_profile": "flagship-feature", "requires_assets": true,
+                "source_signals": [], "due_at": get(entry, "date", "") + "T17:00:00Z"
+            })
+        }
+        normalized := {
+            "contract": "publishing-house.normalized-daily-packet/v1", "schema_name": "publishing-house.normalized-daily-packet", "schema_version": CONTRACT_VERSION,
+            "packet_id": get(get(packet, "run", {}), "id", "calendar-adapter-packet"), "date": get(get(packet, "run", {}), "date", "2026-08-14"),
+            "source_adapter": "content-calendar-agent-packet/v1", "items": items, "provenance": [{"kind": "adapter", "source": source}]
+        }
+        write_json(path_join(ctx["run_dir"], "validated-daily-packet.json"), normalized)
+        return {"ok": true, "value": normalized}
+    }
+    return {"ok": false, "code": "invalid_daily_packet", "error": "source packet is neither normalized nor a supported content-calendar packet"}
+}
+
+func tool_state(ctx, tool) { return path_join(ctx["tool_state_root"], tool) }
+
+func append_record_reference(ctx, ref) {
+    path := path_join(ctx["run_dir"], "record-references.json")
+    refs := []
+    if path_is_file(path) { loaded := read_json_object(path); if loaded["ok"] { refs = get(loaded["value"], "references", []) } }
+    refs = push(refs, ref)
+    write_json(path, {"schema_name":"publishing-house.record-reference-index","schema_version":CONTRACT_VERSION,"references":refs})
+}
+
+func tool_call(ctx, op, index) {
+    tool := op["tool"]
+    payload_path := path_join(ctx["run_dir"], "inputs/" + op["id"] + ".json")
+    write_json(payload_path, op["payload"])
+    argv := [path_join(ctx["repos"], tool + "/bin/" + tool)]
+    for token in split(op["command"], " ") { argv = push(argv, token) }
+    argv = concat(argv, ["--state", tool_state(ctx, tool), "--input", payload_path, "--actor", op["actor"], "--timestamp", FIXTURE_TIMES[index % len(FIXTURE_TIMES)], "--id", op["id"], "--json"])
+    artifact := get(op, "artifact", "")
+    if artifact != "" { argv = concat(argv, ["--path", artifact]) }
+    output := get(op, "output", "")
+    if output != "" { argv = concat(argv, ["--output", output]) }
+    if get(op, "act", false) { argv = concat(argv, ["--act", "--yes"]) }
+    if get(op, "dry_run", false) { argv = push(argv, "--dry-run") }
+    process := spawn_process(concat(["env", "KUJO_BIN=" + ctx["kujo"]], argv), {"cwd": ctx["repos"], "timeout_ms": 30000, "max_output_bytes": 2097152})
+    receipt_path := path_join(ctx["run_dir"], "tool-receipts/" + op["id"] + ".json")
+    parsed := null
+    try { parsed = parse_json(trim(to_string(process.stdout))) } except error { parsed = {"ok": false, "error": trim(to_string(process.stdout) + to_string(process.stderr))} }
+    receipt := {"tool": tool, "command": op["command"], "record_id": op["id"], "exit_code": process.exitcode, "result": parsed, "fixture": true}
+    write_json(receipt_path, receipt)
+    if process.exitcode != 0 || type(parsed) != "dict" || get(parsed, "ok", false) != true { return {"ok": false, "code": "tool_failed", "error": tool + " " + op["command"] + " failed", "receipt": receipt_path} }
+    record_path := path_join(tool_state(ctx, tool), "records/" + op["id"] + ".json")
+    checksum := ""
+    if path_is_file(record_path) { checksum = sha256_file(record_path) }
+    ref := stable_ref(tool, op["id"], "1.0.0", "0.1.0", record_path, checksum)
+    append_record_reference(ctx, ref)
+    return {"ok": true, "ref": ref, "receipt": receipt_path}
+}
+
+func run_ops(ctx, operations) {
+    mut index := 0
+    for op in operations {
+        result := tool_call(ctx, op, index)
+        if !result["ok"] { return result }
+        index = index + 1
+    }
+    return {"ok": true}
+}
+
+func run_agents(ctx) {
+    mut index := 0
+    for binding in ctx["config"]["bindings"] {
+        role := binding["canonical_role"]
+        slug := binding["role_slug"]
+        request_value := {
+            "contract": "publishing-house.agent-step-request/v1", "schema_name": "publishing-house.agent-step-request", "schema_version": CONTRACT_VERSION,
+            "workflow_id": ctx["workflow_id"], "workflow_version": VERSION, "run_id": ctx["request"]["run_id"],
+            "assignment_id": "assignment-" + ctx["request"]["run_id"] + "-" + to_string(index + 1), "canonical_role": role,
+            "role_contract": binding["canonical_agent"], "skill_contract": binding["canonical_skill"], "maximum_permission": binding["maximum_permission"],
+            "current_permission": ctx["request"]["permission_mode"], "input_record_references": ctx["refs"], "allowed_tools": binding["allowed_tools"],
+            "expected_output": binding["expected_output"], "stop_condition": binding["stop_condition"], "next_owner": binding["handoff_destination"]
+        }
+        request_path := path_join(ctx["run_dir"], "agent-requests/" + to_string(index + 1) + "-" + slug + ".json")
+        write_json(request_path, request_value)
+        argv := ["env", "KUJO_MODULE_PATH=" + path_join(ctx["repos"], "agents-sdk"), ctx["kujo"], "run", path_join(ctx["root"], "lib/publishing_house/agents_sdk_bridge.kujo"), "--", "--role", role, "--role-id", slug, "--run-id", ctx["request"]["run_id"], "--assignment-id", request_value["assignment_id"], "--expected-output", binding["expected_output"]]
+        process := spawn_process(argv, {"cwd": ctx["root"], "timeout_ms": 30000, "max_output_bytes": 1048576})
+        sdk := null
+        try { sdk = parse_json(trim(to_string(process.stdout))) } except error { sdk = {"ok": false, "error": trim(to_string(process.stdout) + to_string(process.stderr))} }
+        receipt := request_value
+        receipt["contract"] = "publishing-house.agent-step-receipt/v1"
+        receipt["schema_name"] = "publishing-house.agent-step-receipt"
+        receipt["outcome"] = "completed"
+        receipt["artifact_references"] = []
+        receipt["agents_sdk"] = {"commit": "0e56994f45f577f6e5dd68f2c3c0c7e06af46d71", "contract_version": "0.1.0", "requires_network": false, "result": sdk}
+        if process.exitcode != 0 || get(sdk, "ok", false) != true { receipt["outcome"] = "failed" }
+        receipt_path := path_join(ctx["run_dir"], "agent-receipts/" + to_string(index + 1) + "-" + slug + ".json")
+        write_json(receipt_path, receipt)
+        ctx["agent_receipts"] = push(ctx["agent_receipts"], receipt_path)
+        if receipt["outcome"] != "completed" { return {"ok": false, "code": "agent_step_failed", "error": "Agents SDK fixture step failed for " + role} }
+        index = index + 1
+    }
+    return {"ok": true}
+}
+
+func find_dispatch_run(output_root) {
+    if !path_is_dir(output_root) { return "" }
+    for name in sort(list_dir(output_root)) { if starts_with(name, "run-") && path_is_dir(path_join(output_root, name)) { return name } }
+    return ""
+}
+
+func run_dispatch(ctx, approval_pause, resume) {
+    output_root := path_join(ctx["run_dir"], "dispatch")
+    ensure_dir(output_root)
+    spec := path_join(ctx["workflow_dir"], "workflow.json")
+    argv := []
+    if resume {
+        prior := read_json_object(path_join(ctx["run_dir"], "dispatch-receipt.json"))
+        if !prior["ok"] { return {"ok": false, "code": "dispatch_receipt_missing", "error": "Dispatch receipt is required to resume"} }
+        argv = [ctx["kujo"], "run", path_join(ctx["repos"], "dispatch/dispatch.kujo"), "resume", prior["value"]["run_id"], "--yes", "--non-interactive", "--output-root", output_root]
+    } else {
+        argv = [ctx["kujo"], "run", path_join(ctx["repos"], "dispatch/dispatch.kujo"), "demo", ctx["workflow_id"], "--workflow-file", spec, "--input-json", to_json({"topic": ctx["workflow_id"], "run_id": ctx["request"]["run_id"]}), "--non-interactive", "--output-root", output_root]
+        if !approval_pause { argv = push(argv, "--yes") }
+    }
+    process := spawn_process(concat(["env", "DISPATCH_OFFLINE_FIXTURE=true", "DISPATCH_ALLOW_ANY_OUTPUT_ROOT=true", "DISPATCH_ALLOW_ANY_CONFIG_PATH=true", "KUJO_BIN=" + ctx["kujo"]], argv), {"cwd": path_join(ctx["repos"], "dispatch"), "timeout_ms": 120000, "max_output_bytes": 2097152})
+    run_id := find_dispatch_run(output_root)
+    if resume { prior := read_json_object(path_join(ctx["run_dir"], "dispatch-receipt.json")); if prior["ok"] { run_id = prior["value"]["run_id"] } }
+    dispatch_state_path := path_join(output_root, run_id + "/state.json")
+    status := "unknown"
+    if path_is_file(dispatch_state_path) { parsed := read_json_object(dispatch_state_path); if parsed["ok"] { status = get(parsed["value"], "status", "unknown") } }
+    receipt := {"engine": "dispatch", "version": "1.0.0", "commit": "3e8a5ff74919fd01e3674cfe47e3740206cd0afb", "exit_code": process.exitcode, "run_id": run_id, "status": status, "state": dispatch_state_path, "trace": path_join(output_root, run_id + "/trace.json"), "report": path_join(output_root, run_id + "/report.json"), "offline_fixture": true, "stdout_sha256": sha256(to_string(process.stdout)), "stderr_tail": substring(to_string(process.stderr), max(0, len(to_string(process.stderr)) - 2000), len(to_string(process.stderr)))}
+    write_json(path_join(ctx["run_dir"], "dispatch-receipt.json"), receipt)
+    if process.exitcode != 0 || run_id == "" { return {"ok": false, "code": "dispatch_failed", "error": "Dispatch orchestration failed"} }
+    return {"ok": true, "receipt": receipt}
+}
+
+func standard_ops(ctx) {
+    provenance := [{"kind": "workflow-fixture", "run_id": ctx["request"]["run_id"]}]
+    root := ctx["root"]
+    if ctx["workflow_id"] == "publishing-house-daily-desk" {
+        packet := normalize_daily_packet(ctx)
+        if !packet["ok"] { return packet }
+        return {"ok": true, "ops": [
+            {"tool":"storydesk","command":"idea add","id":"idea-fixture-story","actor":"managing-editor","payload":{"schema_version":"1.0.0","title":"The checksum is the editorial boundary","detail":"Portable fixture idea","provenance":provenance}},
+            {"tool":"storydesk","command":"packet daily","id":"packet-fixture-daily","actor":"managing-editor","payload":{"schema_version":"1.0.0","date":"2026-08-14","source_packet_id":packet["value"]["packet_id"],"provenance":provenance}},
+            {"tool":"storydesk","command":"handoff","id":"handoff-fixture-daily","actor":"managing-editor","payload":{"schema_version":"1.0.0","record_id":"idea-fixture-story","from_actor":"managing-editor","to_actor":"commissioning-editor","next_action":"run publishing-house-commissioning","child_workflow_id":"publishing-house-commissioning","provenance":provenance}}
+        ]}
+    }
+    if ctx["workflow_id"] == "publishing-house-commissioning" {
+        return {"ok": true, "ops": [
+            {"tool":"storydesk","command":"commission create","id":"brief-fixture-primary","actor":"commissioning-editor","payload":{"schema_version":"1.0.0","title":"The checksum is the editorial boundary","audience":"Small editorial teams evaluating local workflow systems","purpose":"Explain why exact package identity matters between review, approval, and publication","thesis":"Approval is trustworthy only when bound to exact package bytes.","reader_promise":"The reader can inspect a local proof of the boundary.","format_profile":"flagship-feature","editorial_lane":"understand","editorial_door":"proof-through-receipts","funnel_stage":"believe","tier":"flagship","platform":"portable-markdown","cta":"Inspect the fixture receipts.","evidence_burden":"Material runtime claims require captured local evidence.","artifact_bundle":["primary-markdown","diagram-alt-text"],"dependencies":["idea-fixture-story"],"non_goals":["live publication"],"kill_conditions":["evidence cannot support checksum binding"],"approval_owner":"fixture-human-approver","provenance":provenance}},
+            {"tool":"storydesk","command":"assign","id":"assignment-fixture-writer","actor":"commissioning-editor","payload":{"schema_version":"1.0.0","brief_id":"brief-fixture-primary","role":"features-writer","due_at":"2026-08-21T17:00:00Z","provenance":provenance}},
+            {"tool":"dossier","command":"claim add","id":"claim-fixture-offline","actor":"commissioning-editor","payload":{"schema_version":"1.0.0","claim_text":"The fixture workflow runs without network access.","claim_kind":"fact","material":true,"brief_id":"brief-fixture-primary","provenance":provenance}}
+        ]}
+    }
+    if ctx["workflow_id"] == "publishing-house-evidence-dossier" {
+        source_path := path_join(root, "fixtures/publishing-house/source-capture.fixture.txt")
+        return {"ok": true, "ops": [
+            {"tool":"dossier","command":"source add","id":"source-fixture-offline","actor":"director-of-editorial-intelligence","payload":{"schema_version":"1.0.0","locator":source_path,"source_type":"local-fixture","retrieved_at":"2026-08-14T12:00:00Z","provenance":provenance}},
+            {"tool":"dossier","command":"evidence attach","id":"evidence-fixture-offline","actor":"standards-evidence-editor","payload":{"schema_version":"1.0.0","claim_id":"claim-fixture-offline","source_id":"source-fixture-offline","source_location":"line 1","captured_support":trim(read_file(source_path)),"checksum":sha256_file(source_path),"classification":"verified","retrieved_at":"2026-08-14T12:00:00Z","reviewed_by":"standards-evidence-editor","freshness":"current-fixture","provenance":provenance}},
+            {"tool":"dossier","command":"rights record","id":"rights-fixture-asset","actor":"standards-evidence-editor","payload":{"schema_version":"1.0.0","asset_id":"asset-fixture-diagram","media_type":"text-alternative","scope":"fixture publication","status":"cleared-fixture","basis":"original fixture work","recorded_by":"standards-evidence-editor","provenance":provenance}},
+            {"tool":"dossier","command":"packet","id":"packet-fixture-evidence","actor":"standards-evidence-editor","payload":{"schema_version":"1.0.0","claim_ids":["claim-fixture-offline"],"evidence_ids":["evidence-fixture-offline"],"decision":"evidence-ready","conflicts":[],"provenance":provenance}},
+            {"tool":"storydesk","command":"status","id":"event-fixture-evidence-ready","actor":"managing-editor","payload":{"schema_version":"1.0.0","record_id":"brief-fixture-primary","from_status":"researching","to_status":"evidence_ready","evidence_packet_id":"packet-fixture-evidence","provenance":provenance}}
+        ]}
+    }
+    if ctx["workflow_id"] == "publishing-house-primary-piece" {
+        primary := path_join(root, "fixtures/publishing-house/primary-v1.fixture.md")
+        return {"ok": true, "ops": [
+            {"tool":"galleypack","command":"add","id":"artifact-fixture-primary-v1","actor":"features-writer","artifact":primary,"payload":{"schema_version":"1.0.0","artifact_kind":"primary-markdown","assignment_id":"assignment-fixture-writer","claim_ids":["claim-fixture-offline"],"evidence_packet_id":"packet-fixture-evidence","profile":"flagship-feature","lineage":[],"provenance":provenance}},
+            {"tool":"galleypack","command":"build","id":"package-fixture-v1","actor":"production-editor","artifact":primary,"payload":{"schema_version":"1.0.0","package_id":"package-fixture","package_version":"1","artifact_ids":["artifact-fixture-primary-v1"],"claim_ids":["claim-fixture-offline"],"provenance":provenance}},
+            {"tool":"storydesk","command":"status","id":"event-fixture-drafting","actor":"managing-editor","payload":{"schema_version":"1.0.0","record_id":"brief-fixture-primary","from_status":"evidence_ready","to_status":"drafting","package_id":"package-fixture-v1","provenance":provenance}}
+        ]}
+    }
+    if ctx["workflow_id"] == "publishing-house-asset-production" {
+        alt := path_join(root, "fixtures/publishing-house/asset-alt.fixture.txt")
+        return {"ok": true, "ops": [
+            {"tool":"assetworks","command":"plan","id":"plan-fixture-asset","actor":"art-director","payload":{"schema_version":"1.0.0","source_id":"artifact-fixture-primary-v1","operation":"create-text-alternative","output_name":"diagram-alt.txt","rights_reference":"rights-fixture-asset","provenance":provenance}},
+            {"tool":"assetworks","command":"captions","id":"caption-fixture-asset","actor":"production-editor","artifact":alt,"payload":{"schema_version":"1.0.0","asset_id":"asset-fixture-diagram","language":"en","format":"text","accessibility_status":"complete","provenance":provenance}},
+            {"tool":"assetworks","command":"manifest","id":"manifest-fixture-asset","actor":"production-editor","artifact":alt,"payload":{"schema_version":"1.0.0","asset_id":"asset-fixture-diagram","media_type":"text/plain","rights_reference":"rights-fixture-asset","accessibility_status":"complete","caption_id":"caption-fixture-asset","synthetic_media":false,"provenance":provenance}},
+            {"tool":"galleypack","command":"add","id":"artifact-fixture-asset","actor":"production-editor","artifact":alt,"payload":{"schema_version":"1.0.0","artifact_kind":"accessibility-text","assetworks_manifest_id":"manifest-fixture-asset","assignment_id":"assignment-fixture-writer","provenance":provenance}}
+        ]}
+    }
+    if ctx["workflow_id"] == "publishing-house-editorial-review" {
+        primary2 := path_join(root, "fixtures/publishing-house/primary-v2.fixture.md")
+        revise := {"consequence":"STRONG","distinctiveness":"STRONG","insight":"ADEQUATE","defensibility":"STRONG","craft":"ADEQUATE","brand_integrity":"STRONG","format_fidelity":"STRONG","strategic_purpose":"STRONG"}
+        passed := {"consequence":"STRONG","distinctiveness":"STRONG","insight":"STRONG","defensibility":"STRONG","craft":"STRONG","brand_integrity":"STRONG","format_fidelity":"STRONG","strategic_purpose":"STRONG"}
+        return {"ok": true, "ops": [
+            {"tool":"bluepencil","command":"review","id":"review-fixture-developmental-v1","actor":"developmental-editor","payload":{"schema_version":"1.0.0","reviewer_id":"developmental-editor","artifact_id":"artifact-fixture-primary-v1","rubric_version":"publishing-house-quality-rubric-v1","verdict":"revise","dimensions":revise,"blocking_findings":[],"requested_changes":["Explain explicitly how changed bytes invalidate approval."],"passage_references":["paragraph-3"],"provenance":provenance}},
+            {"tool":"galleypack","command":"review attach","id":"review-link-fixture-v1","actor":"production-editor","payload":{"schema_version":"1.0.0","package_id":"package-fixture-v1","review_id":"review-fixture-developmental-v1","verdict":"revise","provenance":provenance}},
+            {"tool":"galleypack","command":"add","id":"artifact-fixture-primary-v2","actor":"features-writer","artifact":primary2,"payload":{"schema_version":"1.0.0","artifact_kind":"primary-markdown","assignment_id":"assignment-fixture-writer","claim_ids":["claim-fixture-offline"],"parent_artifact_id":"artifact-fixture-primary-v1","revision_reason":"review-fixture-developmental-v1","provenance":provenance}},
+            {"tool":"galleypack","command":"build","id":"package-fixture-v2-review","actor":"production-editor","artifact":primary2,"payload":{"schema_version":"1.0.0","package_id":"package-fixture","package_version":"2","artifact_ids":["artifact-fixture-primary-v2","artifact-fixture-asset"],"claim_ids":["claim-fixture-offline"],"provenance":provenance}},
+            {"tool":"bluepencil","command":"review","id":"review-fixture-final-v2","actor":"editor-in-chief","payload":{"schema_version":"1.0.0","reviewer_id":"editor-in-chief","artifact_id":"artifact-fixture-primary-v2","rubric_version":"publishing-house-quality-rubric-v1","verdict":"pass","dimensions":passed,"blocking_findings":[],"prior_review_ids":["review-fixture-developmental-v1"],"editorial_recommendation":"ready-for-human-approval","provenance":provenance}},
+            {"tool":"galleypack","command":"review attach","id":"review-link-fixture-v2","actor":"production-editor","payload":{"schema_version":"1.0.0","package_id":"package-fixture-v2-review","review_id":"review-fixture-final-v2","verdict":"pass","provenance":provenance}},
+            {"tool":"storydesk","command":"status","id":"event-fixture-ready-review","actor":"managing-editor","payload":{"schema_version":"1.0.0","record_id":"brief-fixture-primary","from_status":"editorial_review","to_status":"ready_for_review","package_id":"package-fixture-v2-review","provenance":provenance}}
+        ]}
+    }
+    if ctx["workflow_id"] == "publishing-house-post-publication" {
+        return {"ok": true, "ops": [
+            {"tool":"readersignal","command":"snapshot","id":"snapshot-fixture-publication","actor":"audience-development-director","payload":{"schema_version":"1.0.0","publication_receipt_id":"publication-fixture-v2","window":"fixture-7d","metrics":{"views":120,"completion_rate":0.68},"measurement_status":"observed","attribution_limit":"correlation only; fixture values","privacy_boundary":"aggregate fixture only","provenance":provenance}},
+            {"tool":"readersignal","command":"feedback","id":"feedback-fixture-publication","actor":"social-community-editor","payload":{"schema_version":"1.0.0","publication_receipt_id":"publication-fixture-v2","channel":"fixture-feedback","summary":"Readers asked for a concrete checksum-drift example.","consent_basis":"synthetic fixture feedback","provenance":provenance}},
+            {"tool":"readersignal","command":"learn","id":"learn-fixture-publication","actor":"audience-development-director","payload":{"schema_version":"1.0.0","evidence_ids":["snapshot-fixture-publication","feedback-fixture-publication"],"recommendation":"Create a follow-up walkthrough showing one-byte approval invalidation.","attribution_limit":"correlation only; fixture data cannot establish causation","provenance":provenance}},
+            {"tool":"readersignal","command":"followup","id":"followup-fixture-publication","actor":"editorial-strategy-director","payload":{"schema_version":"1.0.0","evidence_ids":["learn-fixture-publication"],"recommendation":"follow-up article","detail":"Show one-byte checksum drift and the required new approval.","attribution_limit":"recommendation only; not commissioned or approved","provenance":provenance}},
+            {"tool":"storydesk","command":"idea add","id":"idea-fixture-followup","actor":"managing-editor","payload":{"schema_version":"1.0.0","title":"What one changed byte does to approval","detail":"ReaderSignal follow-up recommendation; requires a new explicit commission.","source_recommendation_id":"followup-fixture-publication","provenance":provenance}}
+        ]}
+    }
+    return {"ok": true, "ops": []}
+}
+
+func approval_prepare(ctx) {
+    package := path_join(ctx["root"], "fixtures/publishing-house/primary-v2.fixture.md")
+    checksum := sha256_file(package)
+    provenance := [{"kind":"workflow-fixture","run_id":ctx["request"]["run_id"]}]
+    ops := [
+        {"tool":"galleypack","command":"freeze","id":"package-fixture-v2-frozen","actor":"production-editor","artifact":package,"payload":{"schema_version":"1.0.0","package_id":"package-fixture","package_version":"2","artifact_ids":["artifact-fixture-primary-v2","artifact-fixture-asset"],"review_ids":["review-fixture-final-v2"],"destination":"fixture-local","provenance":provenance}},
+        {"tool":"versionseal","command":"request","id":"request-fixture-v2","actor":"production-editor","payload":{"schema_version":"1.0.0","package_id":"package-fixture","package_version":"2","manifest_checksum":checksum,"destinations":["fixture-local"],"actions":["publish"],"requested_by":"production-editor","expires_at":"2026-08-15T15:00:00Z","unresolved_queries":[],"provenance":provenance}}
+    ]
+    result := run_ops(ctx, ops)
+    if !result["ok"] { return result }
+    checksum = sha256_file(package)
+    pause := {
+        "contract":"publishing-house.approval-pause/v1","schema_name":"publishing-house.approval-pause","schema_version":CONTRACT_VERSION,
+        "workflow_id":ctx["workflow_id"],"workflow_version":VERSION,"run_id":ctx["request"]["run_id"],"created_at":"2026-08-14T14:00:00Z",
+        "package_id":"package-fixture","package_version":"2","checksum":checksum,"destination":"fixture-local","requested_action":"publish",
+        "approval_owner":"fixture-human-approver","conditions":[],"unresolved_queries":[],"expires_at":"2026-08-15T15:00:00Z","fixture":true,
+        "current_state":"paused","next_action":"resume with the exact fixture VersionSeal approval decision"
+    }
+    write_json(path_join(ctx["run_dir"], "approval-pause.json"), pause)
+    state_value := ctx["state"]
+    state_value["status"] = "paused"
+    state_value["pause_checksum"] = checksum
+    ctx["state"] = state_value
+    write_json(path_join(ctx["run_dir"], "state.json"), ctx["state"])
+    return {"ok": true, "pause": pause}
+}
+
+func approval_resume(ctx) {
+    if ctx["request"]["permission_mode"] != "ACT" { return blocker(ctx, "blocked", "act_permission_denied", "publication requires explicit ACT permission", "ACT", "rerun with an authorized ACT request", false) }
+    fault := get(ctx["request"]["input"], "fixture_fault", "")
+    if fault != "" {
+        fault_states := {
+            "no_approval":"approval_required","wrong_package":"wrong_package","wrong_checksum":"checksum_drift","wrong_destination":"destination_mismatch",
+            "wrong_action":"action_mismatch","expired_approval":"approval_expired","revoked_approval":"approval_revoked","changed_artifact":"checksum_drift",
+            "missing_adapter":"adapter_unavailable","failed_preflight":"preflight_failed","fixture_external_publication":"fixture_external_effect_denied"
+        }
+        if has_key(fault_states, fault) == 1 { return blocker(ctx, "blocked", fault_states[fault], "injected fixture failure: " + fault, "versionseal", "correct the exact approval, package, permission, or adapter boundary", false) }
+    }
+    approval_path := ctx["fixture_approval"]
+    fixture_result := read_json_object(approval_path)
+    if !fixture_result["ok"] || get(fixture_result["value"], "fixture", false) != true || get(fixture_result["value"], "decision", "") != "approved" { return blocker(ctx, "rejected", "approval_invalid", "fixture resume requires an explicitly labeled approved fixture decision", "versionseal", "provide a valid fixture approval record", false) }
+    package := path_join(ctx["root"], "fixtures/publishing-house/primary-v2.fixture.md")
+    checksum := sha256_file(package)
+    pause_result := read_json_object(path_join(ctx["run_dir"], "approval-pause.json"))
+    if !pause_result["ok"] || checksum != get(pause_result["value"], "checksum", "") { return blocker(ctx, "blocked", "checksum_drift", "package bytes changed after the approval pause", "versionseal", "create a new package and approval request", false) }
+    provenance := [{"kind":"fixture-human-decision","source":approval_path}]
+    approve := {"tool":"versionseal","command":"approve","id":"approve-fixture-v2","actor":"fixture-human-approver","artifact":package,"payload":{"schema_version":"1.0.0","human_actor":"fixture-human-approver","package_id":"package-fixture","package_version":"2","manifest_checksum":checksum,"destination":"fixture-local","action":"publish","fixture":true,"conditions":[],"provenance":provenance}}
+    first := tool_call(ctx, approve, 2)
+    if !first["ok"] { return first }
+    checksum = sha256_file(package)
+    approval_record_path := path_join(tool_state(ctx, "versionseal"), "records/approve-fixture-v2.json")
+    published := path_join(ctx["run_dir"], "published/package-v2.md")
+    ops := [
+        {"tool":"presswire","command":"preflight","id":"publication-fixture-preflight","actor":"publishing-operations-director","artifact":package,"payload":{"schema_version":"1.0.0","approval_id":"approve-fixture-v2","approval_record_path":approval_record_path,"manifest_checksum":checksum,"destination":"fixture-local","authorized_action":"publish","adapter":"local-filesystem","idempotency_key":"publishing-house-fixture-v2","fixture":true,"provenance":provenance}},
+        {"tool":"presswire","command":"publish","id":"publication-fixture-v2","actor":"publishing-operations-director","artifact":package,"output":published,"act":true,"payload":{"schema_version":"1.0.0","approval_id":"approve-fixture-v2","approval_record_path":approval_record_path,"manifest_checksum":checksum,"destination":"fixture-local","authorized_action":"publish","adapter":"local-filesystem","idempotency_key":"publishing-house-fixture-v2","fixture":true,"provenance":provenance}},
+        {"tool":"storydesk","command":"status","id":"event-fixture-published","actor":"managing-editor","payload":{"schema_version":"1.0.0","record_id":"brief-fixture-primary","from_status":"approved","to_status":"published","publication_receipt_id":"publication-fixture-v2","provenance":provenance}}
+    ]
+    result := run_ops(ctx, ops)
+    if !result["ok"] { return result }
+    checksum = sha256_file(package)
+    write_json(path_join(ctx["run_dir"], "external-effect.json"), {"occurred":true,"kind":"bounded-local-fixture-publication","presswire_record_id":"publication-fixture-v2"})
+    write_json(path_join(ctx["run_dir"], "artifact-checksums.json"), {"checksums":[{"artifact":"approved-package","path":package,"checksum":checksum},{"artifact":"published-package","path":published,"checksum":sha256_file(published)}]})
+    return {"ok": true}
+}
+
+func complete(ctx, outcome, next_action) {
+    refs := []
+    refs_result := read_json_object(path_join(ctx["run_dir"], "record-references.json"))
+    if refs_result["ok"] { refs = get(refs_result["value"], "references", []) }
+    agent_receipts := []
+    agent_dir := path_join(ctx["run_dir"], "agent-receipts")
+    if path_is_dir(agent_dir) { for name in sort(list_dir(agent_dir)) { if ends_with(name, ".json") { agent_receipts = push(agent_receipts, path_join(agent_dir, name)) } } }
+    artifact_checksums := []
+    checksums_result := read_json_object(path_join(ctx["run_dir"], "artifact-checksums.json"))
+    if checksums_result["ok"] { artifact_checksums = get(checksums_result["value"], "checksums", []) }
+    effect_occurred := path_is_file(path_join(ctx["run_dir"], "external-effect.json"))
+    dispatch_receipt := read_json_object(path_join(ctx["run_dir"], "dispatch-receipt.json"))
+    dispatch_artifacts := []
+    if dispatch_receipt["ok"] { dispatch_artifacts = [dispatch_receipt["value"]] }
+    summary := {
+        "contract":"publishing-house.workflow-run-summary/v1","schema_name":"publishing-house.workflow-run-summary","schema_version":CONTRACT_VERSION,
+        "workflow_id":ctx["workflow_id"],"workflow_version":VERSION,"run_id":ctx["request"]["run_id"],"correlation_id":ctx["request"]["correlation_id"],
+        "parent_run_id":get(ctx["request"],"parent_run_id",null),"child_run_ids":get(ctx["request"],"child_run_ids",[]),"created_at":ctx["request"]["created_at"],
+        "actor":ctx["request"]["actor"],"permission_mode":ctx["request"]["permission_mode"],"assignment_id":get(ctx["request"]["input"],"assignment_id","assignment-fixture"),
+        "campaign_id":get(ctx["request"]["input"],"campaign_id","campaign-trustworthy-local-publishing"),"source_packet_reference":get(ctx["request"]["input"],"source_packet",null),
+        "current_state":outcome,"next_action":next_action,"tool_record_references":refs,"artifact_checksums":artifact_checksums,
+        "agent_step_receipts":agent_receipts,"dispatch_artifacts":dispatch_artifacts,"blocker":null,"approval_boundary":ctx["config"]["approval_boundaries"],
+        "external_effect_declared":ctx["request"]["external_effects_allowed"],"external_effect_occurred":effect_occurred,
+        "provenance":[{"kind":"publishing-house-workflow","workflow_id":ctx["workflow_id"],"fixture":true}]
+    }
+    summary_path := path_join(ctx["run_dir"], "run-summary.json")
+    write_json(summary_path, summary)
+    receipt := {
+        "contract":"publishing-house.workflow-completion-receipt/v1","schema_name":"publishing-house.workflow-completion-receipt","schema_version":CONTRACT_VERSION,
+        "workflow_id":ctx["workflow_id"],"workflow_version":VERSION,"run_id":ctx["request"]["run_id"],"correlation_id":ctx["request"]["correlation_id"],
+        "created_at":ctx["request"]["created_at"],"actor":ctx["request"]["actor"],"permission_mode":ctx["request"]["permission_mode"],"outcome":outcome,
+        "summary_reference":{"path":summary_path,"checksum":sha256_file(summary_path)},"receipt_references":refs,
+        "external_effect_declared":ctx["request"]["external_effects_allowed"],"external_effect_occurred":effect_occurred,
+        "idempotency_key":sha256(ctx["workflow_id"]+"\n"+ctx["request"]["run_id"]),"provenance":[{"kind":"fixture","run_id":ctx["request"]["run_id"]}]
+    }
+    receipt_path := path_join(ctx["run_dir"], "completion-receipt.json")
+    write_json(receipt_path, receipt)
+    state_value := ctx["state"]
+    state_value["status"] = outcome
+    state_value["completion_receipt"] = receipt_path
+    state_value["tool_record_references"] = refs
+    ctx["state"] = state_value
+    write_json(path_join(ctx["run_dir"], "state.json"), ctx["state"])
+    report := "# " + ctx["config"]["name"] + " fixture report\n\n- Run: " + ctx["request"]["run_id"] + "\n- Outcome: " + outcome + "\n- Permission: " + ctx["request"]["permission_mode"] + "\n- Tool records: " + to_string(len(refs)) + "\n- Agent steps: " + to_string(len(agent_receipts)) + "\n- External effect occurred: " + to_string(effect_occurred) + "\n- Next action: " + next_action + "\n"
+    write_file_atomic(path_join(ctx["run_dir"], "report.md"), report, true)
+    return {"outcome": outcome, "path": receipt_path, "run_dir": ctx["run_dir"], "summary": summary_path}
+}
+
+export func run_workflow(workflow_id) {
+    argv := args()
+    workflow_dir := path_absolute(".")
+    root := parent_dir(workflow_dir)
+    config_result := read_json_object(path_join(workflow_dir, "workflow.json"))
+    if !config_result["ok"] { eprint("workflow.json is invalid"); exit(2) }
+    config := config_result["value"]
+    request_path := flag_value(argv, "--request", "fixtures/request.fixture.json")
+    request_result := read_json_object(request_path)
+    if !request_result["ok"] { print(to_json_pretty(envelope(false, null, request_result["error"], request_result["code"]))); exit(1) }
+    request := request_result["value"]
+    checked := validate_request(workflow_id, config, request)
+    if !checked["ok"] { print(to_json_pretty(envelope(false, null, checked["error"], checked["code"]))); exit(1) }
+    references_checked := validate_input_references(request)
+    if !references_checked["ok"] { print(to_json_pretty(envelope(false, null, references_checked["error"], references_checked["code"]))); exit(1) }
+    run_dir := flag_value(argv, "--out", path_join(workflow_dir, ".runs/" + request["run_id"]))
+    if !safe_path(run_dir) { print(to_json_pretty(envelope(false, null, "unsafe output path", "unsafe_path"))); exit(1) }
+    ensure_dir(run_dir)
+    repos := env_or("KUJO_REPOS", parent_dir(root))
+    kujo := env_or("KUJO_BIN", path_join(repos, "kujo/target/release/kujo"))
+    tool_state_root := flag_value(argv, "--tool-state-root", path_join(run_dir, "tool-state"))
+    ctx := {
+        "root":root,"workflow_dir":workflow_dir,"workflow_id":workflow_id,"config":config,"request":request,"run_dir":run_dir,
+        "repos":repos,"kujo":kujo,"tool_state_root":tool_state_root,"json":has_flag(argv,"--json"),"fixture_approval":flag_value(argv,"--fixture-approval",""),
+        "refs":[],"agent_receipts":[],"artifact_checksums":[],"external_effect_occurred":false,
+        "state":{"schema_name":"publishing-house.workflow-state","schema_version":CONTRACT_VERSION,"workflow_id":workflow_id,"workflow_version":VERSION,"run_id":request["run_id"],"correlation_id":request["correlation_id"],"status":"running","completed_steps":[],"retry_count":0,"max_retries":2}
+    }
+    state_path := path_join(run_dir, "state.json")
+    if path_is_file(state_path) {
+        existing := read_json_object(state_path)
+        if existing["ok"] {
+            ctx["state"] = existing["value"]
+            if get(ctx["state"], "status", "") == "completed" {
+                receipt := read_json_object(path_join(run_dir, "completion-receipt.json"))
+                data := {"outcome":"completed","path":path_join(run_dir,"completion-receipt.json"),"idempotent_replay":true}
+                if receipt["ok"] { data["receipt"] = receipt["value"] }
+                emit(ctx, true, data, null, null)
+                return
+            }
+        }
+    } else { write_json(state_path, ctx["state"]) }
+    preflight_result := preflight(ctx)
+    if !preflight_result["ok"] { emit(ctx, false, null, preflight_result["error"], preflight_result["code"]); exit(1) }
+    if workflow_id == "publishing-house-approval-publication" {
+        if has_flag(argv, "--resume") {
+            if get(ctx["state"], "status", "") != "paused" { result := blocker(ctx,"blocked","not_paused","run is not paused and cannot resume",null,"inspect the run state",false);emit(ctx,false,null,result["error"],result["code"]);exit(1) }
+            resumed := approval_resume(ctx)
+            if !resumed["ok"] { emit(ctx,false,null,resumed["error"],resumed["code"]);exit(1) }
+            dispatch_result := run_dispatch(ctx, true, true)
+            if !dispatch_result["ok"] { result := blocker(ctx,"failed",dispatch_result["code"],dispatch_result["error"],"dispatch","inspect Dispatch artifacts",true);emit(ctx,false,null,result["error"],result["code"]);exit(1) }
+            agents := run_agents(ctx)
+            if !agents["ok"] { result := blocker(ctx,"failed",agents["code"],agents["error"],"agents-sdk","inspect agent receipt",true);emit(ctx,false,null,result["error"],result["code"]);exit(1) }
+            data := complete(ctx,"completed","start publishing-house-post-publication")
+            emit(ctx,true,data,null,null)
+            return
+        }
+        prepared := approval_prepare(ctx)
+        if !prepared["ok"] { result := blocker(ctx,"failed",get(prepared,"code","preparation_failed"),prepared["error"],null,"inspect tool receipt",false);emit(ctx,false,null,result["error"],result["code"]);exit(1) }
+        dispatch_result := run_dispatch(ctx, true, false)
+        if !dispatch_result["ok"] { result := blocker(ctx,"failed",dispatch_result["code"],dispatch_result["error"],"dispatch","inspect Dispatch artifacts",true);emit(ctx,false,null,result["error"],result["code"]);exit(1) }
+        pause_data := complete(ctx,"paused","resume with exact fixture approval")
+        state_value := ctx["state"]
+        state_value["status"] = "paused"
+        state_value["pause_checksum"] = prepared["pause"]["checksum"]
+        ctx["state"] = state_value
+        write_json(state_path,ctx["state"])
+        emit(ctx,true,pause_data,null,null)
+        return
+    }
+    operations := standard_ops(ctx)
+    if !operations["ok"] { result := blocker(ctx,"failed",get(operations,"code","input_failed"),operations["error"],null,"correct the input packet",false);emit(ctx,false,null,result["error"],result["code"]);exit(1) }
+    tools := run_ops(ctx, operations["ops"])
+    if !tools["ok"] { result := blocker(ctx,"failed",tools["code"],tools["error"],null,"inspect tool receipt",false);emit(ctx,false,null,result["error"],result["code"]);exit(1) }
+    agents := run_agents(ctx)
+    if !agents["ok"] { result := blocker(ctx,"failed",agents["code"],agents["error"],"agents-sdk","inspect agent receipt",true);emit(ctx,false,null,result["error"],result["code"]);exit(1) }
+    dispatch_result := run_dispatch(ctx, false, false)
+    if !dispatch_result["ok"] { result := blocker(ctx,"failed",dispatch_result["code"],dispatch_result["error"],"dispatch","inspect Dispatch artifacts",true);emit(ctx,false,null,result["error"],result["code"]);exit(1) }
+    data := complete(ctx,"completed",get(config,"next_workflow","operator review"))
+    emit(ctx,true,data,null,null)
+}

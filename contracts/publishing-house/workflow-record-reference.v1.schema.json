@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kujolang.ai/contracts/publishing-house/workflow-record-reference.v1",
+  "title": "publishing-house.workflow-record-reference/v1",
+  "type": "object",
+  "required": [
+    "contract",
+    "schema_name",
+    "schema_version",
+    "tool",
+    "record_id",
+    "tool_version",
+    "path",
+    "checksum"
+  ],
+  "properties": {
+    "contract": {
+      "const": "publishing-house.workflow-record-reference/v1"
+    },
+    "schema_name": {
+      "const": "publishing-house.workflow-record-reference"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "tool": {
+      "type": "string"
+    },
+    "record_id": {
+      "type": "string"
+    },
+    "tool_version": {
+      "type": "string"
+    },
+    "path": {
+      "type": "string"
+    },
+    "checksum": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,11 @@
+{
+  "schema_name": "publishing-house.brand-profile",
+  "schema_version": "1.0.0",
+  "brand_id": "northstar-review",
+  "position": "Calm, inspectable guidance for teams choosing local-first systems.",
+  "audience_promise": "Every recommendation states its evidence and limits.",
+  "voice_principles": ["specific", "measured", "plainspoken"],
+  "prohibited_shortcuts": ["unsupported superlatives", "false urgency"],
+  "valid_from": "2026-08-14",
+  "provenance": [{"kind": "fixture", "source": "fixtures/publishing-house/brand-profile.fixture.json"}]
+}

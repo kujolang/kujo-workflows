@@ -1,7 +1,8 @@
 # Cross-tool contracts
 
-These JSON contracts are the workflow-facing boundary for Tribunal, Relay, and
-Workcell. They are intentionally additive: consumers must ignore unknown
+These JSON contracts are the workflow-facing boundary for Tribunal, Relay,
+Workcell, and the Publishing House workflow layer. They are intentionally
+additive: consumers must ignore unknown
 properties, while producers must preserve the required timestamps,
 workflow/run/step references, correlation and causation identifiers,
 provenance, redaction, idempotency, and error fields.
@@ -20,6 +21,12 @@ Relay delivery receipts require an explicit acknowledgment object, and all
 receipt families carry a creation timestamp. Tribunal receipts also model
 human override and suspension-resume metadata; Workcell completion receipts
 retain the workflow, run, and step binding from the package.
+
+`publishing-house/` defines orchestration-only transport records for run
+requests, normalized daily packets, record references, capability and agent
+receipts, approval pauses, resume requests, blockers, summaries, and completion
+receipts. These contracts reference but do not redefine tool-owned editorial,
+evidence, artifact, media, review, approval, publication, or learning records.
 
 Validate the schemas and examples with:
 

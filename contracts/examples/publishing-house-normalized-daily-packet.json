@@ -1,0 +1,19 @@
+{
+  "contract": "publishing-house.normalized-daily-packet/v1",
+  "schema_name": "publishing-house.normalized-daily-packet",
+  "schema_version": "1.0.0",
+  "packet_id": "daily-packet-2026-08-14",
+  "date": "2026-08-14",
+  "source_adapter": "portable-fixture",
+  "items": [
+    {
+      "item_id": "item-fixture",
+      "status": "idea"
+    }
+  ],
+  "provenance": [
+    {
+      "kind": "fixture"
+    }
+  ]
+}

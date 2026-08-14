@@ -1,0 +1,12 @@
+{
+  "schema_name": "publishing-house.house-profile",
+  "schema_version": "1.0.0",
+  "house_id": "northstar-review",
+  "name": "Northstar Review",
+  "mission": "Help practical teams make evidence-aware decisions about local software.",
+  "principles": ["truth before persuasion", "specificity before volume"],
+  "default_permission": "PROPOSE",
+  "approval_owner": "fixture-human-approver",
+  "publication_destinations": ["fixture-local"],
+  "provenance": [{"kind": "fixture", "source": "fixtures/publishing-house/house-profile.fixture.json"}]
+}

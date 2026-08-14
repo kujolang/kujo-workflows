@@ -1,0 +1,18 @@
+{
+  "schema_name": "publishing-house.compatibility-matrix",
+  "schema_version": "1.0.0",
+  "tested_at": "2026-08-14T20:00:00Z",
+  "kujo": {"version": "1.0.1", "commit": "5059695d14d6726bc17fef55e0b95511624967cf"},
+  "dispatch": {"version": "1.0.0", "commit": "3e8a5ff74919fd01e3674cfe47e3740206cd0afb", "artifact_contract_version": "dispatch-artifact/v1"},
+  "agents_sdk": {"version": "1.0.0", "commit": "0e56994f45f577f6e5dd68f2c3c0c7e06af46d71", "runner_contract_version": "0.1.0"},
+  "tools": {
+    "storydesk": {"version": "0.1.0", "contract_version": "1.0.0", "commit": "8441df22fd6b6287a930db039a3b40b05052d929"},
+    "dossier": {"version": "0.1.0", "contract_version": "1.0.0", "commit": "342f85bc074b20db42cc8a8ca1bfe9ecd1a30965"},
+    "galleypack": {"version": "0.1.0", "contract_version": "1.0.0", "commit": "b635e9484b88d59cabd098f416e9895c01539020"},
+    "bluepencil": {"version": "0.1.0", "contract_version": "1.0.0", "commit": "dc4b30a4a39d3cfe7305d323c1970e30cb6294ab"},
+    "versionseal": {"version": "0.1.0", "contract_version": "1.0.0", "commit": "782e1d13dd8273c517dd508385bf875ea5c5314f"},
+    "presswire": {"version": "0.1.0", "contract_version": "1.0.0", "commit": "f03471ad85940935acb60bf9d5fa0bfa268db842"},
+    "readersignal": {"version": "0.1.0", "contract_version": "1.0.0", "commit": "c5558bb0df43e8858c5ccb0c7d3d3c0baedccd0e"},
+    "assetworks": {"version": "0.1.0", "contract_version": "1.0.0", "commit": "23e38406ff2b2e91be2efe9cd08ea413f5840e28"}
+  }
+}
