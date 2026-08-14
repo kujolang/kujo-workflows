@@ -1,5 +1,13 @@
 # Changelog
 
+All notable changes to Kujo Workflows are documented here.
+
+The format follows Keep a Changelog and Semantic Versioning.
+
+## [Unreleased]
+
+_No changes yet._
+
 ## [0.3.0] - 2026-08-14
 
 ### Added
@@ -28,14 +36,6 @@
   qualification evidence against the immutable zero-finding public-site baseline.
 - Keep fixture workflows runnable in standalone clean checkouts through bounded,
   explicitly labeled embedded evidence when sibling tool repositories are absent.
-
-All notable changes to Kujo Workflows are documented here.
-
-The format follows Keep a Changelog and Semantic Versioning.
-
-## [Unreleased]
-
-_No changes yet._
 
 ## [0.1.0] - 2026-08-08
 
