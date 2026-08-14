@@ -1725,6 +1725,436 @@
         "contracts/README.md"
       ],
       "production_readiness": "production-capable-with-limitations"
-    }
+    },
+    {
+        "id": "publishing-house-daily-desk",
+        "path": "publishing-house-daily-desk",
+        "status": "production-capable-with-limitations",
+        "purpose": "Validate and route a normalized daily editorial packet.",
+        "entry": "publishing-house-daily-desk/bin/run",
+        "skills": [
+          {
+            "name": "kujo-dispatch-workflows",
+            "path": "skills/kujo-dispatch-workflows/SKILL.md",
+            "compatibility": "compatible"
+          },
+          {
+            "name": "kujo-agents-sdk-workflows",
+            "path": "skills/kujo-agents-sdk-workflows/SKILL.md",
+            "compatibility": "compatible"
+          }
+        ],
+        "tools": [
+          "storydesk",
+          "dispatch",
+          "agents-sdk"
+        ],
+        "inputs": [
+          "publishing-house.workflow-run-request/v1",
+          "portable House, Brand, and Audience profiles",
+          "declared local capabilities"
+        ],
+        "outputs": [
+          "capability-receipt.json",
+          "agent-receipts/*.json",
+          "Dispatch state/trace/report artifacts",
+          "run-summary.json",
+          "completion-receipt.json or blocker.json"
+        ],
+        "approval_boundaries": [
+          "PROPOSE cannot manufacture evidence, review, approval, or publication authority"
+        ],
+        "state_and_recovery": "Kujo-owned state.json with bounded retries, idempotent completed replay, and Dispatch canonical artifacts; approval workflow adds exact paused resume.",
+        "evidence": "deterministic offline fixture records and docs/evidence/publishing-house-fixture-proof.json",
+        "tests": [
+          "bash publishing-house-daily-desk/scripts/test.sh",
+          "python3 -m unittest tests.test_publishing_house_workflows",
+          "bash scripts/run-publishing-house-fixture.sh --out <temporary-directory>"
+        ],
+        "documentation": [
+          "publishing-house-daily-desk/README.md",
+          "publishing-house-daily-desk/HOWTO.md",
+          "docs/publishing-house/README.md"
+        ],
+        "production_readiness": "production-capable-with-limitations"
+      },
+      {
+        "id": "publishing-house-commissioning",
+        "path": "publishing-house-commissioning",
+        "status": "production-capable-with-limitations",
+        "purpose": "Create a specific Editorial Brief, assignments, and evidence work order.",
+        "entry": "publishing-house-commissioning/bin/run",
+        "skills": [
+          {
+            "name": "kujo-dispatch-workflows",
+            "path": "skills/kujo-dispatch-workflows/SKILL.md",
+            "compatibility": "compatible"
+          },
+          {
+            "name": "kujo-agents-sdk-workflows",
+            "path": "skills/kujo-agents-sdk-workflows/SKILL.md",
+            "compatibility": "compatible"
+          }
+        ],
+        "tools": [
+          "storydesk",
+          "dossier",
+          "dispatch",
+          "agents-sdk"
+        ],
+        "inputs": [
+          "publishing-house.workflow-run-request/v1",
+          "portable House, Brand, and Audience profiles",
+          "declared local capabilities"
+        ],
+        "outputs": [
+          "capability-receipt.json",
+          "agent-receipts/*.json",
+          "Dispatch state/trace/report artifacts",
+          "run-summary.json",
+          "completion-receipt.json or blocker.json"
+        ],
+        "approval_boundaries": [
+          "PROPOSE cannot manufacture evidence, review, approval, or publication authority"
+        ],
+        "state_and_recovery": "Kujo-owned state.json with bounded retries, idempotent completed replay, and Dispatch canonical artifacts; approval workflow adds exact paused resume.",
+        "evidence": "deterministic offline fixture records and docs/evidence/publishing-house-fixture-proof.json",
+        "tests": [
+          "bash publishing-house-commissioning/scripts/test.sh",
+          "python3 -m unittest tests.test_publishing_house_workflows",
+          "bash scripts/run-publishing-house-fixture.sh --out <temporary-directory>"
+        ],
+        "documentation": [
+          "publishing-house-commissioning/README.md",
+          "publishing-house-commissioning/HOWTO.md",
+          "docs/publishing-house/README.md"
+        ],
+        "production_readiness": "production-capable-with-limitations"
+      },
+      {
+        "id": "publishing-house-evidence-dossier",
+        "path": "publishing-house-evidence-dossier",
+        "status": "production-capable-with-limitations",
+        "purpose": "Create independently reviewed claim, source, evidence, rights, and packet records.",
+        "entry": "publishing-house-evidence-dossier/bin/run",
+        "skills": [
+          {
+            "name": "kujo-dispatch-workflows",
+            "path": "skills/kujo-dispatch-workflows/SKILL.md",
+            "compatibility": "compatible"
+          },
+          {
+            "name": "kujo-agents-sdk-workflows",
+            "path": "skills/kujo-agents-sdk-workflows/SKILL.md",
+            "compatibility": "compatible"
+          }
+        ],
+        "tools": [
+          "dossier",
+          "storydesk",
+          "dispatch",
+          "agents-sdk"
+        ],
+        "inputs": [
+          "publishing-house.workflow-run-request/v1",
+          "portable House, Brand, and Audience profiles",
+          "declared local capabilities"
+        ],
+        "outputs": [
+          "capability-receipt.json",
+          "agent-receipts/*.json",
+          "Dispatch state/trace/report artifacts",
+          "run-summary.json",
+          "completion-receipt.json or blocker.json"
+        ],
+        "approval_boundaries": [
+          "PROPOSE cannot manufacture evidence, review, approval, or publication authority"
+        ],
+        "state_and_recovery": "Kujo-owned state.json with bounded retries, idempotent completed replay, and Dispatch canonical artifacts; approval workflow adds exact paused resume.",
+        "evidence": "deterministic offline fixture records and docs/evidence/publishing-house-fixture-proof.json",
+        "tests": [
+          "bash publishing-house-evidence-dossier/scripts/test.sh",
+          "python3 -m unittest tests.test_publishing_house_workflows",
+          "bash scripts/run-publishing-house-fixture.sh --out <temporary-directory>"
+        ],
+        "documentation": [
+          "publishing-house-evidence-dossier/README.md",
+          "publishing-house-evidence-dossier/HOWTO.md",
+          "docs/publishing-house/README.md"
+        ],
+        "production_readiness": "production-capable-with-limitations"
+      },
+      {
+        "id": "publishing-house-primary-piece",
+        "path": "publishing-house-primary-piece",
+        "status": "production-capable-with-limitations",
+        "purpose": "Create and package the authoritative evidence-linked primary artifact.",
+        "entry": "publishing-house-primary-piece/bin/run",
+        "skills": [
+          {
+            "name": "kujo-dispatch-workflows",
+            "path": "skills/kujo-dispatch-workflows/SKILL.md",
+            "compatibility": "compatible"
+          },
+          {
+            "name": "kujo-agents-sdk-workflows",
+            "path": "skills/kujo-agents-sdk-workflows/SKILL.md",
+            "compatibility": "compatible"
+          }
+        ],
+        "tools": [
+          "storydesk",
+          "dossier",
+          "galleypack",
+          "dispatch",
+          "agents-sdk"
+        ],
+        "inputs": [
+          "publishing-house.workflow-run-request/v1",
+          "portable House, Brand, and Audience profiles",
+          "declared local capabilities"
+        ],
+        "outputs": [
+          "capability-receipt.json",
+          "agent-receipts/*.json",
+          "Dispatch state/trace/report artifacts",
+          "run-summary.json",
+          "completion-receipt.json or blocker.json"
+        ],
+        "approval_boundaries": [
+          "PROPOSE cannot manufacture evidence, review, approval, or publication authority"
+        ],
+        "state_and_recovery": "Kujo-owned state.json with bounded retries, idempotent completed replay, and Dispatch canonical artifacts; approval workflow adds exact paused resume.",
+        "evidence": "deterministic offline fixture records and docs/evidence/publishing-house-fixture-proof.json",
+        "tests": [
+          "bash publishing-house-primary-piece/scripts/test.sh",
+          "python3 -m unittest tests.test_publishing_house_workflows",
+          "bash scripts/run-publishing-house-fixture.sh --out <temporary-directory>"
+        ],
+        "documentation": [
+          "publishing-house-primary-piece/README.md",
+          "publishing-house-primary-piece/HOWTO.md",
+          "docs/publishing-house/README.md"
+        ],
+        "production_readiness": "production-capable-with-limitations"
+      },
+      {
+        "id": "publishing-house-asset-production",
+        "path": "publishing-house-asset-production",
+        "status": "production-capable-with-limitations",
+        "purpose": "Plan and package supported accessible media assets with provenance.",
+        "entry": "publishing-house-asset-production/bin/run",
+        "skills": [
+          {
+            "name": "kujo-dispatch-workflows",
+            "path": "skills/kujo-dispatch-workflows/SKILL.md",
+            "compatibility": "compatible"
+          },
+          {
+            "name": "kujo-agents-sdk-workflows",
+            "path": "skills/kujo-agents-sdk-workflows/SKILL.md",
+            "compatibility": "compatible"
+          }
+        ],
+        "tools": [
+          "assetworks",
+          "dossier",
+          "galleypack",
+          "dispatch",
+          "agents-sdk"
+        ],
+        "inputs": [
+          "publishing-house.workflow-run-request/v1",
+          "portable House, Brand, and Audience profiles",
+          "declared local capabilities"
+        ],
+        "outputs": [
+          "capability-receipt.json",
+          "agent-receipts/*.json",
+          "Dispatch state/trace/report artifacts",
+          "run-summary.json",
+          "completion-receipt.json or blocker.json"
+        ],
+        "approval_boundaries": [
+          "PROPOSE cannot manufacture evidence, review, approval, or publication authority"
+        ],
+        "state_and_recovery": "Kujo-owned state.json with bounded retries, idempotent completed replay, and Dispatch canonical artifacts; approval workflow adds exact paused resume.",
+        "evidence": "deterministic offline fixture records and docs/evidence/publishing-house-fixture-proof.json",
+        "tests": [
+          "bash publishing-house-asset-production/scripts/test.sh",
+          "python3 -m unittest tests.test_publishing_house_workflows",
+          "bash scripts/run-publishing-house-fixture.sh --out <temporary-directory>"
+        ],
+        "documentation": [
+          "publishing-house-asset-production/README.md",
+          "publishing-house-asset-production/HOWTO.md",
+          "docs/publishing-house/README.md"
+        ],
+        "production_readiness": "production-capable-with-limitations"
+      },
+      {
+        "id": "publishing-house-editorial-review",
+        "path": "publishing-house-editorial-review",
+        "status": "production-capable-with-limitations",
+        "purpose": "Review exact packages and run a bounded revision loop.",
+        "entry": "publishing-house-editorial-review/bin/run",
+        "skills": [
+          {
+            "name": "kujo-dispatch-workflows",
+            "path": "skills/kujo-dispatch-workflows/SKILL.md",
+            "compatibility": "compatible"
+          },
+          {
+            "name": "kujo-agents-sdk-workflows",
+            "path": "skills/kujo-agents-sdk-workflows/SKILL.md",
+            "compatibility": "compatible"
+          }
+        ],
+        "tools": [
+          "bluepencil",
+          "dossier",
+          "galleypack",
+          "storydesk",
+          "dispatch",
+          "agents-sdk"
+        ],
+        "inputs": [
+          "publishing-house.workflow-run-request/v1",
+          "portable House, Brand, and Audience profiles",
+          "declared local capabilities"
+        ],
+        "outputs": [
+          "capability-receipt.json",
+          "agent-receipts/*.json",
+          "Dispatch state/trace/report artifacts",
+          "run-summary.json",
+          "completion-receipt.json or blocker.json"
+        ],
+        "approval_boundaries": [
+          "PROPOSE cannot manufacture evidence, review, approval, or publication authority"
+        ],
+        "state_and_recovery": "Kujo-owned state.json with bounded retries, idempotent completed replay, and Dispatch canonical artifacts; approval workflow adds exact paused resume.",
+        "evidence": "deterministic offline fixture records and docs/evidence/publishing-house-fixture-proof.json",
+        "tests": [
+          "bash publishing-house-editorial-review/scripts/test.sh",
+          "python3 -m unittest tests.test_publishing_house_workflows",
+          "bash scripts/run-publishing-house-fixture.sh --out <temporary-directory>"
+        ],
+        "documentation": [
+          "publishing-house-editorial-review/README.md",
+          "publishing-house-editorial-review/HOWTO.md",
+          "docs/publishing-house/README.md"
+        ],
+        "production_readiness": "production-capable-with-limitations"
+      },
+      {
+        "id": "publishing-house-approval-publication",
+        "path": "publishing-house-approval-publication",
+        "status": "production-capable-with-limitations",
+        "purpose": "Pause for checksum-bound VersionSeal approval and perform only bounded PressWire effects.",
+        "entry": "publishing-house-approval-publication/bin/run",
+        "skills": [
+          {
+            "name": "kujo-dispatch-workflows",
+            "path": "skills/kujo-dispatch-workflows/SKILL.md",
+            "compatibility": "compatible"
+          },
+          {
+            "name": "kujo-agents-sdk-workflows",
+            "path": "skills/kujo-agents-sdk-workflows/SKILL.md",
+            "compatibility": "compatible"
+          }
+        ],
+        "tools": [
+          "galleypack",
+          "versionseal",
+          "presswire",
+          "storydesk",
+          "dispatch",
+          "agents-sdk"
+        ],
+        "inputs": [
+          "publishing-house.workflow-run-request/v1",
+          "portable House, Brand, and Audience profiles",
+          "declared local capabilities"
+        ],
+        "outputs": [
+          "capability-receipt.json",
+          "agent-receipts/*.json",
+          "Dispatch state/trace/report artifacts",
+          "run-summary.json",
+          "completion-receipt.json or blocker.json"
+        ],
+        "approval_boundaries": [
+          "VersionSeal exact checksum approval is required before an ACT-scoped PressWire operation; fixture approval is labeled and local only"
+        ],
+        "state_and_recovery": "Kujo-owned state.json with bounded retries, idempotent completed replay, and Dispatch canonical artifacts; approval workflow adds exact paused resume.",
+        "evidence": "deterministic offline fixture records and docs/evidence/publishing-house-fixture-proof.json",
+        "tests": [
+          "bash publishing-house-approval-publication/scripts/test.sh",
+          "python3 -m unittest tests.test_publishing_house_workflows",
+          "bash scripts/run-publishing-house-fixture.sh --out <temporary-directory>"
+        ],
+        "documentation": [
+          "publishing-house-approval-publication/README.md",
+          "publishing-house-approval-publication/HOWTO.md",
+          "docs/publishing-house/README.md"
+        ],
+        "production_readiness": "production-capable-with-limitations"
+      },
+      {
+        "id": "publishing-house-post-publication",
+        "path": "publishing-house-post-publication",
+        "status": "production-capable-with-limitations",
+        "purpose": "Record measurements, feedback, learning, and a non-commissioning follow-up recommendation.",
+        "entry": "publishing-house-post-publication/bin/run",
+        "skills": [
+          {
+            "name": "kujo-dispatch-workflows",
+            "path": "skills/kujo-dispatch-workflows/SKILL.md",
+            "compatibility": "compatible"
+          },
+          {
+            "name": "kujo-agents-sdk-workflows",
+            "path": "skills/kujo-agents-sdk-workflows/SKILL.md",
+            "compatibility": "compatible"
+          }
+        ],
+        "tools": [
+          "presswire",
+          "readersignal",
+          "storydesk",
+          "dispatch",
+          "agents-sdk"
+        ],
+        "inputs": [
+          "publishing-house.workflow-run-request/v1",
+          "portable House, Brand, and Audience profiles",
+          "declared local capabilities"
+        ],
+        "outputs": [
+          "capability-receipt.json",
+          "agent-receipts/*.json",
+          "Dispatch state/trace/report artifacts",
+          "run-summary.json",
+          "completion-receipt.json or blocker.json"
+        ],
+        "approval_boundaries": [
+          "PROPOSE cannot manufacture evidence, review, approval, or publication authority"
+        ],
+        "state_and_recovery": "Kujo-owned state.json with bounded retries, idempotent completed replay, and Dispatch canonical artifacts; approval workflow adds exact paused resume.",
+        "evidence": "deterministic offline fixture records and docs/evidence/publishing-house-fixture-proof.json",
+        "tests": [
+          "bash publishing-house-post-publication/scripts/test.sh",
+          "python3 -m unittest tests.test_publishing_house_workflows",
+          "bash scripts/run-publishing-house-fixture.sh --out <temporary-directory>"
+        ],
+        "documentation": [
+          "publishing-house-post-publication/README.md",
+          "publishing-house-post-publication/HOWTO.md",
+          "docs/publishing-house/README.md"
+        ],
+        "production_readiness": "production-capable-with-limitations"
+      }
   ]
 }

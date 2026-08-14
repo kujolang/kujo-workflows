@@ -169,6 +169,10 @@
       "role_slug": "features-writer",
       "canonical_agent": "kujo-agents/publishing-house/features-writer/AGENT.md",
       "canonical_skill": "kujo-agents/publishing-house/features-writer/SKILL.md",
+      "format_profiles": [
+        "flagship-feature",
+        "problem-solution"
+      ],
       "allowed_tools": [
         "storydesk",
         "dossier",
@@ -182,6 +186,53 @@
       "expected_output": "primary editorial artifact",
       "handoff_destination": "Developmental Editor",
       "stop_condition": "the draft and claim map are versioned"
+    },
+    {
+      "step_id": "technical-editor-writer",
+      "canonical_role": "Technical Editor & Writer",
+      "role_slug": "technical-editor-writer",
+      "canonical_agent": "kujo-agents/publishing-house/technical-editor-writer/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/technical-editor-writer/SKILL.md",
+      "format_profiles": [
+        "technical-walkthrough",
+        "feature-update-explanation"
+      ],
+      "allowed_tools": [
+        "storydesk",
+        "dossier",
+        "galleypack"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "technical primary editorial artifact",
+      "handoff_destination": "Developmental Editor",
+      "stop_condition": "the technical draft, examples, and claim map are versioned"
+    },
+    {
+      "step_id": "campaign-copywriter",
+      "canonical_role": "Campaign Copywriter",
+      "role_slug": "campaign-copywriter",
+      "canonical_agent": "kujo-agents/publishing-house/campaign-copywriter/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/campaign-copywriter/SKILL.md",
+      "format_profiles": [
+        "campaign-copy"
+      ],
+      "allowed_tools": [
+        "storydesk",
+        "dossier",
+        "galleypack"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "campaign copy artifact",
+      "handoff_destination": "Developmental Editor",
+      "stop_condition": "the campaign copy and claim map are versioned"
     },
     {
       "step_id": "developmental-editor",
@@ -209,6 +260,12 @@
     "problem-solution",
     "feature-update-explanation",
     "campaign-copy"
-  ]
+  ],
+  "format_profile_routes": {
+    "flagship-feature": "Features Writer",
+    "technical-walkthrough": "Technical Editor & Writer",
+    "problem-solution": "Features Writer",
+    "feature-update-explanation": "Technical Editor & Writer",
+    "campaign-copy": "Campaign Copywriter"
+  }
 }
-

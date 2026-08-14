@@ -7,7 +7,7 @@ The machine-readable source of truth is [`workflow-catalog.json`](workflow-catal
 
 ## Scope and disposition
 
-- 26 active workflow kits are inventoried from the catalog and repository README, including ten WebOps kits and the reusable Codebase Cleanup workflow.
+- 34 active workflow kits are inventoried from the catalog and repository README, including ten WebOps kits, the reusable Codebase Cleanup workflow, and eight Publishing House kits.
 - 54 workflow-to-skill relationships are checked against the `kujo-skills` checkout: 45 compatible and 9 compatible but under-tested; no broken, deprecated, or migration-required relationship was found.
 - Weekly refresh checked repositories changed in the last 7-10 days, prioritizing `kujo-skills`, Howl, Watchdog, Kujo v1 release-sweep repositories, AI Chat, Agents SDK, AI SDK, RAG, MCP, RunLedger, Eval, Spec, Scout, Scent, PackWrite, PatchBrief, Muzzle, SSG, Lens, ShipCheck, and Kennel.
 - Howl, Watchdog, AI SDK, AI Chat, and skill-routing records were updated or preserved to reflect current repo-backed tool boundaries: Howl branded social SVG rendering is now directly covered by the content factory, Watchdog August pricing remains a compatible addition, AI SDK/provider ownership did not move, AI Chat dirty local experiments were not promoted, and the `kujo-skills` checkout is recorded at `9376808`.

@@ -1,0 +1,22 @@
+{
+  "schema_name": "publishing-house.integration-proof",
+  "schema_version": "1.0.0",
+  "captured_at": "2026-08-14T20:30:00Z",
+  "fixture": true,
+  "offline": true,
+  "network_calls": 0,
+  "workflow_count": 8,
+  "record_references_checked": 36,
+  "agent_receipts_checked": 26,
+  "dispatch_runs_checked": 8,
+  "revision_loop": "passed",
+  "approval_pause_resume": "passed",
+  "idempotency": "passed",
+  "package_checksum": "828b6cbe7dbff63cd2b1e50e121c743708c3dc76f232d7f72b44fac49c2cf3ec",
+  "publication_checksum": "828b6cbe7dbff63cd2b1e50e121c743708c3dc76f232d7f72b44fac49c2cf3ec",
+  "external_effect": "bounded local fixture copy only",
+  "live_publication": false,
+  "credentials_required": false,
+  "command": "bash scripts/run-publishing-house-fixture.sh --out <temporary-directory>",
+  "compatibility_matrix": "docs/publishing-house/compatibility-matrix.json"
+}

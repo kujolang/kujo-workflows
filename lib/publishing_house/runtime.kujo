@@ -151,10 +151,15 @@ func tool_call(ctx, op, index) {
     receipt := {"tool": tool, "command": op["command"], "record_id": op["id"], "exit_code": process.exitcode, "result": parsed, "fixture": true}
     write_json(receipt_path, receipt)
     if process.exitcode != 0 || type(parsed) != "dict" || get(parsed, "ok", false) != true { return {"ok": false, "code": "tool_failed", "error": tool + " " + op["command"] + " failed", "receipt": receipt_path} }
-    record_path := path_join(tool_state(ctx, tool), "records/" + op["id"] + ".json")
+    result_data := get(parsed, "data", {})
+    actual_id := op["id"]
+    if type(get(result_data, "record", null)) == "dict" { actual_id = get(result_data["record"], "id", actual_id) }
+    else { actual_id = get(result_data, "id", actual_id) }
+    record_path := path_join(tool_state(ctx, tool), "records/" + actual_id + ".json")
+    if type(get(result_data, "storage", null)) == "dict" { record_path = get(result_data["storage"], "path", record_path) }
     checksum := ""
     if path_is_file(record_path) { checksum = sha256_file(record_path) }
-    ref := stable_ref(tool, op["id"], "1.0.0", "0.1.0", record_path, checksum)
+    ref := stable_ref(tool, actual_id, "1.0.0", "0.1.0", record_path, checksum)
     append_record_reference(ctx, ref)
     return {"ok": true, "ref": ref, "receipt": receipt_path}
 }
@@ -172,6 +177,10 @@ func run_ops(ctx, operations) {
 func run_agents(ctx) {
     mut index := 0
     for binding in ctx["config"]["bindings"] {
+        binding_profiles := get(binding, "format_profiles", [])
+        selected_profile := get(ctx["request"]["input"], "format_profile", "flagship-feature")
+        selected := len(binding_profiles) == 0 || has(binding_profiles, selected_profile)
+        if selected {
         role := binding["canonical_role"]
         slug := binding["role_slug"]
         request_value := {
@@ -200,6 +209,7 @@ func run_agents(ctx) {
         ctx["agent_receipts"] = push(ctx["agent_receipts"], receipt_path)
         if receipt["outcome"] != "completed" { return {"ok": false, "code": "agent_step_failed", "error": "Agents SDK fixture step failed for " + role} }
         index = index + 1
+        }
     }
     return {"ok": true}
 }
@@ -296,9 +306,10 @@ func standard_ops(ctx) {
         ]}
     }
     if ctx["workflow_id"] == "publishing-house-post-publication" {
+        publication_record_id := "publication-" + substring(sha256("approve-fixture-v2\npublish\nfixture-local\n" + sha256_file(path_join(root, "fixtures/publishing-house/primary-v2.fixture.md"))), 0, 20)
         return {"ok": true, "ops": [
-            {"tool":"readersignal","command":"snapshot","id":"snapshot-fixture-publication","actor":"audience-development-director","payload":{"schema_version":"1.0.0","publication_receipt_id":"publication-fixture-v2","window":"fixture-7d","metrics":{"views":120,"completion_rate":0.68},"measurement_status":"observed","attribution_limit":"correlation only; fixture values","privacy_boundary":"aggregate fixture only","provenance":provenance}},
-            {"tool":"readersignal","command":"feedback","id":"feedback-fixture-publication","actor":"social-community-editor","payload":{"schema_version":"1.0.0","publication_receipt_id":"publication-fixture-v2","channel":"fixture-feedback","summary":"Readers asked for a concrete checksum-drift example.","consent_basis":"synthetic fixture feedback","provenance":provenance}},
+            {"tool":"readersignal","command":"snapshot","id":"snapshot-fixture-publication","actor":"audience-development-director","payload":{"schema_version":"1.0.0","publication_receipt_id":publication_record_id,"window":"fixture-7d","metrics":{"views":120,"completion_rate":0.68},"measurement_status":"observed","attribution_limit":"correlation only; fixture values","privacy_boundary":"aggregate fixture only","provenance":provenance}},
+            {"tool":"readersignal","command":"feedback","id":"feedback-fixture-publication","actor":"social-community-editor","payload":{"schema_version":"1.0.0","publication_receipt_id":publication_record_id,"channel":"fixture-feedback","summary":"Readers asked for a concrete checksum-drift example.","consent_basis":"synthetic fixture feedback","provenance":provenance}},
             {"tool":"readersignal","command":"learn","id":"learn-fixture-publication","actor":"audience-development-director","payload":{"schema_version":"1.0.0","evidence_ids":["snapshot-fixture-publication","feedback-fixture-publication"],"recommendation":"Create a follow-up walkthrough showing one-byte approval invalidation.","attribution_limit":"correlation only; fixture data cannot establish causation","provenance":provenance}},
             {"tool":"readersignal","command":"followup","id":"followup-fixture-publication","actor":"editorial-strategy-director","payload":{"schema_version":"1.0.0","evidence_ids":["learn-fixture-publication"],"recommendation":"follow-up article","detail":"Show one-byte checksum drift and the required new approval.","attribution_limit":"recommendation only; not commissioned or approved","provenance":provenance}},
             {"tool":"storydesk","command":"idea add","id":"idea-fixture-followup","actor":"managing-editor","payload":{"schema_version":"1.0.0","title":"What one changed byte does to approval","detail":"ReaderSignal follow-up recommendation; requires a new explicit commission.","source_recommendation_id":"followup-fixture-publication","provenance":provenance}}
@@ -350,6 +361,7 @@ func approval_resume(ctx) {
     if !fixture_result["ok"] || get(fixture_result["value"], "fixture", false) != true || get(fixture_result["value"], "decision", "") != "approved" { return blocker(ctx, "rejected", "approval_invalid", "fixture resume requires an explicitly labeled approved fixture decision", "versionseal", "provide a valid fixture approval record", false) }
     package := path_join(ctx["root"], "fixtures/publishing-house/primary-v2.fixture.md")
     checksum := sha256_file(package)
+    publication_record_id := "publication-" + substring(sha256("approve-fixture-v2\npublish\nfixture-local\n" + checksum), 0, 20)
     pause_result := read_json_object(path_join(ctx["run_dir"], "approval-pause.json"))
     if !pause_result["ok"] || checksum != get(pause_result["value"], "checksum", "") { return blocker(ctx, "blocked", "checksum_drift", "package bytes changed after the approval pause", "versionseal", "create a new package and approval request", false) }
     provenance := [{"kind":"fixture-human-decision","source":approval_path}]
@@ -362,7 +374,7 @@ func approval_resume(ctx) {
     ops := [
         {"tool":"presswire","command":"preflight","id":"publication-fixture-preflight","actor":"publishing-operations-director","artifact":package,"payload":{"schema_version":"1.0.0","approval_id":"approve-fixture-v2","approval_record_path":approval_record_path,"manifest_checksum":checksum,"destination":"fixture-local","authorized_action":"publish","adapter":"local-filesystem","idempotency_key":"publishing-house-fixture-v2","fixture":true,"provenance":provenance}},
         {"tool":"presswire","command":"publish","id":"publication-fixture-v2","actor":"publishing-operations-director","artifact":package,"output":published,"act":true,"payload":{"schema_version":"1.0.0","approval_id":"approve-fixture-v2","approval_record_path":approval_record_path,"manifest_checksum":checksum,"destination":"fixture-local","authorized_action":"publish","adapter":"local-filesystem","idempotency_key":"publishing-house-fixture-v2","fixture":true,"provenance":provenance}},
-        {"tool":"storydesk","command":"status","id":"event-fixture-published","actor":"managing-editor","payload":{"schema_version":"1.0.0","record_id":"brief-fixture-primary","from_status":"approved","to_status":"published","publication_receipt_id":"publication-fixture-v2","provenance":provenance}}
+        {"tool":"storydesk","command":"status","id":"event-fixture-published","actor":"managing-editor","payload":{"schema_version":"1.0.0","record_id":"brief-fixture-primary","from_status":"approved","to_status":"published","publication_receipt_id":publication_record_id,"provenance":provenance}}
     ]
     result := run_ops(ctx, ops)
     if !result["ok"] { return result }

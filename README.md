@@ -104,6 +104,14 @@ All commands below run from the repository root.
 | [`tribunal-decision-gate/`](tribunal-decision-gate/) | Limited | Governance, release, security teams | Tribunal mock review becomes a verified advisory decision receipt. | `bash tribunal-decision-gate/scripts/run.sh` |
 | [`relay-lifecycle-handoff/`](relay-lifecycle-handoff/) | Limited | Workflow operators | Relay pause/resume and integrity-checked export become correlated handoff receipts. | `bash relay-lifecycle-handoff/scripts/run.sh` |
 | [`workcell-execution-gate/`](workcell-execution-gate/) | Limited | Agent operators | Workcell validates, inspects, and executes a bounded Docker package with completion evidence. | `bash workcell-execution-gate/scripts/run.sh` |
+| [`publishing-house-daily-desk/`](publishing-house-daily-desk/) | Limited | Editorial operators | A daily packet becomes explicit routes, deferrals, and blockers without manufacturing downstream state. | `(cd publishing-house-daily-desk && bash bin/run --request fixtures/request.fixture.json --json)` |
+| [`publishing-house-commissioning/`](publishing-house-commissioning/) | Limited | Commissioning teams | A specific editorial opportunity becomes a StoryDesk brief and evidence work order. | `(cd publishing-house-commissioning && bash bin/run --request fixtures/request.fixture.json --json)` |
+| [`publishing-house-evidence-dossier/`](publishing-house-evidence-dossier/) | Limited | Research and standards teams | Claims become classified, checksum-bound Dossier evidence and an independent readiness decision. | `(cd publishing-house-evidence-dossier && bash bin/run --request fixtures/request.fixture.json --json)` |
+| [`publishing-house-primary-piece/`](publishing-house-primary-piece/) | Limited | Writers and creative editors | An evidence-ready brief becomes a versioned primary artifact with claim lineage. | `(cd publishing-house-primary-piece && bash bin/run --request fixtures/request.fixture.json --json)` |
+| [`publishing-house-asset-production/`](publishing-house-asset-production/) | Limited | Media production teams | Supported local assets, accessibility records, provenance, and checksums become an AssetWorks manifest. | `(cd publishing-house-asset-production && bash bin/run --request fixtures/request.fixture.json --json)` |
+| [`publishing-house-editorial-review/`](publishing-house-editorial-review/) | Limited | Editorial review teams | Independent reviews and a bounded revision produce an exact reviewed GalleyPack version. | `(cd publishing-house-editorial-review && bash bin/run --request fixtures/request.fixture.json --json)` |
+| [`publishing-house-approval-publication/`](publishing-house-approval-publication/) | Limited | Publishing operators and approvers | Dispatch pauses for checksum-bound VersionSeal approval before a bounded PressWire fixture effect. | `(cd publishing-house-approval-publication && bash scripts/test.sh)` |
+| [`publishing-house-post-publication/`](publishing-house-post-publication/) | Limited | Audience and strategy teams | A verified receipt and compatible measurements become bounded learning and a StoryDesk follow-up. | `(cd publishing-house-post-publication && bash bin/run --request fixtures/request.fixture.json --json)` |
 
 ## Verification
 
@@ -143,6 +151,7 @@ See the current [launch checklist](docs/launch-checklist.md) and [release-readin
 - [`agency-runner/`](agency-runner/) and the other top-level workflow directories contain runnable kits and workflow-specific guidance.
 - [`contracts/`](contracts/) contains versioned Tribunal, Relay, and Workcell evidence contracts.
 - [`docs/audit/`](docs/audit/) contains the machine-readable workflow catalog and compatibility evidence.
+- [`docs/publishing-house/`](docs/publishing-house/) documents the eight-kit editorial lifecycle, ownership boundaries, fixture proof, and compatibility matrix.
 - [`examples/`](examples/) identifies low-risk starting points.
 - [`scripts/`](scripts/) contains repository validators.
 - [`tests/`](tests/) contains portable release and integration checks.
@@ -152,6 +161,7 @@ See the current [launch checklist](docs/launch-checklist.md) and [release-readin
 
 - [`contracts/README.md`](contracts/README.md) — versioned evidence contracts and compatibility rules.
 - [`docs/audit/README.md`](docs/audit/README.md) — catalog, compatibility, and weekly drift evidence.
+- [`docs/publishing-house/README.md`](docs/publishing-house/README.md) — Publishing House lifecycle, fixture/live boundaries, approval, inspection, and recovery.
 - [`docs/launch-checklist.md`](docs/launch-checklist.md) — verified launch gates and remaining external proof.
 - [`docs/specs/showcase-release-readiness.md`](docs/specs/showcase-release-readiness.md) — rendered `0.2.0` acceptance contract.
 

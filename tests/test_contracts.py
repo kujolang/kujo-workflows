@@ -17,8 +17,8 @@ class ContractValidationTests(unittest.TestCase):
             check=False,
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertIn("schemas=8", result.stdout)
-        self.assertIn("examples=5", result.stdout)
+        self.assertIn("schemas=19", result.stdout)
+        self.assertIn("examples=16", result.stdout)
         self.assertIn("required-field-negatives=", result.stdout)
 
 
