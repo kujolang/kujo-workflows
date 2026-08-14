@@ -1,0 +1,56 @@
+func get(value,key,fallback){if type(value)=="dict"&&has_key(value,key)==1{return value[key]};return fallback}
+func flag(argv,name,fallback){mut i:=0;while i<len(argv){token:=to_string(argv[i]);if token==name&&i+1<len(argv){return to_string(argv[i+1])};if starts_with(token,name+"="){return substring(token,len(name)+1,len(token))};i=i+1};return fallback}
+func has_flag(argv,name){for token in argv{if token==name{return true}};return false}
+func read_object(path){try{value:=parse_json(read_file(path));if type(value)=="dict"{return value}}except error{};return {}}
+func run(command,cwd){return spawn_process(command,{"cwd":cwd,"timeout_ms":30000,"max_output_bytes":1048576})}
+
+func main(){
+    root:=path_absolute(".")
+    argv:=args()
+    repos:=flag(argv,"--repos",env_or("KUJO_REPOS","."))
+    kujo:=flag(argv,"--kujo-bin",env_or("KUJO_BIN",path_join(repos,"kujo/target/release/kujo")))
+    lock:=read_object(path_join(root,"docs/publishing-house/install-lock.json"))
+    if has_flag(argv,"--install-lines"){
+        for name in sort(keys(get(lock,"repositories",{}))){entry:=lock["repositories"][name];print(name+"\t"+entry["commit"]+"\t"+entry["repository"])}
+        return
+    }
+    failures:=[]
+    checks:=[]
+    if !path_is_file(kujo){failures=push(failures,"Kujo binary is missing: "+kujo)}else{
+        version:=run([kujo,"--version"],root)
+        expected:="kujo "+get(get(lock,"kujo",{}),"version","")
+        ok:=version.exitcode==0&&trim(to_string(version.stdout))==expected
+        checks=push(checks,{"component":"kujo","ok":ok,"expected":expected,"reported":trim(to_string(version.stdout))})
+        if !ok{failures=push(failures,"Kujo version does not match the install lock")}
+    }
+    repositories:=get(lock,"repositories",{})
+    for name in sort(keys(repositories)){
+        expected:=repositories[name]
+        repository:=path_join(repos,name)
+        commit_result:=run(["git","-C",repository,"rev-parse","HEAD"],root)
+        status_result:=run(["git","-C",repository,"status","--porcelain"],root)
+        commit:=trim(to_string(commit_result.stdout))
+        clean:=status_result.exitcode==0&&trim(to_string(status_result.stdout))==""
+        ok:=commit_result.exitcode==0&&commit==expected["commit"]&&clean
+        check:={"component":name,"ok":ok,"expected_commit":expected["commit"],"reported_commit":commit,"clean":clean}
+        if ok&&name!="dispatch"&&name!="agents-sdk"{
+            version_result:=run(["env","KUJO_BIN="+kujo,path_join(repository,"bin/"+name),"version","--json"],root)
+            reported:=read_object(path_join(root,"__missing__"))
+            try{reported=parse_json(trim(to_string(version_result.stdout)))}except error{reported={}}
+            matrix:=read_object(path_join(root,"docs/publishing-house/compatibility-matrix.json"))
+            tool_expected:=get(get(matrix,"tools",{}),name,{})
+            contract_ok:=version_result.exitcode==0&&get(reported,"ok",false)==true&&get(reported,"tool_version","")==get(tool_expected,"version","")&&get(reported,"contract_version","")==get(tool_expected,"contract_version","")
+            check["contract_ok"]=contract_ok
+            check["tool_version"]=get(reported,"tool_version","")
+            check["contract_version"]=get(reported,"contract_version","")
+            if !contract_ok{ok=false;check["ok"]=false}
+        }
+        checks=push(checks,check)
+        if !ok{failures=push(failures,name+" does not match its clean locked contract")}
+    }
+    result:={"ok":len(failures)==0,"schema_name":"publishing-house.install-doctor","schema_version":"1.0.0","workflow_version":"0.1.0","kujo_bin":kujo,"repos":repos,"checks":checks,"failures":failures}
+    if len(failures)==0{result["next_command"]="bash scripts/run-publishing-house-fixture.sh --out .runs/publishing-house-first-run"}
+    print(to_json_pretty(result))
+    if len(failures)>0{exit(1)}
+}
+main()

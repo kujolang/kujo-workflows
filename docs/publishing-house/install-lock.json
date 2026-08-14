@@ -1,0 +1,52 @@
+{
+  "schema_name": "publishing-house.install-lock",
+  "schema_version": "1.0.0",
+  "workflow_version": "0.1.0",
+  "kujo": {
+    "version": "1.0.1",
+    "commit": "5059695d14d6726bc17fef55e0b95511624967cf",
+    "repository": "https://github.com/kujolang/kujo.git"
+  },
+  "repositories": {
+    "dispatch": {
+      "commit": "3e8a5ff74919fd01e3674cfe47e3740206cd0afb",
+      "repository": "https://github.com/kujolang/dispatch.git"
+    },
+    "agents-sdk": {
+      "commit": "0e56994f45f577f6e5dd68f2c3c0c7e06af46d71",
+      "repository": "https://github.com/kujolang/agents-sdk.git"
+    },
+    "storydesk": {
+      "commit": "1a05d1a6f50da4c9b5ced1bcc55a7c6db40dc411",
+      "repository": "https://github.com/kujolang/storydesk.git"
+    },
+    "dossier": {
+      "commit": "378a05f96a6bcc7b1b5417b7bdfeeab0ecb6e320",
+      "repository": "https://github.com/kujolang/dossier.git"
+    },
+    "galleypack": {
+      "commit": "f9de506bd76b758d3a52ddb07580e43421b03be3",
+      "repository": "https://github.com/kujolang/galleypack.git"
+    },
+    "bluepencil": {
+      "commit": "29a99583a5b7e60c55580d871715a34664928396",
+      "repository": "https://github.com/kujolang/bluepencil.git"
+    },
+    "versionseal": {
+      "commit": "6e1ae63492826dba36a64e639cc7ffc5e702cf78",
+      "repository": "https://github.com/kujolang/versionseal.git"
+    },
+    "presswire": {
+      "commit": "e498e8afeba70d061601fd0f6c392ceea6e66843",
+      "repository": "https://github.com/kujolang/presswire.git"
+    },
+    "readersignal": {
+      "commit": "a8d39c40db175e5875c47a57a34449ae4998b26f",
+      "repository": "https://github.com/kujolang/readersignal.git"
+    },
+    "assetworks": {
+      "commit": "9cc8e754049b68cc695425e1aa38df4b14b58ece",
+      "repository": "https://github.com/kujolang/assetworks.git"
+    }
+  }
+}
