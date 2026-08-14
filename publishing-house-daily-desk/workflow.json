@@ -1,0 +1,201 @@
+{
+  "id": "publishing-house-daily-desk",
+  "name": "Publishing House Daily Desk",
+  "description": "Validate a daily editorial packet, inspect queue state, and route each actionable item to the narrowest child workflow.",
+  "version": "0.1.0",
+  "purpose": "Validate a daily editorial packet, inspect queue state, and route each actionable item to the narrowest child workflow.",
+  "audience": "portable Publishing House operators",
+  "default_permission": "PROPOSE",
+  "maximum_permission": "PROPOSE",
+  "fixture_mode": true,
+  "live_mode": true,
+  "tools": [
+    "storydesk",
+    "dispatch",
+    "agents-sdk"
+  ],
+  "required_capabilities": [
+    "kujo",
+    "storydesk",
+    "dispatch",
+    "agents-sdk"
+  ],
+  "optional_capabilities": [
+    "runledger",
+    "watchdog"
+  ],
+  "approval_boundaries": [
+    "No publication authority; routing may occur under PROPOSE."
+  ],
+  "state_and_recovery": "state.json and Dispatch state/trace/report artifacts support interruption and bounded resume.",
+  "next_workflow": "publishing-house-commissioning",
+  "input_schema": {
+    "type": "dict",
+    "required": [
+      "topic",
+      "run_id"
+    ],
+    "properties": {
+      "topic": {
+        "type": "string"
+      },
+      "run_id": {
+        "type": "string"
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "role_1_managing-editor",
+      "name": "Managing Editor",
+      "type": "agent",
+      "agent_id": "planner",
+      "input_from": [
+        "input"
+      ],
+      "output_key": "role_1_output",
+      "depends_on": [],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-daily-desk-role-1"
+    },
+    {
+      "id": "role_2_commissioning-editor",
+      "name": "Commissioning Editor",
+      "type": "agent",
+      "agent_id": "research",
+      "input_from": [
+        "role_1_managing-editor"
+      ],
+      "output_key": "role_2_output",
+      "depends_on": [
+        "role_1_managing-editor"
+      ],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-daily-desk-role-2"
+    },
+    {
+      "id": "role_3_production-editor",
+      "name": "Production Editor",
+      "type": "agent",
+      "agent_id": "verification",
+      "input_from": [
+        "role_2_commissioning-editor"
+      ],
+      "output_key": "role_3_output",
+      "depends_on": [
+        "role_2_commissioning-editor"
+      ],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-daily-desk-role-3"
+    },
+    {
+      "id": "final_report",
+      "name": "Workflow Report",
+      "type": "report",
+      "input_from": [
+        "role_3_output"
+      ],
+      "depends_on": [
+        "role_3_production-editor"
+      ],
+      "output_key": "final_output"
+    }
+  ],
+  "output_schema": {
+    "type": "dict"
+  },
+  "default_retry_policy": {
+    "max_attempts": 2,
+    "base_delay_ms": 0,
+    "max_delay_ms": 0,
+    "strategy": "none",
+    "retry_on_codes": [
+      "transient_error"
+    ]
+  },
+  "approval_config": {
+    "auto_approve": false
+  },
+  "bindings": [
+    {
+      "step_id": "managing-editor",
+      "canonical_role": "Managing Editor",
+      "role_slug": "managing-editor",
+      "canonical_agent": "kujo-agents/publishing-house/managing-editor/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/managing-editor/SKILL.md",
+      "allowed_tools": [
+        "storydesk"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "daily routing receipt",
+      "handoff_destination": "Commissioning Editor",
+      "stop_condition": "every item is routed, deferred, or blocked"
+    },
+    {
+      "step_id": "commissioning-editor",
+      "canonical_role": "Commissioning Editor",
+      "role_slug": "commissioning-editor",
+      "canonical_agent": "kujo-agents/publishing-house/commissioning-editor/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/commissioning-editor/SKILL.md",
+      "allowed_tools": [
+        "storydesk"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "commissioning route",
+      "handoff_destination": "Production Editor",
+      "stop_condition": "the next commission boundary is explicit"
+    },
+    {
+      "step_id": "production-editor",
+      "canonical_role": "Production Editor",
+      "role_slug": "production-editor",
+      "canonical_agent": "kujo-agents/publishing-house/production-editor/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/production-editor/SKILL.md",
+      "allowed_tools": [
+        "storydesk"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "capacity and dependency check",
+      "handoff_destination": "Managing Editor",
+      "stop_condition": "production dependencies are classified"
+    }
+  ],
+  "format_profiles": []
+}
+

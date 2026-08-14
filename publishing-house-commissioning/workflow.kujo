@@ -1,0 +1,3 @@
+from lib.publishing_house.runtime import run_workflow
+run_workflow("publishing-house-commissioning")
+

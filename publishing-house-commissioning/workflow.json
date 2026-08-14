@@ -1,0 +1,242 @@
+{
+  "id": "publishing-house-commissioning",
+  "name": "Publishing House Commissioning",
+  "description": "Turn an approved idea or signal into a specific Editorial Brief, assignments, and an evidence work order.",
+  "version": "0.1.0",
+  "purpose": "Turn an approved idea or signal into a specific Editorial Brief, assignments, and an evidence work order.",
+  "audience": "portable Publishing House operators",
+  "default_permission": "PROPOSE",
+  "maximum_permission": "PROPOSE",
+  "fixture_mode": true,
+  "live_mode": true,
+  "tools": [
+    "storydesk",
+    "dossier",
+    "dispatch",
+    "agents-sdk"
+  ],
+  "required_capabilities": [
+    "kujo",
+    "storydesk",
+    "dossier",
+    "dispatch",
+    "agents-sdk"
+  ],
+  "optional_capabilities": [],
+  "approval_boundaries": [
+    "Commissioning records a proposal and approval owner; it does not approve publication."
+  ],
+  "state_and_recovery": "state.json and Dispatch state/trace/report artifacts support interruption and bounded resume.",
+  "next_workflow": "publishing-house-evidence-dossier",
+  "input_schema": {
+    "type": "dict",
+    "required": [
+      "topic",
+      "run_id"
+    ],
+    "properties": {
+      "topic": {
+        "type": "string"
+      },
+      "run_id": {
+        "type": "string"
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "role_1_commissioning-editor",
+      "name": "Commissioning Editor",
+      "type": "agent",
+      "agent_id": "planner",
+      "input_from": [
+        "input"
+      ],
+      "output_key": "role_1_output",
+      "depends_on": [],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-commissioning-role-1"
+    },
+    {
+      "id": "role_2_editorial-strategy-director",
+      "name": "Editorial Strategy Director",
+      "type": "agent",
+      "agent_id": "research",
+      "input_from": [
+        "role_1_commissioning-editor"
+      ],
+      "output_key": "role_2_output",
+      "depends_on": [
+        "role_1_commissioning-editor"
+      ],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-commissioning-role-2"
+    },
+    {
+      "id": "role_3_creative-director",
+      "name": "Creative Director",
+      "type": "agent",
+      "agent_id": "verification",
+      "input_from": [
+        "role_2_editorial-strategy-director"
+      ],
+      "output_key": "role_3_output",
+      "depends_on": [
+        "role_2_editorial-strategy-director"
+      ],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-commissioning-role-3"
+    },
+    {
+      "id": "role_4_brand-strategy-director",
+      "name": "Brand Strategy Director",
+      "type": "agent",
+      "agent_id": "writer",
+      "input_from": [
+        "role_3_creative-director"
+      ],
+      "output_key": "role_4_output",
+      "depends_on": [
+        "role_3_creative-director"
+      ],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-commissioning-role-4"
+    },
+    {
+      "id": "final_report",
+      "name": "Workflow Report",
+      "type": "report",
+      "input_from": [
+        "role_4_output"
+      ],
+      "depends_on": [
+        "role_4_brand-strategy-director"
+      ],
+      "output_key": "final_output"
+    }
+  ],
+  "output_schema": {
+    "type": "dict"
+  },
+  "default_retry_policy": {
+    "max_attempts": 2,
+    "base_delay_ms": 0,
+    "max_delay_ms": 0,
+    "strategy": "none",
+    "retry_on_codes": [
+      "transient_error"
+    ]
+  },
+  "approval_config": {
+    "auto_approve": false
+  },
+  "bindings": [
+    {
+      "step_id": "commissioning-editor",
+      "canonical_role": "Commissioning Editor",
+      "role_slug": "commissioning-editor",
+      "canonical_agent": "kujo-agents/publishing-house/commissioning-editor/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/commissioning-editor/SKILL.md",
+      "allowed_tools": [
+        "storydesk",
+        "dossier"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "Editorial Brief",
+      "handoff_destination": "Director of Editorial Intelligence",
+      "stop_condition": "the assignment is specific or blocked"
+    },
+    {
+      "step_id": "editorial-strategy-director",
+      "canonical_role": "Editorial Strategy Director",
+      "role_slug": "editorial-strategy-director",
+      "canonical_agent": "kujo-agents/publishing-house/editorial-strategy-director/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/editorial-strategy-director/SKILL.md",
+      "allowed_tools": [
+        "storydesk"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "strategic thesis",
+      "handoff_destination": "Creative Director",
+      "stop_condition": "the opportunity and non-goals are explicit"
+    },
+    {
+      "step_id": "creative-director",
+      "canonical_role": "Creative Director",
+      "role_slug": "creative-director",
+      "canonical_agent": "kujo-agents/publishing-house/creative-director/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/creative-director/SKILL.md",
+      "allowed_tools": [
+        "storydesk"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "creative direction",
+      "handoff_destination": "Brand Strategy Director",
+      "stop_condition": "the central idea is bounded"
+    },
+    {
+      "step_id": "brand-strategy-director",
+      "canonical_role": "Brand Strategy Director",
+      "role_slug": "brand-strategy-director",
+      "canonical_agent": "kujo-agents/publishing-house/brand-strategy-director/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/brand-strategy-director/SKILL.md",
+      "allowed_tools": [
+        "storydesk"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "brand constraints",
+      "handoff_destination": "Commissioning Editor",
+      "stop_condition": "brand fit is explicit"
+    }
+  ],
+  "format_profiles": []
+}
+

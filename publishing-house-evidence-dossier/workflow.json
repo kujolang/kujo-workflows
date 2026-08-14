@@ -1,0 +1,160 @@
+{
+  "id": "publishing-house-evidence-dossier",
+  "name": "Publishing House Evidence Dossier",
+  "description": "Build and independently review claims, sources, captured evidence, freshness, rights, consent, and conflicts before drafting.",
+  "version": "0.1.0",
+  "purpose": "Build and independently review claims, sources, captured evidence, freshness, rights, consent, and conflicts before drafting.",
+  "audience": "portable Publishing House operators",
+  "default_permission": "PROPOSE",
+  "maximum_permission": "PROPOSE",
+  "fixture_mode": true,
+  "live_mode": true,
+  "tools": [
+    "dossier",
+    "storydesk",
+    "dispatch",
+    "agents-sdk"
+  ],
+  "required_capabilities": [
+    "kujo",
+    "dossier",
+    "storydesk",
+    "dispatch",
+    "agents-sdk"
+  ],
+  "optional_capabilities": [],
+  "approval_boundaries": [
+    "Unsupported material claims block or narrow drafting."
+  ],
+  "state_and_recovery": "state.json and Dispatch state/trace/report artifacts support interruption and bounded resume.",
+  "next_workflow": "publishing-house-primary-piece",
+  "input_schema": {
+    "type": "dict",
+    "required": [
+      "topic",
+      "run_id"
+    ],
+    "properties": {
+      "topic": {
+        "type": "string"
+      },
+      "run_id": {
+        "type": "string"
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "role_1_director-of-editorial-intelligence",
+      "name": "Director of Editorial Intelligence",
+      "type": "agent",
+      "agent_id": "planner",
+      "input_from": [
+        "input"
+      ],
+      "output_key": "role_1_output",
+      "depends_on": [],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-evidence-dossier-role-1"
+    },
+    {
+      "id": "role_2_standards-evidence-editor",
+      "name": "Standards & Evidence Editor",
+      "type": "agent",
+      "agent_id": "research",
+      "input_from": [
+        "role_1_director-of-editorial-intelligence"
+      ],
+      "output_key": "role_2_output",
+      "depends_on": [
+        "role_1_director-of-editorial-intelligence"
+      ],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-evidence-dossier-role-2"
+    },
+    {
+      "id": "final_report",
+      "name": "Workflow Report",
+      "type": "report",
+      "input_from": [
+        "role_2_output"
+      ],
+      "depends_on": [
+        "role_2_standards-evidence-editor"
+      ],
+      "output_key": "final_output"
+    }
+  ],
+  "output_schema": {
+    "type": "dict"
+  },
+  "default_retry_policy": {
+    "max_attempts": 2,
+    "base_delay_ms": 0,
+    "max_delay_ms": 0,
+    "strategy": "none",
+    "retry_on_codes": [
+      "transient_error"
+    ]
+  },
+  "approval_config": {
+    "auto_approve": false
+  },
+  "bindings": [
+    {
+      "step_id": "director-of-editorial-intelligence",
+      "canonical_role": "Director of Editorial Intelligence",
+      "role_slug": "director-of-editorial-intelligence",
+      "canonical_agent": "kujo-agents/publishing-house/director-of-editorial-intelligence/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/director-of-editorial-intelligence/SKILL.md",
+      "allowed_tools": [
+        "dossier",
+        "storydesk"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "evidence collection plan",
+      "handoff_destination": "Standards & Evidence Editor",
+      "stop_condition": "all material claims are classified"
+    },
+    {
+      "step_id": "standards-evidence-editor",
+      "canonical_role": "Standards & Evidence Editor",
+      "role_slug": "standards-evidence-editor",
+      "canonical_agent": "kujo-agents/publishing-house/standards-evidence-editor/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/standards-evidence-editor/SKILL.md",
+      "allowed_tools": [
+        "dossier"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "independent evidence decision",
+      "handoff_destination": "Technical Editor & Writer",
+      "stop_condition": "evidence is ready, partial, conflicted, blocked, or rejected"
+    }
+  ],
+  "format_profiles": []
+}
+
