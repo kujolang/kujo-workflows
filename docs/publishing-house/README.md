@@ -37,7 +37,32 @@ requires a new package and approval. Dispatch's pause state is orchestration
 evidence, not approval. BluePencil verdicts are editorial records, not human
 publication authority.
 
-## Run the complete fixture
+## Install and run today
+
+The supported installation path creates an isolated bundle containing the
+eight workflow kits, clean checkouts of every locked Kujo dependency, and the
+operator-supplied Kujo binary. It refuses to overwrite an existing target and
+does not require Python, model credentials, or a network when `--source-repos`
+points to local checkouts:
+
+```bash
+bash scripts/install-publishing-house.sh \
+  --prefix "$PWD/.local/publishing-house" \
+  --source-repos /path/to/kujo-repos \
+  --kujo-bin /path/to/kujo \
+  --demo
+
+.local/publishing-house/bin/publishing-house-doctor
+```
+
+Without `--source-repos`, missing dependency checkouts are cloned from the
+HTTPS repositories recorded in
+[`install-lock.json`](install-lock.json). The `--demo` gate runs all eight
+workflows after the staged installation is moved to its final path, so every
+persisted record reference remains resolvable. The resulting
+`first-run/integration-proof.json` is the installation acceptance receipt.
+
+## Run the complete fixture from a source checkout
 
 Provide sibling Kujo repositories under the same parent directory or set
 `KUJO_REPOS` and `KUJO_BIN`, then run:
@@ -105,6 +130,9 @@ completed outcomes remain distinct.
 Exact tested repository commits and contract versions are recorded in
 [`compatibility-matrix.json`](compatibility-matrix.json), with command outcomes
 in [`validation-report.md`](validation-report.md). All eight kits are
-classified as **Limited technical preview**: their offline fixture contracts
-and composed proof are locally verified, while live adapters, authenticated
-destinations, and live model execution remain environment-specific.
+installable and usable today for the locked, offline local fixture contract.
+They remain classified as **Limited** rather than production-ready because
+their live mode deliberately fails closed until an operator provides reviewed
+model/retrieval adapters, authenticated destination adapters, and a real human
+VersionSeal decision. The limit is an external/live integration boundary, not
+an unverified fixture or missing installation path.

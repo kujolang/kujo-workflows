@@ -113,6 +113,29 @@ All commands below run from the repository root.
 | [`publishing-house-approval-publication/`](publishing-house-approval-publication/) | Limited | Publishing operators and approvers | Dispatch pauses for checksum-bound VersionSeal approval before a bounded PressWire fixture effect. | `(cd publishing-house-approval-publication && bash scripts/test.sh)` |
 | [`publishing-house-post-publication/`](publishing-house-post-publication/) | Limited | Audience and strategy teams | A verified receipt and compatible measurements become bounded learning and a StoryDesk follow-up. | `(cd publishing-house-post-publication && bash bin/run --request fixtures/request.fixture.json --json)` |
 
+### Install Publishing House locally
+
+The eight Publishing House kits have one locked, tested installation path.
+Supply an existing Kujo 1.0.1 binary; the installer uses local sibling
+checkouts when available and otherwise clones the exact commits in the install
+lock:
+
+```bash
+bash scripts/install-publishing-house.sh \
+  --prefix "$PWD/.local/publishing-house" \
+  --kujo-bin /absolute/path/to/kujo \
+  --demo
+
+.local/publishing-house/bin/publishing-house-doctor
+.local/publishing-house/bin/publishing-house-demo \
+  --out "$PWD/.local/publishing-house/runs/second-run"
+```
+
+The installer refuses an existing target, installs into a staging directory,
+pins clean dependency checkouts, runs the Kujo-native contract doctor, and can
+run the complete eight-workflow offline proof before reporting success. It
+does not install credentials or enable live publication.
+
 ## Verification
 
 Run the portable release gates:
@@ -178,7 +201,7 @@ For contribution, support, conduct, and vulnerability-reporting guidance, see [C
 - Tribunal mock decisions are advisory and unsigned.
 - Relay proves local persistence and bounded retries, not remote exactly-once delivery.
 - Workcell is a trusted local Docker/Podman boundary, not a hosted scheduler or microVM isolation layer.
-- The clean-worktree gate has passed on the development host; clean-machine installation on a separate host remains open.
+- The locked Publishing House installer and all-eight first run pass from a tracked archive on the development host; validation on a physically separate host remains open.
 
 ## License
 

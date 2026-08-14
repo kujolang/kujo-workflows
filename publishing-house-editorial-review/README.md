@@ -22,5 +22,4 @@ The request supplies portable House, Brand, and Audience profiles, permission, c
 
 state.json records running, paused, blocked, failed, and completed states. Repeating a completed run is an idempotent read. Retries are bounded at two attempts. Resume is accepted only from a paused approval run.
 
-Primary roles: Developmental Editor, Standards & Evidence Editor, Brand Strategy Director, Copy Chief, Editor-in-Chief. Required tools: bluepencil, dossier, galleypack, storydesk, dispatch, agents-sdk. Default permission: PROPOSE. Readiness: Limited technical preview; fixture evidence is verified locally, while live adapters and live-provider execution remain environment-specific.
-
+Primary roles: Developmental Editor, Standards & Evidence Editor, Brand Strategy Director, Copy Chief, Editor-in-Chief. Required tools: bluepencil, dossier, galleypack, storydesk, dispatch, agents-sdk. Default permission: PROPOSE. Readiness: installable and verified for the locked offline fixture contract; catalog status remains Limited because operator-specific live adapters are not included.

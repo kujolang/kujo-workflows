@@ -44,7 +44,8 @@ mkdir -p "$STAGE/kujo-workflows" "$STAGE/repos" "$STAGE/bin"
 if [[ -d "$ROOT/.git" ]]; then
   git -C "$ROOT" archive --format=tar HEAD | tar -xf - -C "$STAGE/kujo-workflows"
 else
-  cp -R "$ROOT/." "$STAGE/kujo-workflows/"
+  echo "installer must run from a Git checkout so only tracked files are installed" >&2
+  exit 2
 fi
 
 while IFS=$'\t' read -r name commit url; do
@@ -78,12 +79,11 @@ EOF
 chmod 0755 "$STAGE/bin/publishing-house-doctor" "$STAGE/bin/publishing-house-demo"
 
 KUJO_REPOS="$STAGE/repos" KUJO_BIN="$STAGE/bin/kujo" "$STAGE/kujo-workflows/scripts/publishing-house-doctor" >/dev/null
-if [[ "$RUN_DEMO" -eq 1 ]]; then
-  KUJO_REPOS="$STAGE/repos" KUJO_BIN="$STAGE/bin/kujo" "$STAGE/kujo-workflows/scripts/run-publishing-house-fixture.sh" --out "$STAGE/first-run" >/dev/null
-fi
-
 mv "$STAGE" "$PREFIX"
 trap - EXIT
+if [[ "$RUN_DEMO" -eq 1 ]]; then
+  "$PREFIX/bin/publishing-house-demo" --out "$PREFIX/first-run" >/dev/null
+fi
 echo "Publishing House installed at $PREFIX"
 echo "Doctor: $PREFIX/bin/publishing-house-doctor"
 echo "Fixture: $PREFIX/bin/publishing-house-demo --out $PREFIX/runs/first-run"

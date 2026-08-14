@@ -10,6 +10,7 @@ outside the repository or under ignored `.runs/` paths.
 | `python3 scripts/validate_contracts.py` | 0 | 19 schemas, 16 examples, 314 required-field negative checks |
 | `python3 scripts/validate_docs.py` | 0 | 123 Markdown files and 10 release files |
 | `bash scripts/run-publishing-house-fixture.sh --out <temporary-directory>` | 0 | 8 workflows, 36 resolved record references, 22 exact 0.2.0 tool-contract preflights, 26 agent receipts, matching approval/publication checksum |
+| `bash tests/publishing-house-install.sh` | 0 | tracked-only workflow archive installed with ten clean locked dependency checkouts; Kujo-native doctor and all-eight fixture passed from the final install path with resolvable references |
 | `bash publishing-house-approval-publication/scripts/test.sh` | 0 | pause, fixture approval resume, bounded local effect, repeated resume/idempotent read |
 | Dispatch `sdk_adapter_tests`, `policy_precedence_tests`, and `dispatch_tests` | 0 | 8 + 3 + 99 tests passed against commit in compatibility matrix |
 | Agents SDK runner, integration adapter, no-network, example, and CI no-network suites | 0 | selected suites and all 23 no-network enforcement fixtures passed |

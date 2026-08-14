@@ -44,6 +44,7 @@ These commands require the local Kujo runtime, sibling tool repositories, and an
 - [x] Loop Engineering, AI SDK + Watchdog, and AI SDK + Muzzle fixture demos.
 - [x] Workcell proof: `workcell run --file docs/workcell-launch-gate.json --repo . --no-pull`.
 - [x] Detached clean local worktree validation on the development host.
+- [x] Locked Publishing House installation and all-eight first run from a tracked archive on the development host: `bash tests/publishing-house-install.sh`.
 - [ ] Clean-checkout installation and workflow validation on a separate machine.
 - [ ] Live-provider and fully authenticated browser validation.
 - [ ] Hosted runner validation.

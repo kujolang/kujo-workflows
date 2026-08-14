@@ -1,4 +1,4 @@
-.PHONY: validate lint format test release clean-checkout
+.PHONY: validate lint format test release clean-checkout publishing-house-install-test
 
 validate: lint test
 
@@ -20,3 +20,6 @@ release:
 
 clean-checkout:
 	bash tests/clean-checkout.sh
+
+publishing-house-install-test:
+	bash tests/publishing-house-install.sh

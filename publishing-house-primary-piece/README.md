@@ -28,4 +28,4 @@ use Features Writer; `technical-walkthrough` and
 uses Campaign Copywriter. Creative Director and Developmental Editor bound the
 selected writer stage.
 
-Required tools: storydesk, dossier, galleypack, dispatch, agents-sdk. Default permission: PROPOSE. Readiness: Limited technical preview; fixture evidence is verified locally, while live adapters and live-provider execution remain environment-specific.
+Required tools: storydesk, dossier, galleypack, dispatch, agents-sdk. Default permission: PROPOSE. Readiness: installable and verified for the locked offline fixture contract; catalog status remains Limited because operator-specific live adapters are not included.
