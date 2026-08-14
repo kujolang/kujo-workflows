@@ -4,7 +4,7 @@
 |---|---|
 | **Priority** | high |
 | **Status** | ready |
-| **Version** | 0.2.0 |
+| **Version** | 0.3.0 |
 | **ID** | `2f091169-b4cf-4d24-9783-617129d055f8` |
 | **Estimated Effort** | medium |
 
@@ -12,7 +12,7 @@
 
 ## Goal
 
-Make the repository's technical-preview release surface portable, truthful, legally distributable, continuously validated, and reproducible from a clean checkout.
+Ship a portable, truthful 0.3.0 workflow-kit distribution with 34 catalog workflows and a verified installable Publishing House lifecycle.
 
 ## Background
 
@@ -28,7 +28,7 @@ Maintain repository-level release metadata and public policy files; present the 
 - Deploy hosted workflow runners.
 - Run live external providers or spend provider credits.
 - Claim production or enterprise readiness.
-- Publish packages, releases, or tags.
+- Publish packages or deploy hosted workflow runners.
 - Change branch protection or repository visibility.
 
 ## Relevant Systems
@@ -65,20 +65,22 @@ Maintain repository-level release metadata and public policy files; present the 
 ## Acceptance Criteria
 
 1. ShipCheck gate passes at the repository root with no error-level findings.
-2. The repository contains an MIT LICENSE, VERSION, and CHANGELOG.md appropriate for a 0.2.0 technical preview.
-3. README, VERSION, package metadata, changelog, and the canonical Spec agree on version 0.2.0.
-4. Ten WebOps workflow kits run in deterministic fixture mode with resumable evidence and explicit approval boundaries.
-5. WebOps site-profile and history schemas preserve credential references, stable finding states, and separate recommendation/action/outcome records.
-6. Public contribution, support, security, and conduct policies are present and linked from the README.
-7. Every checked-in relative Markdown link resolves to an existing file or local anchor target.
-8. Active documentation contains no maintainer-specific /Users path and all copyable commands state or encode their working directory.
-9. The root README distinguishes experimental, production-capable-with-limitations, and production-ready workflows and provides one portable first-run path.
-10. GitHub Actions runs self-contained contract, unit, documentation, metadata, and static validation on pushes and pull requests.
-11. Portable release-readiness and tracked-file clean-checkout gates run locally and in GitHub Actions.
-12. Agency Verified Fix Loop completes with STRICT=1 and produces passing ChangeBucket and ShipCheck gates.
-13. Catalog, contract, unit, Workcell, Tribunal, Relay, and representative workflow validations pass in the current checkout.
-14. The required validation set passes from a detached clean local worktree without relying on untracked files.
-15. The tracked worktree is clean, committed in meaningful commits, and pushed without rewriting history.
+2. The repository contains an MIT LICENSE, VERSION, and CHANGELOG.md appropriate for a 0.3.0 technical preview.
+3. README, VERSION, package metadata, changelog, and the canonical Spec agree on version 0.3.0.
+4. The catalog contains 34 active workflows, including all eight independently runnable Publishing House workflow kits.
+5. The locked Publishing House installer, Kujo-native doctor, and all-eight offline fixture complete from the final install path with resolvable record references.
+6. Ten WebOps workflow kits run in deterministic fixture mode with resumable evidence and explicit approval boundaries.
+7. WebOps site-profile and history schemas preserve credential references, stable finding states, and separate recommendation/action/outcome records.
+8. Public contribution, support, security, and conduct policies are present and linked from the README.
+9. Every checked-in relative Markdown link resolves to an existing file or local anchor target.
+10. Active documentation contains no maintainer-specific /Users path and all copyable commands state or encode their working directory.
+11. The root README distinguishes experimental, production-capable-with-limitations, and production-ready workflows and provides one portable first-run path.
+12. GitHub Actions runs self-contained contract, unit, documentation, metadata, and static validation on pushes and pull requests.
+13. Portable release-readiness and tracked-file clean-checkout gates run locally and in GitHub Actions.
+14. Agency Verified Fix Loop completes with STRICT=1 and produces passing ChangeBucket and ShipCheck gates.
+15. Catalog, contract, unit, Workcell, Tribunal, Relay, and representative workflow validations pass in the current checkout.
+16. The required validation set passes from a detached clean local worktree without relying on untracked files.
+17. The tracked worktree is clean, committed in meaningful commits, and pushed without rewriting history.
 
 ## Eval Requirements
 
@@ -115,9 +117,9 @@ Maintain repository-level release metadata and public policy files; present the 
 
 ## Human Approval Points
 
-1. Publishing a release or tag remains a separate explicit decision.
+1. The maintainer explicitly authorized the v0.3.0 release and tag on 2026-08-14.
 2. Changing the repository's technical-preview scope requires maintainer approval.
 
 ---
 
-*Generated by Spec v0.2.0*
+*Generated by Spec v0.3.0*

@@ -1,6 +1,6 @@
 # Launch Checklist
 
-Current launch scope: `locally verified support/distribution technical preview` (`0.2.0`). Repository-owned validation and WebOps fixture workflows pass on the development host. Hosted runner behavior, live external-provider workflows, and clean-machine installation on a separate host are not complete.
+Current launch scope: `locally verified support/distribution technical preview` (`0.3.0`). Repository-owned validation, WebOps fixture workflows, and the locked Publishing House all-eight installation proof pass on the development host. Hosted runner behavior, live external-provider workflows, and clean-machine installation on a separate host are not complete.
 
 The synchronized three-tool contract is `docs/webops-toolchain-contract.json`.
 Its release evidence is

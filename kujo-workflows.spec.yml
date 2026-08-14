@@ -1,9 +1,9 @@
 name: "Kujo Workflows technical preview"
 id: "2f091169-b4cf-4d24-9783-617129d055f8"
-version: "0.2.0"
+version: "0.3.0"
 status: "ready"
 priority: "high"
-goal: "Make the repository's technical-preview release surface portable, truthful, legally distributable, continuously validated, and reproducible from a clean checkout."
+goal: "Ship a portable, truthful 0.3.0 workflow-kit distribution with 34 catalog workflows and a verified installable Publishing House lifecycle."
 background: >
   A 2026-08-08 release-readiness review found that the local workflow demos are
   useful and largely healthy, but the public repository surface has missing
@@ -14,7 +14,7 @@ non_goals:
   - "Deploy hosted workflow runners."
   - "Run live external providers or spend provider credits."
   - "Claim production or enterprise readiness."
-  - "Publish packages, releases, or tags."
+  - "Publish packages or deploy hosted workflow runners."
   - "Change branch protection or repository visibility."
 relevant_systems:
   - "Kujo Spec"
@@ -45,8 +45,10 @@ likely_files:
   - "agency-verified-fix-loop/scripts/run-loop.sh"
 acceptance_criteria:
   - "ShipCheck gate passes at the repository root with no error-level findings."
-  - "The repository contains an MIT LICENSE, VERSION, and CHANGELOG.md appropriate for a 0.2.0 technical preview."
-  - "README, VERSION, package metadata, changelog, and the canonical Spec agree on version 0.2.0."
+  - "The repository contains an MIT LICENSE, VERSION, and CHANGELOG.md appropriate for a 0.3.0 technical preview."
+  - "README, VERSION, package metadata, changelog, and the canonical Spec agree on version 0.3.0."
+  - "The catalog contains 34 active workflows, including all eight independently runnable Publishing House workflow kits."
+  - "The locked Publishing House installer, Kujo-native doctor, and all-eight offline fixture complete from the final install path with resolvable record references."
   - "Ten WebOps workflow kits run in deterministic fixture mode with resumable evidence and explicit approval boundaries."
   - "WebOps site-profile and history schemas preserve credential references, stable finding states, and separate recommendation/action/outcome records."
   - "Public contribution, support, security, and conduct policies are present and linked from the README."
@@ -108,7 +110,7 @@ review_expectations:
   - "Inspect the strict agency run summary and ensure only the intended CSS/JavaScript fix remains in its ChangeBucket diff."
   - "Confirm the condensed audit summary preserves provenance without retaining bulk disposable inventories."
 human_approval_points:
-  - "Publishing a release or tag remains a separate explicit decision."
+  - "The maintainer explicitly authorized the v0.3.0 release and tag on 2026-08-14."
   - "Changing the repository's technical-preview scope requires maintainer approval."
 estimated_effort: "medium"
 tags:

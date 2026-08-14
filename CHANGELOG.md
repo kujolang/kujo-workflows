@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.3.0] - 2026-08-14
+
+### Added
+
+- Eight composable Publishing House workflow kits covering daily routing,
+  commissioning, evidence, primary and asset production, editorial revision,
+  checksum-bound human approval and publication, and post-publication learning.
+- Versioned Publishing House transport contracts, exact tool compatibility
+  records, role bindings, deterministic fixtures, and an all-eight integration
+  proof with bounded revision, pause/resume, idempotency, and no-network gates.
+- A locked local installer and Kujo-native doctor that verify the runtime and
+  ten pinned dependencies before running the complete offline fixture.
+
+### Changed
+
+- Expanded the active workflow catalog from 26 to 34 workflows.
+- Documented the Publishing House live-adapter and human-approval boundaries
+  separately from the verified offline installation contract.
+
 ## [0.2.0] - 2026-08-11
 
 - Add ten fixture-first, resumable WebOps workflow kits.
