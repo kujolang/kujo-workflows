@@ -1,0 +1,246 @@
+{
+  "id": "publishing-house-post-publication",
+  "name": "Publishing House Post-Publication Learning",
+  "description": "Turn a verified publication receipt, bounded measurements, and feedback into learning and a non-commissioning follow-up recommendation.",
+  "version": "0.1.0",
+  "purpose": "Turn a verified publication receipt, bounded measurements, and feedback into learning and a non-commissioning follow-up recommendation.",
+  "audience": "portable Publishing House operators",
+  "default_permission": "PROPOSE",
+  "maximum_permission": "PROPOSE",
+  "fixture_mode": true,
+  "live_mode": true,
+  "tools": [
+    "presswire",
+    "readersignal",
+    "storydesk",
+    "dispatch",
+    "agents-sdk"
+  ],
+  "required_capabilities": [
+    "kujo",
+    "presswire",
+    "readersignal",
+    "storydesk",
+    "dispatch",
+    "agents-sdk"
+  ],
+  "optional_capabilities": [],
+  "approval_boundaries": [
+    "ReaderSignal recommendations do not commission, alter, approve, or publish content."
+  ],
+  "state_and_recovery": "state.json and Dispatch state/trace/report artifacts support interruption and bounded resume.",
+  "next_workflow": "future Daily Desk run",
+  "input_schema": {
+    "type": "dict",
+    "required": [
+      "topic",
+      "run_id"
+    ],
+    "properties": {
+      "topic": {
+        "type": "string"
+      },
+      "run_id": {
+        "type": "string"
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "role_1_audience-development-director",
+      "name": "Audience Development Director",
+      "type": "agent",
+      "agent_id": "planner",
+      "input_from": [
+        "input"
+      ],
+      "output_key": "role_1_output",
+      "depends_on": [],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-post-publication-role-1"
+    },
+    {
+      "id": "role_2_social-community-editor",
+      "name": "Social & Community Editor",
+      "type": "agent",
+      "agent_id": "research",
+      "input_from": [
+        "role_1_audience-development-director"
+      ],
+      "output_key": "role_2_output",
+      "depends_on": [
+        "role_1_audience-development-director"
+      ],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-post-publication-role-2"
+    },
+    {
+      "id": "role_3_managing-editor",
+      "name": "Managing Editor",
+      "type": "agent",
+      "agent_id": "verification",
+      "input_from": [
+        "role_2_social-community-editor"
+      ],
+      "output_key": "role_3_output",
+      "depends_on": [
+        "role_2_social-community-editor"
+      ],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-post-publication-role-3"
+    },
+    {
+      "id": "role_4_editorial-strategy-director",
+      "name": "Editorial Strategy Director",
+      "type": "agent",
+      "agent_id": "writer",
+      "input_from": [
+        "role_3_managing-editor"
+      ],
+      "output_key": "role_4_output",
+      "depends_on": [
+        "role_3_managing-editor"
+      ],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-post-publication-role-4"
+    },
+    {
+      "id": "final_report",
+      "name": "Workflow Report",
+      "type": "report",
+      "input_from": [
+        "role_4_output"
+      ],
+      "depends_on": [
+        "role_4_editorial-strategy-director"
+      ],
+      "output_key": "final_output"
+    }
+  ],
+  "output_schema": {
+    "type": "dict"
+  },
+  "default_retry_policy": {
+    "max_attempts": 2,
+    "base_delay_ms": 0,
+    "max_delay_ms": 0,
+    "strategy": "none",
+    "retry_on_codes": [
+      "transient_error"
+    ]
+  },
+  "approval_config": {
+    "auto_approve": false
+  },
+  "bindings": [
+    {
+      "step_id": "audience-development-director",
+      "canonical_role": "Audience Development Director",
+      "role_slug": "audience-development-director",
+      "canonical_agent": "kujo-agents/publishing-house/audience-development-director/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/audience-development-director/SKILL.md",
+      "allowed_tools": [
+        "readersignal",
+        "presswire"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "measurement and learning record",
+      "handoff_destination": "Social & Community Editor",
+      "stop_condition": "measurement limits are explicit"
+    },
+    {
+      "step_id": "social-community-editor",
+      "canonical_role": "Social & Community Editor",
+      "role_slug": "social-community-editor",
+      "canonical_agent": "kujo-agents/publishing-house/social-community-editor/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/social-community-editor/SKILL.md",
+      "allowed_tools": [
+        "readersignal"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "qualitative feedback record",
+      "handoff_destination": "Managing Editor",
+      "stop_condition": "privacy and consent boundaries are preserved"
+    },
+    {
+      "step_id": "managing-editor",
+      "canonical_role": "Managing Editor",
+      "role_slug": "managing-editor",
+      "canonical_agent": "kujo-agents/publishing-house/managing-editor/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/managing-editor/SKILL.md",
+      "allowed_tools": [
+        "storydesk",
+        "readersignal"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "follow-up queue entry",
+      "handoff_destination": "Editorial Strategy Director",
+      "stop_condition": "recommendation is recorded without auto-commissioning"
+    },
+    {
+      "step_id": "editorial-strategy-director",
+      "canonical_role": "Editorial Strategy Director",
+      "role_slug": "editorial-strategy-director",
+      "canonical_agent": "kujo-agents/publishing-house/editorial-strategy-director/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/editorial-strategy-director/SKILL.md",
+      "allowed_tools": [
+        "readersignal",
+        "storydesk"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "bounded follow-up recommendation",
+      "handoff_destination": "Daily Desk",
+      "stop_condition": "future work requires a new run"
+    }
+  ],
+  "format_profiles": []
+}
+

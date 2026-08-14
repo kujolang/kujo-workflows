@@ -1,0 +1,186 @@
+{
+  "id": "publishing-house-approval-publication",
+  "name": "Publishing House Approval and Publication",
+  "description": "Freeze the exact package, pause for human approval, bind the decision to its checksum, and permit only an authorized PressWire action.",
+  "version": "0.1.0",
+  "purpose": "Freeze the exact package, pause for human approval, bind the decision to its checksum, and permit only an authorized PressWire action.",
+  "audience": "portable Publishing House operators",
+  "default_permission": "PROPOSE",
+  "maximum_permission": "ACT",
+  "fixture_mode": true,
+  "live_mode": true,
+  "tools": [
+    "galleypack",
+    "versionseal",
+    "presswire",
+    "storydesk",
+    "dispatch",
+    "agents-sdk"
+  ],
+  "required_capabilities": [
+    "kujo",
+    "galleypack",
+    "versionseal",
+    "presswire",
+    "storydesk",
+    "dispatch",
+    "agents-sdk"
+  ],
+  "optional_capabilities": [
+    "runledger",
+    "watchdog"
+  ],
+  "approval_boundaries": [
+    "A real VersionSeal decision is required in live mode; fixture approval is explicitly labeled and authorizes only the bounded local fixture destination."
+  ],
+  "state_and_recovery": "state.json and Dispatch state/trace/report artifacts support interruption and bounded resume.",
+  "next_workflow": "publishing-house-post-publication",
+  "input_schema": {
+    "type": "dict",
+    "required": [
+      "topic",
+      "run_id"
+    ],
+    "properties": {
+      "topic": {
+        "type": "string"
+      },
+      "run_id": {
+        "type": "string"
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "role_1_production-editor",
+      "name": "Production Editor",
+      "type": "agent",
+      "agent_id": "planner",
+      "input_from": [
+        "input"
+      ],
+      "output_key": "role_1_output",
+      "depends_on": [],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-approval-publication-role-1"
+    },
+    {
+      "id": "role_2_publishing-operations-director",
+      "name": "Publishing Operations Director",
+      "type": "agent",
+      "agent_id": "research",
+      "input_from": [
+        "role_1_production-editor"
+      ],
+      "output_key": "role_2_output",
+      "depends_on": [
+        "role_1_production-editor"
+      ],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-approval-publication-role-2"
+    },
+    {
+      "id": "approval_gate",
+      "name": "Exact Package Human Approval",
+      "type": "approval",
+      "approval_required": true,
+      "approval_gate": {
+        "reason": "Review exact package checksum before fixture publication.",
+        "summary": "VersionSeal remains the approval system of record."
+      },
+      "input_from": [
+        "role_2_output"
+      ],
+      "depends_on": [
+        "role_2_publishing-operations-director"
+      ],
+      "output_key": "dispatch_approval"
+    },
+    {
+      "id": "final_report",
+      "name": "Workflow Report",
+      "type": "report",
+      "input_from": [
+        "dispatch_approval"
+      ],
+      "depends_on": [
+        "approval_gate"
+      ],
+      "output_key": "final_output"
+    }
+  ],
+  "output_schema": {
+    "type": "dict"
+  },
+  "default_retry_policy": {
+    "max_attempts": 2,
+    "base_delay_ms": 0,
+    "max_delay_ms": 0,
+    "strategy": "none",
+    "retry_on_codes": [
+      "transient_error"
+    ]
+  },
+  "approval_config": {
+    "auto_approve": false
+  },
+  "bindings": [
+    {
+      "step_id": "production-editor",
+      "canonical_role": "Production Editor",
+      "role_slug": "production-editor",
+      "canonical_agent": "kujo-agents/publishing-house/production-editor/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/production-editor/SKILL.md",
+      "allowed_tools": [
+        "galleypack",
+        "versionseal"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "frozen approval package",
+      "handoff_destination": "configured human approver",
+      "stop_condition": "the exact package is ready for human review"
+    },
+    {
+      "step_id": "publishing-operations-director",
+      "canonical_role": "Publishing Operations Director",
+      "role_slug": "publishing-operations-director",
+      "canonical_agent": "kujo-agents/publishing-house/publishing-operations-director/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/publishing-operations-director/SKILL.md",
+      "allowed_tools": [
+        "versionseal",
+        "presswire",
+        "storydesk"
+      ],
+      "maximum_permission": "ACT",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "publication receipt",
+      "handoff_destination": "Managing Editor",
+      "stop_condition": "authorized PressWire action completes or blocks"
+    }
+  ],
+  "format_profiles": []
+}
+

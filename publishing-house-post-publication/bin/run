@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+WORKFLOW_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+ROOT="$(cd "$WORKFLOW_DIR/.." && pwd)"
+KUJO_REPOS="${KUJO_REPOS:-$(cd "$ROOT/.." && pwd)}"
+KUJO_BIN="${KUJO_BIN:-$KUJO_REPOS/kujo/target/release/kujo}"
+export KUJO_MODULE_PATH="$ROOT${KUJO_MODULE_PATH:+:$KUJO_MODULE_PATH}"
+cd "$WORKFLOW_DIR"
+exec "$KUJO_BIN" run workflow.kujo -- "$@"
+
