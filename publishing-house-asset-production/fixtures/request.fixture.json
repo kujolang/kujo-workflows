@@ -1,0 +1,60 @@
+{
+  "contract": "publishing-house.workflow-run-request/v1",
+  "schema_name": "publishing-house.workflow-run-request",
+  "schema_version": "1.0.0",
+  "workflow_id": "publishing-house-asset-production",
+  "workflow_version": "0.1.0",
+  "run_id": "run-fixture-asset-production",
+  "correlation_id": "correlation-publishing-house-fixture",
+  "parent_run_id": "run-fixture-parent",
+  "child_run_ids": [],
+  "created_at": "2026-08-14T12:00:00Z",
+  "actor": "fixture-operator",
+  "permission_mode": "PROPOSE",
+  "mode": "fixture",
+  "profiles": {
+    "house": "../fixtures/publishing-house/house-profile.fixture.json",
+    "brand": "../fixtures/publishing-house/brand-profile.fixture.json",
+    "audience": "../fixtures/publishing-house/audience-profile.fixture.json"
+  },
+  "capabilities": [
+    {
+      "name": "kujo",
+      "available": true,
+      "required": true
+    },
+    {
+      "name": "assetworks",
+      "available": true,
+      "required": true
+    },
+    {
+      "name": "dossier",
+      "available": true,
+      "required": true
+    },
+    {
+      "name": "galleypack",
+      "available": true,
+      "required": true
+    },
+    {
+      "name": "dispatch",
+      "available": true,
+      "required": true
+    },
+    {
+      "name": "agents-sdk",
+      "available": true,
+      "required": true
+    }
+  ],
+  "input": {
+    "assignment_id": "assignment-fixture-writer",
+    "campaign_id": "campaign-trustworthy-local-publishing",
+    "source_packet": null,
+    "fixture_record_references": []
+  },
+  "external_effects_allowed": false
+}
+

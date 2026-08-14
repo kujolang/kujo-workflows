@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Publishing House Editorial Review and Revision request",
+  "type": "object",
+  "required": [
+    "schema_name",
+    "schema_version",
+    "workflow_id",
+    "workflow_version",
+    "run_id",
+    "correlation_id",
+    "created_at",
+    "actor",
+    "permission_mode",
+    "mode",
+    "profiles",
+    "capabilities",
+    "input",
+    "external_effects_allowed"
+  ],
+  "properties": {
+    "schema_name": {
+      "const": "publishing-house.workflow-run-request"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "workflow_id": {
+      "const": "publishing-house-editorial-review"
+    },
+    "workflow_version": {
+      "const": "0.1.0"
+    },
+    "permission_mode": {
+      "enum": [
+        "OBSERVE",
+        "PROPOSE",
+        "ACT"
+      ]
+    },
+    "mode": {
+      "enum": [
+        "fixture",
+        "live"
+      ]
+    }
+  },
+  "additionalProperties": true
+}
+

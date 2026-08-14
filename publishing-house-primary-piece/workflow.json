@@ -1,0 +1,214 @@
+{
+  "id": "publishing-house-primary-piece",
+  "name": "Publishing House Primary Piece Production",
+  "description": "Create the authoritative source artifact from an Editorial Brief and evidence-ready Dossier packet.",
+  "version": "0.1.0",
+  "purpose": "Create the authoritative source artifact from an Editorial Brief and evidence-ready Dossier packet.",
+  "audience": "portable Publishing House operators",
+  "default_permission": "PROPOSE",
+  "maximum_permission": "PROPOSE",
+  "fixture_mode": true,
+  "live_mode": true,
+  "tools": [
+    "storydesk",
+    "dossier",
+    "galleypack",
+    "dispatch",
+    "agents-sdk"
+  ],
+  "required_capabilities": [
+    "kujo",
+    "storydesk",
+    "dossier",
+    "galleypack",
+    "dispatch",
+    "agents-sdk"
+  ],
+  "optional_capabilities": [
+    "assetworks"
+  ],
+  "approval_boundaries": [
+    "Drafting and developmental revision remain proposals; new claims return to Dossier."
+  ],
+  "state_and_recovery": "state.json and Dispatch state/trace/report artifacts support interruption and bounded resume.",
+  "next_workflow": "publishing-house-asset-production",
+  "input_schema": {
+    "type": "dict",
+    "required": [
+      "topic",
+      "run_id"
+    ],
+    "properties": {
+      "topic": {
+        "type": "string"
+      },
+      "run_id": {
+        "type": "string"
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "role_1_creative-director",
+      "name": "Creative Director",
+      "type": "agent",
+      "agent_id": "planner",
+      "input_from": [
+        "input"
+      ],
+      "output_key": "role_1_output",
+      "depends_on": [],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-primary-piece-role-1"
+    },
+    {
+      "id": "role_2_features-writer",
+      "name": "Features Writer",
+      "type": "agent",
+      "agent_id": "research",
+      "input_from": [
+        "role_1_creative-director"
+      ],
+      "output_key": "role_2_output",
+      "depends_on": [
+        "role_1_creative-director"
+      ],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-primary-piece-role-2"
+    },
+    {
+      "id": "role_3_developmental-editor",
+      "name": "Developmental Editor",
+      "type": "agent",
+      "agent_id": "verification",
+      "input_from": [
+        "role_2_features-writer"
+      ],
+      "output_key": "role_3_output",
+      "depends_on": [
+        "role_2_features-writer"
+      ],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-primary-piece-role-3"
+    },
+    {
+      "id": "final_report",
+      "name": "Workflow Report",
+      "type": "report",
+      "input_from": [
+        "role_3_output"
+      ],
+      "depends_on": [
+        "role_3_developmental-editor"
+      ],
+      "output_key": "final_output"
+    }
+  ],
+  "output_schema": {
+    "type": "dict"
+  },
+  "default_retry_policy": {
+    "max_attempts": 2,
+    "base_delay_ms": 0,
+    "max_delay_ms": 0,
+    "strategy": "none",
+    "retry_on_codes": [
+      "transient_error"
+    ]
+  },
+  "approval_config": {
+    "auto_approve": false
+  },
+  "bindings": [
+    {
+      "step_id": "creative-director",
+      "canonical_role": "Creative Director",
+      "role_slug": "creative-director",
+      "canonical_agent": "kujo-agents/publishing-house/creative-director/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/creative-director/SKILL.md",
+      "allowed_tools": [
+        "storydesk",
+        "dossier"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "creative direction",
+      "handoff_destination": "Features Writer",
+      "stop_condition": "the architecture is approved for drafting"
+    },
+    {
+      "step_id": "features-writer",
+      "canonical_role": "Features Writer",
+      "role_slug": "features-writer",
+      "canonical_agent": "kujo-agents/publishing-house/features-writer/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/features-writer/SKILL.md",
+      "allowed_tools": [
+        "storydesk",
+        "dossier",
+        "galleypack"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "primary editorial artifact",
+      "handoff_destination": "Developmental Editor",
+      "stop_condition": "the draft and claim map are versioned"
+    },
+    {
+      "step_id": "developmental-editor",
+      "canonical_role": "Developmental Editor",
+      "role_slug": "developmental-editor",
+      "canonical_agent": "kujo-agents/publishing-house/developmental-editor/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/developmental-editor/SKILL.md",
+      "allowed_tools": [
+        "galleypack",
+        "dossier"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "developmental review",
+      "handoff_destination": "Production Editor",
+      "stop_condition": "bounded revision is complete or escalated"
+    }
+  ],
+  "format_profiles": [
+    "flagship-feature",
+    "technical-walkthrough",
+    "problem-solution",
+    "feature-update-explanation",
+    "campaign-copy"
+  ]
+}
+

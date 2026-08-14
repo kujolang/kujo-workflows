@@ -1,0 +1,204 @@
+{
+  "id": "publishing-house-asset-production",
+  "name": "Publishing House Asset Production",
+  "description": "Plan, validate, and package supported media assets with provenance, rights, accessibility, and exact checksums.",
+  "version": "0.1.0",
+  "purpose": "Plan, validate, and package supported media assets with provenance, rights, accessibility, and exact checksums.",
+  "audience": "portable Publishing House operators",
+  "default_permission": "PROPOSE",
+  "maximum_permission": "PROPOSE",
+  "fixture_mode": true,
+  "live_mode": true,
+  "tools": [
+    "assetworks",
+    "dossier",
+    "galleypack",
+    "dispatch",
+    "agents-sdk"
+  ],
+  "required_capabilities": [
+    "kujo",
+    "assetworks",
+    "dossier",
+    "galleypack",
+    "dispatch",
+    "agents-sdk"
+  ],
+  "optional_capabilities": [],
+  "approval_boundaries": [
+    "Unsupported transforms become bounded blockers; this workflow never publishes assets."
+  ],
+  "state_and_recovery": "state.json and Dispatch state/trace/report artifacts support interruption and bounded resume.",
+  "next_workflow": "publishing-house-editorial-review",
+  "input_schema": {
+    "type": "dict",
+    "required": [
+      "topic",
+      "run_id"
+    ],
+    "properties": {
+      "topic": {
+        "type": "string"
+      },
+      "run_id": {
+        "type": "string"
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "role_1_art-director",
+      "name": "Art Director",
+      "type": "agent",
+      "agent_id": "planner",
+      "input_from": [
+        "input"
+      ],
+      "output_key": "role_1_output",
+      "depends_on": [],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-asset-production-role-1"
+    },
+    {
+      "id": "role_2_video-audio-producer",
+      "name": "Video & Audio Producer",
+      "type": "agent",
+      "agent_id": "research",
+      "input_from": [
+        "role_1_art-director"
+      ],
+      "output_key": "role_2_output",
+      "depends_on": [
+        "role_1_art-director"
+      ],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-asset-production-role-2"
+    },
+    {
+      "id": "role_3_production-editor",
+      "name": "Production Editor",
+      "type": "agent",
+      "agent_id": "verification",
+      "input_from": [
+        "role_2_video-audio-producer"
+      ],
+      "output_key": "role_3_output",
+      "depends_on": [
+        "role_2_video-audio-producer"
+      ],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-asset-production-role-3"
+    },
+    {
+      "id": "final_report",
+      "name": "Workflow Report",
+      "type": "report",
+      "input_from": [
+        "role_3_output"
+      ],
+      "depends_on": [
+        "role_3_production-editor"
+      ],
+      "output_key": "final_output"
+    }
+  ],
+  "output_schema": {
+    "type": "dict"
+  },
+  "default_retry_policy": {
+    "max_attempts": 2,
+    "base_delay_ms": 0,
+    "max_delay_ms": 0,
+    "strategy": "none",
+    "retry_on_codes": [
+      "transient_error"
+    ]
+  },
+  "approval_config": {
+    "auto_approve": false
+  },
+  "bindings": [
+    {
+      "step_id": "art-director",
+      "canonical_role": "Art Director",
+      "role_slug": "art-director",
+      "canonical_agent": "kujo-agents/publishing-house/art-director/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/art-director/SKILL.md",
+      "allowed_tools": [
+        "assetworks",
+        "dossier"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "asset plan",
+      "handoff_destination": "Video & Audio Producer",
+      "stop_condition": "visual requirements and rights are bounded"
+    },
+    {
+      "step_id": "video-audio-producer",
+      "canonical_role": "Video & Audio Producer",
+      "role_slug": "video-audio-producer",
+      "canonical_agent": "kujo-agents/publishing-house/video-audio-producer/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/video-audio-producer/SKILL.md",
+      "allowed_tools": [
+        "assetworks"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "supported media artifact",
+      "handoff_destination": "Production Editor",
+      "stop_condition": "supported work is produced or blocked"
+    },
+    {
+      "step_id": "production-editor",
+      "canonical_role": "Production Editor",
+      "role_slug": "production-editor",
+      "canonical_agent": "kujo-agents/publishing-house/production-editor/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/production-editor/SKILL.md",
+      "allowed_tools": [
+        "assetworks",
+        "galleypack"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "media manifest",
+      "handoff_destination": "Editorial Review",
+      "stop_condition": "checksums and accessibility records are attached"
+    }
+  ],
+  "format_profiles": []
+}
+

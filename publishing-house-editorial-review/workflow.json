@@ -1,0 +1,293 @@
+{
+  "id": "publishing-house-editorial-review",
+  "name": "Publishing House Editorial Review and Revision",
+  "description": "Review an exact GalleyPack version, preserve independent findings, route bounded changes, and recommend an exact package for approval.",
+  "version": "0.1.0",
+  "purpose": "Review an exact GalleyPack version, preserve independent findings, route bounded changes, and recommend an exact package for approval.",
+  "audience": "portable Publishing House operators",
+  "default_permission": "PROPOSE",
+  "maximum_permission": "PROPOSE",
+  "fixture_mode": true,
+  "live_mode": true,
+  "tools": [
+    "bluepencil",
+    "dossier",
+    "galleypack",
+    "storydesk",
+    "dispatch",
+    "agents-sdk"
+  ],
+  "required_capabilities": [
+    "kujo",
+    "bluepencil",
+    "dossier",
+    "galleypack",
+    "storydesk",
+    "dispatch",
+    "agents-sdk"
+  ],
+  "optional_capabilities": [
+    "eval",
+    "runledger"
+  ],
+  "approval_boundaries": [
+    "BluePencil verdicts and editorial recommendations do not constitute human publication approval."
+  ],
+  "state_and_recovery": "state.json and Dispatch state/trace/report artifacts support interruption and bounded resume.",
+  "next_workflow": "publishing-house-approval-publication",
+  "input_schema": {
+    "type": "dict",
+    "required": [
+      "topic",
+      "run_id"
+    ],
+    "properties": {
+      "topic": {
+        "type": "string"
+      },
+      "run_id": {
+        "type": "string"
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "role_1_developmental-editor",
+      "name": "Developmental Editor",
+      "type": "agent",
+      "agent_id": "planner",
+      "input_from": [
+        "input"
+      ],
+      "output_key": "role_1_output",
+      "depends_on": [],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-editorial-review-role-1"
+    },
+    {
+      "id": "role_2_standards-evidence-editor",
+      "name": "Standards & Evidence Editor",
+      "type": "agent",
+      "agent_id": "research",
+      "input_from": [
+        "role_1_developmental-editor"
+      ],
+      "output_key": "role_2_output",
+      "depends_on": [
+        "role_1_developmental-editor"
+      ],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-editorial-review-role-2"
+    },
+    {
+      "id": "role_3_brand-strategy-director",
+      "name": "Brand Strategy Director",
+      "type": "agent",
+      "agent_id": "verification",
+      "input_from": [
+        "role_2_standards-evidence-editor"
+      ],
+      "output_key": "role_3_output",
+      "depends_on": [
+        "role_2_standards-evidence-editor"
+      ],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-editorial-review-role-3"
+    },
+    {
+      "id": "role_4_copy-chief",
+      "name": "Copy Chief",
+      "type": "agent",
+      "agent_id": "writer",
+      "input_from": [
+        "role_3_brand-strategy-director"
+      ],
+      "output_key": "role_4_output",
+      "depends_on": [
+        "role_3_brand-strategy-director"
+      ],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-editorial-review-role-4"
+    },
+    {
+      "id": "role_5_editor-in-chief",
+      "name": "Editor-in-Chief",
+      "type": "agent",
+      "agent_id": "planner",
+      "input_from": [
+        "role_4_copy-chief"
+      ],
+      "output_key": "role_5_output",
+      "depends_on": [
+        "role_4_copy-chief"
+      ],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-editorial-review-role-5"
+    },
+    {
+      "id": "final_report",
+      "name": "Workflow Report",
+      "type": "report",
+      "input_from": [
+        "role_5_output"
+      ],
+      "depends_on": [
+        "role_5_editor-in-chief"
+      ],
+      "output_key": "final_output"
+    }
+  ],
+  "output_schema": {
+    "type": "dict"
+  },
+  "default_retry_policy": {
+    "max_attempts": 2,
+    "base_delay_ms": 0,
+    "max_delay_ms": 0,
+    "strategy": "none",
+    "retry_on_codes": [
+      "transient_error"
+    ]
+  },
+  "approval_config": {
+    "auto_approve": false
+  },
+  "bindings": [
+    {
+      "step_id": "developmental-editor",
+      "canonical_role": "Developmental Editor",
+      "role_slug": "developmental-editor",
+      "canonical_agent": "kujo-agents/publishing-house/developmental-editor/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/developmental-editor/SKILL.md",
+      "allowed_tools": [
+        "bluepencil",
+        "galleypack"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "developmental review",
+      "handoff_destination": "Standards & Evidence Editor",
+      "stop_condition": "argument and structure are pass or revise"
+    },
+    {
+      "step_id": "standards-evidence-editor",
+      "canonical_role": "Standards & Evidence Editor",
+      "role_slug": "standards-evidence-editor",
+      "canonical_agent": "kujo-agents/publishing-house/standards-evidence-editor/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/standards-evidence-editor/SKILL.md",
+      "allowed_tools": [
+        "bluepencil",
+        "dossier"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "standards review",
+      "handoff_destination": "Copy Chief",
+      "stop_condition": "blocking evidence findings are resolved or preserved"
+    },
+    {
+      "step_id": "brand-strategy-director",
+      "canonical_role": "Brand Strategy Director",
+      "role_slug": "brand-strategy-director",
+      "canonical_agent": "kujo-agents/publishing-house/brand-strategy-director/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/brand-strategy-director/SKILL.md",
+      "allowed_tools": [
+        "bluepencil"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "brand review",
+      "handoff_destination": "Copy Chief",
+      "stop_condition": "brand fit is decided"
+    },
+    {
+      "step_id": "copy-chief",
+      "canonical_role": "Copy Chief",
+      "role_slug": "copy-chief",
+      "canonical_agent": "kujo-agents/publishing-house/copy-chief/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/copy-chief/SKILL.md",
+      "allowed_tools": [
+        "bluepencil",
+        "galleypack"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "copy review",
+      "handoff_destination": "Editor-in-Chief",
+      "stop_condition": "sentence and metadata issues are bounded"
+    },
+    {
+      "step_id": "editor-in-chief",
+      "canonical_role": "Editor-in-Chief",
+      "role_slug": "editor-in-chief",
+      "canonical_agent": "kujo-agents/publishing-house/editor-in-chief/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/editor-in-chief/SKILL.md",
+      "allowed_tools": [
+        "bluepencil",
+        "galleypack"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "final editorial recommendation",
+      "handoff_destination": "Production Editor",
+      "stop_condition": "exact reviewed package is recommended or blocked"
+    }
+  ],
+  "format_profiles": []
+}
+
