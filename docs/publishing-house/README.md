@@ -1,15 +1,16 @@
 # Publishing House workflows
 
-The Publishing House workflow layer is an eight-kit, local-first technical
+The Publishing House workflow layer is an eleven-kit, local-first technical
 preview for moving an editorial signal through publication evidence and back
 into a follow-up recommendation. Each kit is independently runnable, and the
 repository fixture composes them in this order:
 
 ```text
-Daily Desk -> Commissioning -> Evidence Dossier -> Primary Piece
+Governance -> Daily Desk -> Commissioning -> Evidence Dossier -> Primary Piece
                                       Primary Piece -> Asset Production
 Primary Piece + Asset Production -> Editorial Review
-Editorial Review -> Approval and Publication -> Post-Publication Learning
+Editorial Review -> Adaptation -> Format Production
+Format Production -> Approval and Publication -> Post-Publication Learning
 Post-Publication Learning -> future StoryDesk input
 ```
 
@@ -40,7 +41,7 @@ publication authority.
 ## Install and run today
 
 The supported installation path creates an isolated bundle containing the
-eight workflow kits, clean checkouts of every locked Kujo dependency, and the
+eleven workflow kits, clean checkouts of every locked Kujo dependency, and the
 operator-supplied Kujo binary. It refuses to overwrite an existing target and
 does not require Python, model credentials, or a network when `--source-repos`
 points to local checkouts:
@@ -57,7 +58,7 @@ bash scripts/install-publishing-house.sh \
 
 Without `--source-repos`, missing dependency checkouts are cloned from the
 HTTPS repositories recorded in
-[`install-lock.json`](install-lock.json). The `--demo` gate runs all eight
+[`install-lock.json`](install-lock.json). The `--demo` gate runs all eleven
 workflows after the staged installation is moved to its final path, so every
 persisted record reference remains resolvable. The resulting
 `first-run/integration-proof.json` is the installation acceptance receipt.
@@ -93,9 +94,12 @@ runtime dependency.
 
 Fixture mode is offline, deterministic, repeatable, credential-free, and
 external-effect-free. It runs the current tool CLIs, Dispatch workflow, and
-Agents SDK no-network fixture boundary. Capability preflight verifies that each
-tool checkout is clean and matches the exact commit, tool version, and contract
-version in the compatibility matrix; drift fails closed before tool mutation.
+Agents SDK no-network fixture boundary. Every agent step loads the canonical
+Publishing House shared contracts, role contract, role skill, and workflow
+skill into the runner and records their exact paths and instruction checksum.
+Capability preflight verifies that each tool, `kujo-agents`, and `kujo-skills`
+checkout is clean and matches the exact tested commit; drift fails closed
+before tool mutation.
 Generated run directories are ignored unless deliberately promoted as reviewed
 evidence.
 
@@ -129,7 +133,7 @@ completed outcomes remain distinct.
 
 Exact tested repository commits and contract versions are recorded in
 [`compatibility-matrix.json`](compatibility-matrix.json), with command outcomes
-in [`validation-report.md`](validation-report.md). All eight kits are
+in [`validation-report.md`](validation-report.md). All eleven kits are
 installable and usable today for the locked, offline local fixture contract.
 They remain classified as **Limited** rather than production-ready because
 their live mode deliberately fails closed until an operator provides reviewed

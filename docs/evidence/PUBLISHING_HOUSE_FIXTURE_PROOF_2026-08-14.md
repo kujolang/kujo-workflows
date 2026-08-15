@@ -1,10 +1,10 @@
-# Publishing House all-eight fixture proof
+# Publishing House all-eleven fixture proof
 
 Captured: 2026-08-14
 
-The portable all-eight fixture completed with 8 workflow completion receipts,
-36 checksum-verified tool record references, 22 exact tool-contract preflights,
-26 offline Agents SDK step receipts, and 8 Dispatch state/trace sets.
+The portable all-eleven fixture completed with 11 workflow completion receipts,
+46 checksum-verified tool record references, 34 exact tool-contract preflights,
+38 offline Agents SDK step receipts, and 11 Dispatch state/trace sets.
 
 Verified boundaries:
 
@@ -12,6 +12,9 @@ Verified boundaries:
 - Approval and Publication paused before VersionSeal approval and resumed only with explicitly labeled fixture approval data;
 - approved and locally published bytes both hashed to `828b6cbe7dbff63cd2b1e50e121c743708c3dc76f232d7f72b44fac49c2cf3ec`;
 - every completed workflow accepted an idempotent replay;
+- every Agents SDK step loaded the canonical shared house contracts, role
+  contract, role skill, and Publishing House workflow skill, with matching
+  instruction checksums in the execution receipt;
 - Agents SDK receipts reported `requires_network=false`, Dispatch ran in offline fixture mode, and no credentials were required;
 - PressWire produced only a bounded local fixture copy; no live publication occurred.
 

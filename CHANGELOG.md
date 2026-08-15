@@ -6,7 +6,20 @@ The format follows Keep a Changelog and Semantic Versioning.
 
 ## [Unreleased]
 
-_No changes yet._
+### Added
+
+- Governance, adaptation, and format-production workflow kits complete the
+  eleven-stage Publishing House lifecycle and cover the four previously
+  unbound specialist roles.
+- Canonical role, shared-contract, role-skill, and workflow-skill loading for
+  every Agents SDK step, with checksum-bound execution receipts.
+
+### Changed
+
+- Expanded the workflow catalog from 34 to 37 entries and the locked
+  Publishing House installation from eight to eleven kits.
+- Refreshed all locked Publishing House tool, agent, and skill checkouts to the
+  exact tested commits.
 
 ## [0.3.0] - 2026-08-14
 

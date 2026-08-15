@@ -1,6 +1,6 @@
 # Launch Checklist
 
-Current launch scope: `locally verified support/distribution technical preview` (`0.3.0`). Repository-owned validation, WebOps fixture workflows, and the locked Publishing House all-eight installation proof pass on the development host. Hosted runner behavior, live external-provider workflows, and clean-machine installation on a separate host are not complete.
+Current launch scope: `locally verified support/distribution technical preview` (`0.3.0`). Repository-owned validation, WebOps fixture workflows, and the locked Publishing House all-eleven installation proof pass on the development host. Hosted runner behavior, live external-provider workflows, and clean-machine installation on a separate host are not complete.
 
 The synchronized three-tool contract is `docs/webops-toolchain-contract.json`.
 Its release evidence is
@@ -44,7 +44,7 @@ These commands require the local Kujo runtime, sibling tool repositories, and an
 - [x] Loop Engineering, AI SDK + Watchdog, and AI SDK + Muzzle fixture demos.
 - [x] Workcell proof: `workcell run --file docs/workcell-launch-gate.json --repo . --no-pull`.
 - [x] Detached clean local worktree validation on the development host.
-- [x] Locked Publishing House installation and all-eight first run from a tracked archive on the development host: `bash tests/publishing-house-install.sh`.
+- [x] Locked Publishing House installation and all-eleven first run from a tracked archive on the development host: `bash tests/publishing-house-install.sh`.
 - [ ] Clean-checkout installation and workflow validation on a separate machine.
 - [ ] Live-provider and fully authenticated browser validation.
 - [ ] Hosted runner validation.

@@ -12,7 +12,7 @@
 
 ## Goal
 
-Ship a portable, truthful 0.3.0 workflow-kit distribution with 34 catalog workflows and a verified installable Publishing House lifecycle.
+Ship a portable, truthful 0.3.0 workflow-kit distribution with 37 catalog workflows and a verified installable Publishing House lifecycle.
 
 ## Background
 
@@ -67,8 +67,8 @@ Maintain repository-level release metadata and public policy files; present the 
 1. ShipCheck gate passes at the repository root with no error-level findings.
 2. The repository contains an MIT LICENSE, VERSION, and CHANGELOG.md appropriate for a 0.3.0 technical preview.
 3. README, VERSION, package metadata, changelog, and the canonical Spec agree on version 0.3.0.
-4. The catalog contains 34 active workflows, including all eight independently runnable Publishing House workflow kits.
-5. The locked Publishing House installer, Kujo-native doctor, and all-eight offline fixture complete from the final install path with resolvable record references.
+4. The catalog contains 37 active workflows, including all eleven independently runnable Publishing House workflow kits.
+5. The locked Publishing House installer, Kujo-native doctor, and all-eleven offline fixture complete from the final install path with resolvable record references and contract-loaded agent receipts.
 6. Ten WebOps workflow kits run in deterministic fixture mode with resumable evidence and explicit approval boundaries.
 7. WebOps site-profile and history schemas preserve credential references, stable finding states, and separate recommendation/action/outcome records.
 8. Public contribution, support, security, and conduct policies are present and linked from the README.

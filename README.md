@@ -104,18 +104,21 @@ All commands below run from the repository root.
 | [`tribunal-decision-gate/`](tribunal-decision-gate/) | Limited | Governance, release, security teams | Tribunal mock review becomes a verified advisory decision receipt. | `bash tribunal-decision-gate/scripts/run.sh` |
 | [`relay-lifecycle-handoff/`](relay-lifecycle-handoff/) | Limited | Workflow operators | Relay pause/resume and integrity-checked export become correlated handoff receipts. | `bash relay-lifecycle-handoff/scripts/run.sh` |
 | [`workcell-execution-gate/`](workcell-execution-gate/) | Limited | Agent operators | Workcell validates, inspects, and executes a bounded Docker package with completion evidence. | `bash workcell-execution-gate/scripts/run.sh` |
+| [`publishing-house-governance/`](publishing-house-governance/) | Limited | Publishers and editorial leaders | A house mandate becomes explicit portfolio priorities and accountable operating handoffs. | `(cd publishing-house-governance && bash bin/run --request fixtures/request.fixture.json --json)` |
 | [`publishing-house-daily-desk/`](publishing-house-daily-desk/) | Limited | Editorial operators | A daily packet becomes explicit routes, deferrals, and blockers without manufacturing downstream state. | `(cd publishing-house-daily-desk && bash bin/run --request fixtures/request.fixture.json --json)` |
 | [`publishing-house-commissioning/`](publishing-house-commissioning/) | Limited | Commissioning teams | A specific editorial opportunity becomes a StoryDesk brief and evidence work order. | `(cd publishing-house-commissioning && bash bin/run --request fixtures/request.fixture.json --json)` |
 | [`publishing-house-evidence-dossier/`](publishing-house-evidence-dossier/) | Limited | Research and standards teams | Claims become classified, checksum-bound Dossier evidence and an independent readiness decision. | `(cd publishing-house-evidence-dossier && bash bin/run --request fixtures/request.fixture.json --json)` |
 | [`publishing-house-primary-piece/`](publishing-house-primary-piece/) | Limited | Writers and creative editors | An evidence-ready brief becomes a versioned primary artifact with claim lineage. | `(cd publishing-house-primary-piece && bash bin/run --request fixtures/request.fixture.json --json)` |
 | [`publishing-house-asset-production/`](publishing-house-asset-production/) | Limited | Media production teams | Supported local assets, accessibility records, provenance, and checksums become an AssetWorks manifest. | `(cd publishing-house-asset-production && bash bin/run --request fixtures/request.fixture.json --json)` |
 | [`publishing-house-editorial-review/`](publishing-house-editorial-review/) | Limited | Editorial review teams | Independent reviews and a bounded revision produce an exact reviewed GalleyPack version. | `(cd publishing-house-editorial-review && bash bin/run --request fixtures/request.fixture.json --json)` |
+| [`publishing-house-adaptation/`](publishing-house-adaptation/) | Limited | Franchise and creative teams | An approved primary artifact becomes a claim-bounded, versioned adaptation plan. | `(cd publishing-house-adaptation && bash bin/run --request fixtures/request.fixture.json --json)` |
+| [`publishing-house-format-production/`](publishing-house-format-production/) | Limited | Format desks and producers | Approved lineage becomes reviewable newsletter, social, case-study, and audiovisual packages. | `(cd publishing-house-format-production && bash bin/run --request fixtures/request.fixture.json --json)` |
 | [`publishing-house-approval-publication/`](publishing-house-approval-publication/) | Limited | Publishing operators and approvers | Dispatch pauses for checksum-bound VersionSeal approval before a bounded PressWire fixture effect. | `(cd publishing-house-approval-publication && bash scripts/test.sh)` |
 | [`publishing-house-post-publication/`](publishing-house-post-publication/) | Limited | Audience and strategy teams | A verified receipt and compatible measurements become bounded learning and a StoryDesk follow-up. | `(cd publishing-house-post-publication && bash bin/run --request fixtures/request.fixture.json --json)` |
 
 ### Install Publishing House locally
 
-The eight Publishing House kits have one locked, tested installation path.
+The eleven Publishing House kits have one locked, tested installation path.
 Supply an existing Kujo 1.0.1 binary; the installer uses local sibling
 checkouts when available and otherwise clones the exact commits in the install
 lock:
@@ -133,7 +136,7 @@ bash scripts/install-publishing-house.sh \
 
 The installer refuses an existing target, installs into a staging directory,
 pins clean dependency checkouts, runs the Kujo-native contract doctor, and can
-run the complete eight-workflow offline proof before reporting success. It
+run the complete eleven-workflow offline proof before reporting success. It
 does not install credentials or enable live publication.
 
 ## Verification
@@ -174,7 +177,7 @@ See the current [launch checklist](docs/launch-checklist.md) and [release-readin
 - [`agency-runner/`](agency-runner/) and the other top-level workflow directories contain runnable kits and workflow-specific guidance.
 - [`contracts/`](contracts/) contains versioned Tribunal, Relay, and Workcell evidence contracts.
 - [`docs/audit/`](docs/audit/) contains the machine-readable workflow catalog and compatibility evidence.
-- [`docs/publishing-house/`](docs/publishing-house/) documents the eight-kit editorial lifecycle, ownership boundaries, fixture proof, and compatibility matrix.
+- [`docs/publishing-house/`](docs/publishing-house/) documents the eleven-kit editorial lifecycle, ownership boundaries, fixture proof, and compatibility matrix.
 - [`examples/`](examples/) identifies low-risk starting points.
 - [`scripts/`](scripts/) contains repository validators.
 - [`tests/`](tests/) contains portable release and integration checks.
@@ -190,7 +193,7 @@ See the current [launch checklist](docs/launch-checklist.md) and [release-readin
 
 ## Release and Support Status
 
-This repository is the MIT-licensed `0.3.0` technical preview of the Kujo workflow-kit distribution. The release covers 34 checked-in local workflows, including the eight-workflow Publishing House lifecycle, shared contracts, documentation, versioned evidence contracts, and repository-owned validation gates. It does not publish a package, container image, hosted runner, or workflow service.
+This repository is the MIT-licensed `0.3.0` technical preview of the Kujo workflow-kit distribution. The checkout covers 37 local workflows, including the eleven-workflow Publishing House lifecycle, shared contracts, documentation, versioned evidence contracts, and repository-owned validation gates. It does not publish a package, container image, hosted runner, or workflow service.
 
 For contribution, support, conduct, and vulnerability-reporting guidance, see [CONTRIBUTING.md](CONTRIBUTING.md), [SUPPORT.md](SUPPORT.md), [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), and [SECURITY.md](SECURITY.md).
 
@@ -201,7 +204,7 @@ For contribution, support, conduct, and vulnerability-reporting guidance, see [C
 - Tribunal mock decisions are advisory and unsigned.
 - Relay proves local persistence and bounded retries, not remote exactly-once delivery.
 - Workcell is a trusted local Docker/Podman boundary, not a hosted scheduler or microVM isolation layer.
-- The locked Publishing House installer and all-eight first run pass from a tracked archive on the development host; validation on a physically separate host remains open.
+- The locked Publishing House installer and all-eleven first run pass from a tracked archive on the development host; validation on a physically separate host remains open.
 
 ## License
 
