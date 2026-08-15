@@ -1,12 +1,12 @@
 {
   "schema_name": "publishing-house.compatibility-matrix",
   "schema_version": "1.0.0",
-  "tested_at": "2026-08-14T23:30:00Z",
+  "tested_at": "2026-08-15T10:02:35Z",
   "kujo": {"version": "1.0.1", "commit": "5059695d14d6726bc17fef55e0b95511624967cf"},
   "dispatch": {"version": "1.0.0", "commit": "3e8a5ff74919fd01e3674cfe47e3740206cd0afb", "artifact_contract_version": "dispatch-artifact/v1"},
   "agents_sdk": {"version": "1.0.0", "commit": "0e56994f45f577f6e5dd68f2c3c0c7e06af46d71", "runner_contract_version": "0.1.0"},
   "kujo_agents": {"version": "1.2.0", "commit": "823ea1291f3f0c9d402b8e47e1ef913ed4d3a2cb", "publishing_house_contract_version": "1.0.0"},
-  "kujo_skills": {"version": "0.3.0", "commit": "50d299a5edf4ef69c778ff5f538b5c9760faaa1c", "publishing_house_skill": "kujo-publishing-house-workflows"},
+  "kujo_skills": {"version": "0.3.0", "commit": "b931c681070bddd807391b9590ba90b1d09b5400", "publishing_house_skill": "kujo-publishing-house-workflows"},
   "tools": {
     "storydesk": {"version": "0.3.0", "contract_version": "1.0.0", "commit": "e3707994b564c5b746493393c697424cc8503209"},
     "dossier": {"version": "0.2.0", "contract_version": "1.0.0", "commit": "5c17bd7c77abee499fe9c67498bed6f2a1baf8fa"},

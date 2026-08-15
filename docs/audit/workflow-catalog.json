@@ -1,6 +1,6 @@
 {
   "schema": "kujo.workflow-catalog/v1",
-  "audit_id": "kujo-workflows-codebase-cleanup-2026-08-12",
+  "audit_id": "kujo-workflows-audit-2026-08-15",
   "source_repositories": {
     "workflows": "../kujo-workflows",
     "skills": "../kujo-skills",

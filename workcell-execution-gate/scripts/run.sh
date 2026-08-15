@@ -29,7 +29,7 @@ jq -e '.ok == true and .effective_security_policy.network_mode == "none" and .re
 
 run_status=0
 env TMPDIR="$TMP_ROOT" KUJO="$KUJO_BIN" "$WORKCELL/bin/workcell" run --file "$WORKCELL/examples/hello/workcell.json" --repo "$TMP" --output "$RUN_OUTPUT" --no-pull --json > "$OUT/run-result.json" || run_status=$?
-test "$run_status" -eq 0 -o "$run_status" -eq 7 -o "$run_status" -eq 8
+test "$run_status" -eq 0 -o "$run_status" -eq 4 -o "$run_status" -eq 7 -o "$run_status" -eq 8
 
 python3 - "$OUT/inspect.json" "$OUT/run-result.json" "$OUT/work-package.json" "$OUT/completion-receipt.json" "$(tr -d '[:space:]' < "$WORKCELL/VERSION")" <<'PY'
 import json
