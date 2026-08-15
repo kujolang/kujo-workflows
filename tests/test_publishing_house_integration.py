@@ -1,4 +1,5 @@
 import json
+import os
 import subprocess
 import tempfile
 import unittest
@@ -6,9 +7,15 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+REPOS = Path(os.environ.get("KUJO_REPOS", ROOT.parent))
+HAS_RUNTIME = Path(os.environ.get("KUJO_BIN", REPOS / "kujo/target/release/kujo")).is_file() and all(
+    (REPOS / name).is_dir()
+    for name in ["dispatch", "agents-sdk", "kujo-agents", "kujo-skills", "storydesk", "dossier", "galleypack", "bluepencil", "versionseal", "presswire", "readersignal", "assetworks"]
+)
 
 
 class PublishingHouseIntegrationTests(unittest.TestCase):
+    @unittest.skipUnless(HAS_RUNTIME, "Publishing House runtime dependencies are not available")
     def test_all_eleven_offline_fixture(self):
         with tempfile.TemporaryDirectory() as temp:
             result = subprocess.run(

@@ -8,6 +8,12 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+REPOS = Path(os.environ.get("KUJO_REPOS", ROOT.parent))
+HAS_RUNTIME = Path(os.environ.get("KUJO_BIN", REPOS / "kujo/target/release/kujo")).is_file() and all(
+    (REPOS / name).is_dir()
+    for name in ["dispatch", "agents-sdk", "kujo-agents", "kujo-skills", "storydesk", "dossier", "galleypack", "bluepencil", "versionseal", "presswire", "readersignal", "assetworks"]
+)
+requires_runtime = unittest.skipUnless(HAS_RUNTIME, "Publishing House runtime dependencies are not available")
 WORKFLOWS = [
     "publishing-house-governance",
     "publishing-house-daily-desk",
@@ -68,6 +74,7 @@ class PublishingHouseWorkflowTests(unittest.TestCase):
             },
         )
 
+    @requires_runtime
     def test_common_fail_closed_request_boundaries(self):
         cases = [
             ("missing", lambda value: value.pop("actor"), "missing_required_field"),
@@ -85,6 +92,7 @@ class PublishingHouseWorkflowTests(unittest.TestCase):
                 self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
                 self.assertIn(expected, result.stdout + result.stderr)
 
+    @requires_runtime
     def test_optional_capability_unavailable_is_honest_degradation(self):
         with tempfile.TemporaryDirectory() as temp:
             request = self.write_request(Path(temp), WORKFLOWS[0])
@@ -96,6 +104,7 @@ class PublishingHouseWorkflowTests(unittest.TestCase):
             self.assertFalse(optional["runledger"])
             self.assertFalse(optional["watchdog"])
 
+    @requires_runtime
     def test_agents_execute_loaded_canonical_contracts(self):
         with tempfile.TemporaryDirectory() as temp:
             output = Path(temp) / "run"
@@ -111,6 +120,7 @@ class PublishingHouseWorkflowTests(unittest.TestCase):
                 self.assertEqual(receipt["instructions_sha256"], sdk["instructions_sha256"])
                 self.assertEqual(receipt["instructions_bytes"], sdk["instructions_bytes"])
 
+    @requires_runtime
     def test_record_references_fail_closed(self):
         with tempfile.TemporaryDirectory() as temp:
             temp_path = Path(temp)
@@ -140,6 +150,7 @@ class PublishingHouseWorkflowTests(unittest.TestCase):
             self.assertNotEqual(drift_result.returncode, 0)
             self.assertIn("checksum_drift", drift_result.stdout + drift_result.stderr)
 
+    @requires_runtime
     def test_primary_piece_format_profile_routes_writer(self):
         workflow = "publishing-house-primary-piece"
         with tempfile.TemporaryDirectory() as temp:
@@ -157,6 +168,7 @@ class PublishingHouseWorkflowTests(unittest.TestCase):
             self.assertFalse(any("features-writer" in name for name in receipts))
             self.assertFalse(any("campaign-copywriter" in name for name in receipts))
 
+    @requires_runtime
     def test_unsafe_output_path_is_rejected(self):
         workflow = WORKFLOWS[0]
         request = ROOT / workflow / "fixtures" / "request.fixture.json"
@@ -164,6 +176,7 @@ class PublishingHouseWorkflowTests(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("unsafe_path", result.stdout + result.stderr)
 
+    @requires_runtime
     def test_approval_failure_matrix_and_no_effect(self):
         workflow = "publishing-house-approval-publication"
         faults = {
@@ -196,6 +209,7 @@ class PublishingHouseWorkflowTests(unittest.TestCase):
                 self.assertIn(expected, result.stdout + result.stderr)
                 self.assertFalse((output / "published" / "package-v2.md").exists())
 
+    @requires_runtime
     def test_denied_act_and_invalid_fixture_approval(self):
         workflow = "publishing-house-approval-publication"
         with tempfile.TemporaryDirectory() as temp:
@@ -208,6 +222,7 @@ class PublishingHouseWorkflowTests(unittest.TestCase):
             self.assertNotEqual(denied.returncode, 0)
             self.assertIn("act_permission_denied", denied.stdout + denied.stderr)
 
+    @requires_runtime
     def test_json_envelope_report_and_receipt_are_stable(self):
         with tempfile.TemporaryDirectory() as temp:
             temp_path = Path(temp)
