@@ -18,10 +18,20 @@ func main() {
     run_id := flag(argv, "--run-id", "run-fixture")
     assignment_id := flag(argv, "--assignment-id", "assignment-fixture")
     expected_output := flag(argv, "--expected-output", "agent-step-receipt")
+    instructions_file := flag(argv, "--instructions-file", "")
+    if instructions_file == "" || !path_is_file(instructions_file) || path_is_symlink(instructions_file) || file_size(instructions_file) > 524288 {
+        print(to_json({"ok": false, "error": "instructions file is missing, unsafe, or exceeds 512 KiB"}))
+        exit(1)
+    }
+    instructions := read_file(instructions_file)
+    if trim(instructions) == "" {
+        print(to_json({"ok": false, "error": "instructions file is empty"}))
+        exit(1)
+    }
     harness := create_no_network_harness({"model": {"output_text": "fixture proposal from " + role}})
     if harness["ok"] == false { print(to_json({"ok": false, "error": harness["error"]})); exit(1) }
     runner := create_agent_runner({"ai_adapter": harness["model_adapter"]})
-    agent := create_agent({"id": role_id, "name": role, "instructions": "Operate within the supplied Publishing House role contract. Fixture output is a proposal only."})
+    agent := create_agent({"id": role_id, "name": role, "instructions": instructions})
     request := create_agent_run_request("Produce " + expected_output + " for " + assignment_id, {"run_id": run_id + "-" + role_id, "session_id": "session-" + run_id})
     result := run_agent(runner, agent, request, {"tool_registry": harness["tool_registry"]})
     output := {}
@@ -35,6 +45,8 @@ func main() {
         "output_text": output_text,
         "step_count": len(result["steps"]),
         "artifact_count": len(result["artifacts"]),
+        "instructions_sha256": sha256(instructions),
+        "instructions_bytes": len(instructions),
         "agents_sdk_contract": "0.1.0"
     }))
     if result["status"] != "completed" { exit(1) }

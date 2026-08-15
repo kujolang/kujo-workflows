@@ -1,0 +1,258 @@
+{
+  "id": "publishing-house-adaptation",
+  "name": "Publishing House Adaptation",
+  "description": "Extend an approved primary artifact into a versioned franchise and format-native derivative plan without changing its claim boundary.",
+  "version": "0.1.0",
+  "purpose": "Extend an approved primary artifact into a versioned franchise and format-native derivative plan without changing its claim boundary.",
+  "audience": "portable Publishing House operators",
+  "default_permission": "PROPOSE",
+  "maximum_permission": "PROPOSE",
+  "fixture_mode": true,
+  "live_mode": true,
+  "tools": [
+    "storydesk",
+    "dossier",
+    "galleypack",
+    "bluepencil",
+    "assetworks",
+    "dispatch",
+    "agents-sdk"
+  ],
+  "required_capabilities": [
+    "kujo",
+    "storydesk",
+    "dossier",
+    "galleypack",
+    "bluepencil",
+    "assetworks",
+    "dispatch",
+    "agents-sdk"
+  ],
+  "optional_capabilities": [
+    "runledger",
+    "watchdog"
+  ],
+  "approval_boundaries": [
+    "Adaptation remains PROPOSE-only; new or strengthened claims return to Dossier and every derivative retains source lineage."
+  ],
+  "state_and_recovery": "state.json and Dispatch state/trace/report artifacts support interruption and bounded resume.",
+  "next_workflow": "publishing-house-format-production",
+  "input_schema": {
+    "type": "dict",
+    "required": [
+      "topic",
+      "run_id"
+    ],
+    "properties": {
+      "topic": {
+        "type": "string"
+      },
+      "run_id": {
+        "type": "string"
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "role_1_franchise-adaptation-editor",
+      "name": "Franchise & Adaptation Editor",
+      "type": "agent",
+      "agent_id": "planner",
+      "input_from": [
+        "input"
+      ],
+      "output_key": "role_1_output",
+      "depends_on": [],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-adaptation-role-1"
+    },
+    {
+      "id": "role_2_creative-director",
+      "name": "Creative Director",
+      "type": "agent",
+      "agent_id": "verification",
+      "input_from": [
+        "role_1_output"
+      ],
+      "output_key": "role_2_output",
+      "depends_on": [
+        "role_1_franchise-adaptation-editor"
+      ],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-adaptation-role-2"
+    },
+    {
+      "id": "role_3_standards-evidence-editor",
+      "name": "Standards & Evidence Editor",
+      "type": "agent",
+      "agent_id": "verification",
+      "input_from": [
+        "role_2_output"
+      ],
+      "output_key": "role_3_output",
+      "depends_on": [
+        "role_2_creative-director"
+      ],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-adaptation-role-3"
+    },
+    {
+      "id": "role_4_production-editor",
+      "name": "Production Editor",
+      "type": "agent",
+      "agent_id": "verification",
+      "input_from": [
+        "role_3_output"
+      ],
+      "output_key": "role_4_output",
+      "depends_on": [
+        "role_3_standards-evidence-editor"
+      ],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-adaptation-role-4"
+    },
+    {
+      "id": "final_report",
+      "name": "Workflow Report",
+      "type": "report",
+      "input_from": [
+        "role_4_output"
+      ],
+      "depends_on": [
+        "role_4_production-editor"
+      ],
+      "output_key": "final_output"
+    }
+  ],
+  "output_schema": {
+    "type": "dict"
+  },
+  "default_retry_policy": {
+    "max_attempts": 2,
+    "base_delay_ms": 0,
+    "max_delay_ms": 0,
+    "strategy": "none",
+    "retry_on_codes": [
+      "transient_error"
+    ]
+  },
+  "approval_config": {
+    "auto_approve": false
+  },
+  "bindings": [
+    {
+      "step_id": "franchise-adaptation-editor",
+      "canonical_role": "Franchise & Adaptation Editor",
+      "role_slug": "franchise-adaptation-editor",
+      "canonical_agent": "kujo-agents/publishing-house/franchise-adaptation-editor/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/franchise-adaptation-editor/SKILL.md",
+      "allowed_tools": [
+        "storydesk",
+        "dossier",
+        "galleypack",
+        "bluepencil"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "adaptation architecture and claim-boundary map",
+      "handoff_destination": "Creative Director",
+      "stop_condition": "adaptation architecture and claim-boundary map is versioned, blocked, or handed off"
+    },
+    {
+      "step_id": "creative-director",
+      "canonical_role": "Creative Director",
+      "role_slug": "creative-director",
+      "canonical_agent": "kujo-agents/publishing-house/creative-director/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/creative-director/SKILL.md",
+      "allowed_tools": [
+        "storydesk",
+        "galleypack",
+        "assetworks"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "cross-format creative direction",
+      "handoff_destination": "Standards & Evidence Editor",
+      "stop_condition": "cross-format creative direction is versioned, blocked, or handed off"
+    },
+    {
+      "step_id": "standards-evidence-editor",
+      "canonical_role": "Standards & Evidence Editor",
+      "role_slug": "standards-evidence-editor",
+      "canonical_agent": "kujo-agents/publishing-house/standards-evidence-editor/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/standards-evidence-editor/SKILL.md",
+      "allowed_tools": [
+        "dossier",
+        "bluepencil",
+        "galleypack"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "adaptation evidence and rights review",
+      "handoff_destination": "Production Editor",
+      "stop_condition": "adaptation evidence and rights review is versioned, blocked, or handed off"
+    },
+    {
+      "step_id": "production-editor",
+      "canonical_role": "Production Editor",
+      "role_slug": "production-editor",
+      "canonical_agent": "kujo-agents/publishing-house/production-editor/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/production-editor/SKILL.md",
+      "allowed_tools": [
+        "galleypack",
+        "assetworks",
+        "bluepencil"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "versioned adaptation package",
+      "handoff_destination": "Format Desk",
+      "stop_condition": "versioned adaptation package is versioned, blocked, or handed off"
+    }
+  ],
+  "format_profiles": []
+}

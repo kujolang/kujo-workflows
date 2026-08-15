@@ -1,0 +1,204 @@
+{
+  "id": "publishing-house-governance",
+  "name": "Publishing House Governance",
+  "description": "Set a bounded house mandate, portfolio decision, operating priorities, and accountable handoffs without replacing human approval.",
+  "version": "0.1.0",
+  "purpose": "Set a bounded house mandate, portfolio decision, operating priorities, and accountable handoffs without replacing human approval.",
+  "audience": "portable Publishing House operators",
+  "default_permission": "PROPOSE",
+  "maximum_permission": "PROPOSE",
+  "fixture_mode": true,
+  "live_mode": true,
+  "tools": [
+    "storydesk",
+    "dossier",
+    "dispatch",
+    "agents-sdk"
+  ],
+  "required_capabilities": [
+    "kujo",
+    "storydesk",
+    "dossier",
+    "dispatch",
+    "agents-sdk"
+  ],
+  "optional_capabilities": [
+    "runledger",
+    "watchdog"
+  ],
+  "approval_boundaries": [
+    "Governance may commission, defer, revise, or decline work under PROPOSE; it cannot approve or publish artifacts."
+  ],
+  "state_and_recovery": "state.json and Dispatch state/trace/report artifacts support interruption and bounded resume.",
+  "next_workflow": "publishing-house-daily-desk",
+  "input_schema": {
+    "type": "dict",
+    "required": [
+      "topic",
+      "run_id"
+    ],
+    "properties": {
+      "topic": {
+        "type": "string"
+      },
+      "run_id": {
+        "type": "string"
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "role_1_publisher",
+      "name": "Publisher",
+      "type": "agent",
+      "agent_id": "planner",
+      "input_from": [
+        "input"
+      ],
+      "output_key": "role_1_output",
+      "depends_on": [],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-governance-role-1"
+    },
+    {
+      "id": "role_2_editor-in-chief",
+      "name": "Editor-in-Chief",
+      "type": "agent",
+      "agent_id": "verification",
+      "input_from": [
+        "role_1_output"
+      ],
+      "output_key": "role_2_output",
+      "depends_on": [
+        "role_1_publisher"
+      ],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-governance-role-2"
+    },
+    {
+      "id": "role_3_managing-editor",
+      "name": "Managing Editor",
+      "type": "agent",
+      "agent_id": "verification",
+      "input_from": [
+        "role_2_output"
+      ],
+      "output_key": "role_3_output",
+      "depends_on": [
+        "role_2_editor-in-chief"
+      ],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-governance-role-3"
+    },
+    {
+      "id": "final_report",
+      "name": "Workflow Report",
+      "type": "report",
+      "input_from": [
+        "role_3_output"
+      ],
+      "depends_on": [
+        "role_3_managing-editor"
+      ],
+      "output_key": "final_output"
+    }
+  ],
+  "output_schema": {
+    "type": "dict"
+  },
+  "default_retry_policy": {
+    "max_attempts": 2,
+    "base_delay_ms": 0,
+    "max_delay_ms": 0,
+    "strategy": "none",
+    "retry_on_codes": [
+      "transient_error"
+    ]
+  },
+  "approval_config": {
+    "auto_approve": false
+  },
+  "bindings": [
+    {
+      "step_id": "publisher",
+      "canonical_role": "Publisher",
+      "role_slug": "publisher",
+      "canonical_agent": "kujo-agents/publishing-house/publisher/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/publisher/SKILL.md",
+      "allowed_tools": [
+        "storydesk",
+        "dossier"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "publishing mandate and portfolio decision",
+      "handoff_destination": "Editor-in-Chief",
+      "stop_condition": "publishing mandate and portfolio decision is versioned, blocked, or handed off"
+    },
+    {
+      "step_id": "editor-in-chief",
+      "canonical_role": "Editor-in-Chief",
+      "role_slug": "editor-in-chief",
+      "canonical_agent": "kujo-agents/publishing-house/editor-in-chief/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/editor-in-chief/SKILL.md",
+      "allowed_tools": [
+        "storydesk",
+        "dossier"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "editorial ambition and quality boundary",
+      "handoff_destination": "Managing Editor",
+      "stop_condition": "editorial ambition and quality boundary is versioned, blocked, or handed off"
+    },
+    {
+      "step_id": "managing-editor",
+      "canonical_role": "Managing Editor",
+      "role_slug": "managing-editor",
+      "canonical_agent": "kujo-agents/publishing-house/managing-editor/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/managing-editor/SKILL.md",
+      "allowed_tools": [
+        "storydesk"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "operating plan and queue handoff",
+      "handoff_destination": "Commissioning Editor",
+      "stop_condition": "operating plan and queue handoff is versioned, blocked, or handed off"
+    }
+  ],
+  "format_profiles": []
+}

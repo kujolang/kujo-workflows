@@ -34,7 +34,7 @@
     "BluePencil verdicts and editorial recommendations do not constitute human publication approval."
   ],
   "state_and_recovery": "state.json and Dispatch state/trace/report artifacts support interruption and bounded resume.",
-  "next_workflow": "publishing-house-approval-publication",
+  "next_workflow": "publishing-house-adaptation",
   "input_schema": {
     "type": "dict",
     "required": [
@@ -290,4 +290,3 @@
   ],
   "format_profiles": []
 }
-

@@ -75,6 +75,17 @@ func inspect_tool_contract(ctx, name) {
     return {"ok": true, "tool_version": reported["tool_version"], "contract_version": reported["contract_version"], "tested_commit": expected["commit"], "verified_commit": checkout_commit}
 }
 
+func inspect_support_contract(ctx, name, matrix_key) {
+    expected := get(ctx["compatibility"], matrix_key, null)
+    if type(expected) != "dict" { return {"ok": false, "code": "incompatible_support_contract", "error": "compatibility matrix has no entry for " + name} }
+    repository := path_join(ctx["repos"], name)
+    commit_process := spawn_process(["git", "-C", repository, "rev-parse", "HEAD"], {"cwd": ctx["root"], "timeout_ms": 10000, "max_output_bytes": 4096})
+    status_process := spawn_process(["git", "-C", repository, "status", "--porcelain"], {"cwd": ctx["root"], "timeout_ms": 10000, "max_output_bytes": 65536})
+    commit := trim(to_string(commit_process.stdout))
+    ok := commit_process.exitcode == 0 && status_process.exitcode == 0 && commit == expected["commit"] && trim(to_string(status_process.stdout)) == ""
+    return {"ok": ok, "code": "incompatible_support_checkout", "error": name + " is not the clean tested contract checkout", "expected_commit": expected["commit"], "verified_commit": commit}
+}
+
 func validate_input_references(request) {
     references := get(request["input"], "fixture_record_references", [])
     if type(references) != "array" { return {"ok": false, "code": "invalid_record_reference", "error": "fixture_record_references must be an array"} }
@@ -105,6 +116,12 @@ func preflight(ctx) {
         }
         required = push(required, entry)
         if !available { missing = push(missing, name) }
+    }
+    for dependency in [{"name":"kujo-agents","matrix_key":"kujo_agents"},{"name":"kujo-skills","matrix_key":"kujo_skills"}] {
+        inspected := inspect_support_contract(ctx, dependency["name"], dependency["matrix_key"])
+        available := inspected["ok"]
+        required = push(required, {"name":dependency["name"],"available":available,"required":true,"contract_preflight":inspected})
+        if !available { missing = push(missing, dependency["name"]) }
     }
     mut optional := []
     for name in ctx["config"]["optional_capabilities"] { optional = push(optional, {"name": name, "available": capability_available(ctx["request"], name), "required": false}) }
@@ -157,6 +174,7 @@ func append_record_reference(ctx, ref) {
     refs := []
     if path_is_file(path) { loaded := read_json_object(path); if loaded["ok"] { refs = get(loaded["value"], "references", []) } }
     refs = push(refs, ref)
+    ctx["refs"] = refs
     write_json(path, {"schema_name":"publishing-house.record-reference-index","schema_version":CONTRACT_VERSION,"references":refs})
 }
 
@@ -207,6 +225,47 @@ func run_ops(ctx, operations) {
     return {"ok": true}
 }
 
+func load_agent_contract(ctx, binding) {
+    agents_root := path_join(ctx["repos"], "kujo-agents")
+    skills_root := path_join(ctx["repos"], "kujo-skills")
+    relative_paths := [
+        "publishing-house/00-publishing-house.md",
+        "publishing-house/00-quality-standard.md",
+        "publishing-house/00-shared-contracts.md",
+        "publishing-house/00-permission-model.md",
+        "publishing-house/00-tool-workflow-map.md",
+        replace(binding["canonical_agent"], "kujo-agents/", "")
+    ]
+    paths := []
+    mut content := ""
+    for relative in relative_paths {
+        path := path_join(agents_root, relative)
+        if !safe_path(path) || !path_is_file(path) || path_is_symlink(path) || file_size(path) > 131072 {
+            return {"ok": false, "code": "agent_contract_unavailable", "error": "canonical agent contract is missing, unsafe, or too large: " + relative}
+        }
+        paths = push(paths, path)
+        content = content + "\n\n<!-- source: " + relative + " -->\n\n" + read_file(path)
+    }
+    skill_relative := replace(binding["canonical_skill"], "kujo-agents/", "")
+    skill_path := path_join(agents_root, skill_relative)
+    if !safe_path(skill_path) || !path_is_file(skill_path) || path_is_symlink(skill_path) || file_size(skill_path) > 131072 {
+        return {"ok": false, "code": "agent_contract_unavailable", "error": "canonical skill contract is missing, unsafe, or too large: " + binding["canonical_skill"]}
+    }
+    paths = push(paths, skill_path)
+    content = content + "\n\n<!-- source: " + binding["canonical_skill"] + " -->\n\n" + read_file(skill_path)
+    workflow_skill := path_join(skills_root, "skills/kujo-publishing-house-workflows/SKILL.md")
+    if !safe_path(workflow_skill) || !path_is_file(workflow_skill) || path_is_symlink(workflow_skill) || file_size(workflow_skill) > 131072 {
+        return {"ok": false, "code": "agent_contract_unavailable", "error": "canonical Publishing House workflow skill is unavailable"}
+    }
+    paths = push(paths, workflow_skill)
+    content = content + "\n\n<!-- source: skills/kujo-publishing-house-workflows/SKILL.md -->\n\n" + read_file(workflow_skill)
+    content = trim(content) + "\n\nFixture execution is proposal-only, offline, and may not broaden the supplied permission or tool boundary.\n"
+    output := path_join(ctx["run_dir"], "agent-contracts/" + binding["role_slug"] + ".md")
+    ensure_dir(parent_dir(output))
+    write_file_atomic(output, content, true)
+    return {"ok": true, "paths": paths, "instructions_path": output, "instructions_sha256": sha256(content), "instructions_bytes": len(content)}
+}
+
 func run_agents(ctx) {
     mut index := 0
     for binding in ctx["config"]["bindings"] {
@@ -216,17 +275,21 @@ func run_agents(ctx) {
         if selected {
         role := binding["canonical_role"]
         slug := binding["role_slug"]
+        contract := load_agent_contract(ctx, binding)
+        if !contract["ok"] { return contract }
         request_value := {
             "contract": "publishing-house.agent-step-request/v1", "schema_name": "publishing-house.agent-step-request", "schema_version": CONTRACT_VERSION,
             "workflow_id": ctx["workflow_id"], "workflow_version": VERSION, "run_id": ctx["request"]["run_id"],
             "assignment_id": "assignment-" + ctx["request"]["run_id"] + "-" + to_string(index + 1), "canonical_role": role,
             "role_contract": binding["canonical_agent"], "skill_contract": binding["canonical_skill"], "maximum_permission": binding["maximum_permission"],
             "current_permission": ctx["request"]["permission_mode"], "input_record_references": ctx["refs"], "allowed_tools": binding["allowed_tools"],
-            "expected_output": binding["expected_output"], "stop_condition": binding["stop_condition"], "next_owner": binding["handoff_destination"]
+            "expected_output": binding["expected_output"], "stop_condition": binding["stop_condition"], "next_owner": binding["handoff_destination"],
+            "contract_loaded": true, "contract_paths": contract["paths"], "instructions_path": contract["instructions_path"],
+            "instructions_sha256": contract["instructions_sha256"], "instructions_bytes": contract["instructions_bytes"]
         }
         request_path := path_join(ctx["run_dir"], "agent-requests/" + to_string(index + 1) + "-" + slug + ".json")
         write_json(request_path, request_value)
-        argv := ["env", "KUJO_MODULE_PATH=" + path_join(ctx["repos"], "agents-sdk"), ctx["kujo"], "run", path_join(ctx["root"], "lib/publishing_house/agents_sdk_bridge.kujo"), "--", "--role", role, "--role-id", slug, "--run-id", ctx["request"]["run_id"], "--assignment-id", request_value["assignment_id"], "--expected-output", binding["expected_output"]]
+        argv := ["env", "KUJO_MODULE_PATH=" + path_join(ctx["repos"], "agents-sdk"), ctx["kujo"], "run", path_join(ctx["root"], "lib/publishing_house/agents_sdk_bridge.kujo"), "--", "--role", role, "--role-id", slug, "--run-id", ctx["request"]["run_id"], "--assignment-id", request_value["assignment_id"], "--expected-output", binding["expected_output"], "--instructions-file", contract["instructions_path"]]
         process := spawn_process(argv, {"cwd": ctx["root"], "timeout_ms": 30000, "max_output_bytes": 1048576})
         sdk := null
         try { sdk = parse_json(trim(to_string(process.stdout))) } except error { sdk = {"ok": false, "error": trim(to_string(process.stdout) + to_string(process.stderr))} }
@@ -236,6 +299,7 @@ func run_agents(ctx) {
         receipt["outcome"] = "completed"
         receipt["artifact_references"] = []
         receipt["agents_sdk"] = {"commit": "0e56994f45f577f6e5dd68f2c3c0c7e06af46d71", "contract_version": "0.1.0", "requires_network": false, "result": sdk}
+        if get(sdk, "instructions_sha256", "") != contract["instructions_sha256"] || get(sdk, "instructions_bytes", 0) != contract["instructions_bytes"] { receipt["outcome"] = "failed" }
         if process.exitcode != 0 || get(sdk, "ok", false) != true { receipt["outcome"] = "failed" }
         receipt_path := path_join(ctx["run_dir"], "agent-receipts/" + to_string(index + 1) + "-" + slug + ".json")
         write_json(receipt_path, receipt)
@@ -281,6 +345,12 @@ func run_dispatch(ctx, approval_pause, resume) {
 func standard_ops(ctx) {
     provenance := [{"kind": "workflow-fixture", "run_id": ctx["request"]["run_id"]}]
     root := ctx["root"]
+    if ctx["workflow_id"] == "publishing-house-governance" {
+        return {"ok": true, "ops": [
+            {"tool":"storydesk","command":"campaign create","id":"campaign-fixture-governance","actor":"publisher","payload":{"schema_version":"1.0.0","name":"Trustworthy local publishing","objective":"Prove a review-to-publication checksum boundary with portable local evidence.","provenance":provenance}},
+            {"tool":"dossier","command":"claim add","id":"claim-fixture-governance-boundary","actor":"editor-in-chief","payload":{"schema_version":"1.0.0","claim_text":"The house will not represent fixture publication as live publication.","claim_kind":"fact","material":true,"brief_id":"campaign-fixture-governance","provenance":provenance}}
+        ]}
+    }
     if ctx["workflow_id"] == "publishing-house-daily-desk" {
         packet := normalize_daily_packet(ctx)
         if !packet["ok"] { return packet }
@@ -310,9 +380,10 @@ func standard_ops(ctx) {
     if ctx["workflow_id"] == "publishing-house-primary-piece" {
         primary := path_join(root, "fixtures/publishing-house/primary-v1.fixture.md")
         return {"ok": true, "ops": [
+            {"tool":"storydesk","command":"status","id":"event-fixture-outlined","actor":"managing-editor","payload":{"schema_version":"1.0.0","record_id":"brief-fixture-primary","from_status":"evidence_ready","to_status":"outlined","evidence_packet_id":"packet-fixture-evidence","provenance":provenance}},
             {"tool":"galleypack","command":"add","id":"artifact-fixture-primary-v1","actor":"features-writer","artifact":primary,"payload":{"schema_version":"1.0.0","artifact_kind":"primary-markdown","assignment_id":"assignment-fixture-writer","claim_ids":["claim-fixture-offline"],"evidence_packet_id":"packet-fixture-evidence","profile":"flagship-feature","lineage":[],"provenance":provenance}},
             {"tool":"galleypack","command":"build","id":"package-fixture-v1","actor":"production-editor","artifact":primary,"payload":{"schema_version":"1.0.0","package_id":"package-fixture","package_version":"1","artifact_ids":["artifact-fixture-primary-v1"],"claim_ids":["claim-fixture-offline"],"provenance":provenance}},
-            {"tool":"storydesk","command":"status","id":"event-fixture-drafting","actor":"managing-editor","payload":{"schema_version":"1.0.0","record_id":"brief-fixture-primary","from_status":"evidence_ready","to_status":"drafting","package_id":"package-fixture-v1","provenance":provenance}}
+            {"tool":"storydesk","command":"status","id":"event-fixture-drafting","actor":"managing-editor","payload":{"schema_version":"1.0.0","record_id":"brief-fixture-primary","from_status":"outlined","to_status":"drafting","package_id":"package-fixture-v1","provenance":provenance}}
         ]}
     }
     if ctx["workflow_id"] == "publishing-house-asset-production" {
@@ -329,6 +400,7 @@ func standard_ops(ctx) {
         revise := {"consequence":"STRONG","distinctiveness":"STRONG","insight":"ADEQUATE","defensibility":"STRONG","craft":"ADEQUATE","brand_integrity":"STRONG","format_fidelity":"STRONG","strategic_purpose":"STRONG"}
         passed := {"consequence":"STRONG","distinctiveness":"STRONG","insight":"STRONG","defensibility":"STRONG","craft":"STRONG","brand_integrity":"STRONG","format_fidelity":"STRONG","strategic_purpose":"STRONG"}
         return {"ok": true, "ops": [
+            {"tool":"storydesk","command":"status","id":"event-fixture-editorial-review","actor":"managing-editor","payload":{"schema_version":"1.0.0","record_id":"brief-fixture-primary","from_status":"drafting","to_status":"editorial_review","package_id":"package-fixture-v1","provenance":provenance}},
             {"tool":"bluepencil","command":"review","id":"review-fixture-developmental-v1","actor":"developmental-editor","payload":{"schema_version":"1.0.0","reviewer_id":"developmental-editor","artifact_id":"artifact-fixture-primary-v1","rubric_version":"publishing-house-quality-rubric-v1","verdict":"revise","dimensions":revise,"blocking_findings":[],"requested_changes":["Explain explicitly how changed bytes invalidate approval."],"passage_references":["paragraph-3"],"provenance":provenance}},
             {"tool":"galleypack","command":"review attach","id":"review-link-fixture-v1","actor":"production-editor","payload":{"schema_version":"1.0.0","package_id":"package-fixture-v1","review_id":"review-fixture-developmental-v1","verdict":"revise","provenance":provenance}},
             {"tool":"galleypack","command":"add","id":"artifact-fixture-primary-v2","actor":"features-writer","artifact":primary2,"payload":{"schema_version":"1.0.0","artifact_kind":"primary-markdown","assignment_id":"assignment-fixture-writer","claim_ids":["claim-fixture-offline"],"parent_artifact_id":"artifact-fixture-primary-v1","revision_reason":"review-fixture-developmental-v1","provenance":provenance}},
@@ -336,6 +408,22 @@ func standard_ops(ctx) {
             {"tool":"bluepencil","command":"review","id":"review-fixture-final-v2","actor":"editor-in-chief","payload":{"schema_version":"1.0.0","reviewer_id":"editor-in-chief","artifact_id":"artifact-fixture-primary-v2","rubric_version":"publishing-house-quality-rubric-v1","verdict":"pass","dimensions":passed,"blocking_findings":[],"prior_review_ids":["review-fixture-developmental-v1"],"editorial_recommendation":"ready-for-human-approval","provenance":provenance}},
             {"tool":"galleypack","command":"review attach","id":"review-link-fixture-v2","actor":"production-editor","payload":{"schema_version":"1.0.0","package_id":"package-fixture-v2-review","review_id":"review-fixture-final-v2","verdict":"pass","provenance":provenance}},
             {"tool":"storydesk","command":"status","id":"event-fixture-ready-review","actor":"managing-editor","payload":{"schema_version":"1.0.0","record_id":"brief-fixture-primary","from_status":"editorial_review","to_status":"ready_for_review","package_id":"package-fixture-v2-review","provenance":provenance}}
+        ]}
+    }
+    if ctx["workflow_id"] == "publishing-house-adaptation" {
+        adaptation := path_join(root, "fixtures/publishing-house/adaptation-plan.fixture.md")
+        passed := {"consequence":"STRONG","distinctiveness":"STRONG","insight":"STRONG","defensibility":"STRONG","craft":"STRONG","brand_integrity":"STRONG","format_fidelity":"STRONG","strategic_purpose":"STRONG"}
+        return {"ok": true, "ops": [
+            {"tool":"galleypack","command":"add","id":"artifact-fixture-adaptation-plan","actor":"franchise-adaptation-editor","artifact":adaptation,"payload":{"schema_version":"1.0.0","artifact_kind":"adaptation-plan","assignment_id":"assignment-fixture-writer","claim_ids":["claim-fixture-offline"],"parent_artifact_id":"artifact-fixture-primary-v2","profile":"cross-format-adaptation","lineage":["artifact-fixture-primary-v2"],"provenance":provenance}},
+            {"tool":"bluepencil","command":"review","id":"review-fixture-adaptation","actor":"standards-evidence-editor","payload":{"schema_version":"1.0.0","reviewer_id":"standards-evidence-editor","artifact_id":"artifact-fixture-adaptation-plan","rubric_version":"publishing-house-quality-rubric-v1","verdict":"pass","dimensions":passed,"blocking_findings":[],"editorial_recommendation":"ready-for-format-production","provenance":provenance}}
+        ]}
+    }
+    if ctx["workflow_id"] == "publishing-house-format-production" {
+        package := path_join(root, "fixtures/publishing-house/format-package.fixture.md")
+        passed := {"consequence":"STRONG","distinctiveness":"STRONG","insight":"STRONG","defensibility":"STRONG","craft":"STRONG","brand_integrity":"STRONG","format_fidelity":"STRONG","strategic_purpose":"STRONG"}
+        return {"ok": true, "ops": [
+            {"tool":"galleypack","command":"add","id":"artifact-fixture-format-package","actor":"production-editor","artifact":package,"payload":{"schema_version":"1.0.0","artifact_kind":"multi-format-package","assignment_id":"assignment-fixture-writer","claim_ids":["claim-fixture-offline"],"parent_artifact_id":"artifact-fixture-adaptation-plan","profile":"newsletter-social-case-study-audiovisual","lineage":["artifact-fixture-primary-v2","artifact-fixture-adaptation-plan"],"provenance":provenance}},
+            {"tool":"bluepencil","command":"review","id":"review-fixture-format-package","actor":"editor-in-chief","payload":{"schema_version":"1.0.0","reviewer_id":"editor-in-chief","artifact_id":"artifact-fixture-format-package","rubric_version":"publishing-house-quality-rubric-v1","verdict":"pass","dimensions":passed,"blocking_findings":[],"prior_review_ids":["review-fixture-adaptation"],"editorial_recommendation":"ready-for-editorial-review","provenance":provenance}}
         ]}
     }
     if ctx["workflow_id"] == "publishing-house-post-publication" {
@@ -407,7 +495,9 @@ func approval_resume(ctx) {
     ops := [
         {"tool":"presswire","command":"preflight","id":"publication-fixture-preflight","actor":"publishing-operations-director","artifact":package,"payload":{"schema_version":"1.0.0","approval_id":"approve-fixture-v2","approval_record_path":approval_record_path,"manifest_checksum":checksum,"destination":"fixture-local","authorized_action":"publish","adapter":"local-filesystem","idempotency_key":"publishing-house-fixture-v2","fixture":true,"provenance":provenance}},
         {"tool":"presswire","command":"publish","id":"publication-fixture-v2","actor":"publishing-operations-director","artifact":package,"output":published,"act":true,"payload":{"schema_version":"1.0.0","approval_id":"approve-fixture-v2","approval_record_path":approval_record_path,"manifest_checksum":checksum,"destination":"fixture-local","authorized_action":"publish","adapter":"local-filesystem","idempotency_key":"publishing-house-fixture-v2","fixture":true,"provenance":provenance}},
-        {"tool":"storydesk","command":"status","id":"event-fixture-published","actor":"managing-editor","payload":{"schema_version":"1.0.0","record_id":"brief-fixture-primary","from_status":"approved","to_status":"published","publication_receipt_id":publication_record_id,"provenance":provenance}}
+        {"tool":"storydesk","command":"status","id":"event-fixture-approved","actor":"managing-editor","payload":{"schema_version":"1.0.0","record_id":"brief-fixture-primary","from_status":"ready_for_review","to_status":"approved","approval_id":"approve-fixture-v2","provenance":provenance}},
+        {"tool":"storydesk","command":"status","id":"event-fixture-scheduled","actor":"managing-editor","payload":{"schema_version":"1.0.0","record_id":"brief-fixture-primary","from_status":"approved","to_status":"scheduled","destination":"fixture-local","provenance":provenance}},
+        {"tool":"storydesk","command":"status","id":"event-fixture-published","actor":"managing-editor","payload":{"schema_version":"1.0.0","record_id":"brief-fixture-primary","from_status":"scheduled","to_status":"published","publication_receipt_id":publication_record_id,"provenance":provenance}}
     ]
     result := run_ops(ctx, ops)
     if !result["ok"] { return result }

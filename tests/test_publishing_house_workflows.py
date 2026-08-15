@@ -9,12 +9,15 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOWS = [
+    "publishing-house-governance",
     "publishing-house-daily-desk",
     "publishing-house-commissioning",
     "publishing-house-evidence-dossier",
     "publishing-house-primary-piece",
     "publishing-house-asset-production",
     "publishing-house-editorial-review",
+    "publishing-house-adaptation",
+    "publishing-house-format-production",
     "publishing-house-approval-publication",
     "publishing-house-post-publication",
 ]
@@ -92,6 +95,21 @@ class PublishingHouseWorkflowTests(unittest.TestCase):
             optional = {entry["name"]: entry["available"] for entry in receipt["optional"]}
             self.assertFalse(optional["runledger"])
             self.assertFalse(optional["watchdog"])
+
+    def test_agents_execute_loaded_canonical_contracts(self):
+        with tempfile.TemporaryDirectory() as temp:
+            output = Path(temp) / "run"
+            result = run_workflow(WORKFLOWS[0], ROOT / WORKFLOWS[0] / "fixtures" / "request.fixture.json", output)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            receipts = list((output / "agent-receipts").glob("*.json"))
+            self.assertTrue(receipts)
+            for path in receipts:
+                receipt = json.loads(path.read_text())
+                sdk = receipt["agents_sdk"]["result"]
+                self.assertTrue(receipt["contract_loaded"])
+                self.assertGreaterEqual(len(receipt["contract_paths"]), 8)
+                self.assertEqual(receipt["instructions_sha256"], sdk["instructions_sha256"])
+                self.assertEqual(receipt["instructions_bytes"], sdk["instructions_bytes"])
 
     def test_record_references_fail_closed(self):
         with tempfile.TemporaryDirectory() as temp:

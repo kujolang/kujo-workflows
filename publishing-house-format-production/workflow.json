@@ -1,0 +1,304 @@
+{
+  "id": "publishing-house-format-production",
+  "name": "Publishing House Format Production",
+  "description": "Produce reviewable newsletter, social, case-study, and video/audio packages from approved source lineage.",
+  "version": "0.1.0",
+  "purpose": "Produce reviewable newsletter, social, case-study, and video/audio packages from approved source lineage.",
+  "audience": "portable Publishing House operators",
+  "default_permission": "PROPOSE",
+  "maximum_permission": "PROPOSE",
+  "fixture_mode": true,
+  "live_mode": true,
+  "tools": [
+    "storydesk",
+    "dossier",
+    "galleypack",
+    "bluepencil",
+    "assetworks",
+    "dispatch",
+    "agents-sdk"
+  ],
+  "required_capabilities": [
+    "kujo",
+    "storydesk",
+    "dossier",
+    "galleypack",
+    "bluepencil",
+    "assetworks",
+    "dispatch",
+    "agents-sdk"
+  ],
+  "optional_capabilities": [
+    "runledger",
+    "watchdog"
+  ],
+  "approval_boundaries": [
+    "Format production creates proposals and packages only; it cannot publish, infer consent, or expand claims beyond approved evidence."
+  ],
+  "state_and_recovery": "state.json and Dispatch state/trace/report artifacts support interruption and bounded resume.",
+  "next_workflow": "publishing-house-approval-publication",
+  "input_schema": {
+    "type": "dict",
+    "required": [
+      "topic",
+      "run_id"
+    ],
+    "properties": {
+      "topic": {
+        "type": "string"
+      },
+      "run_id": {
+        "type": "string"
+      }
+    }
+  },
+  "steps": [
+    {
+      "id": "role_1_newsletter-editor",
+      "name": "Newsletter Editor",
+      "type": "agent",
+      "agent_id": "planner",
+      "input_from": [
+        "input"
+      ],
+      "output_key": "role_1_output",
+      "depends_on": [],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-format-production-role-1"
+    },
+    {
+      "id": "role_2_social-community-editor",
+      "name": "Social & Community Editor",
+      "type": "agent",
+      "agent_id": "verification",
+      "input_from": [
+        "role_1_output"
+      ],
+      "output_key": "role_2_output",
+      "depends_on": [
+        "role_1_newsletter-editor"
+      ],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-format-production-role-2"
+    },
+    {
+      "id": "role_3_case-study-editor",
+      "name": "Case Study Editor",
+      "type": "agent",
+      "agent_id": "verification",
+      "input_from": [
+        "role_2_output"
+      ],
+      "output_key": "role_3_output",
+      "depends_on": [
+        "role_2_social-community-editor"
+      ],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-format-production-role-3"
+    },
+    {
+      "id": "role_4_video-audio-producer",
+      "name": "Video & Audio Producer",
+      "type": "agent",
+      "agent_id": "verification",
+      "input_from": [
+        "role_3_output"
+      ],
+      "output_key": "role_4_output",
+      "depends_on": [
+        "role_3_case-study-editor"
+      ],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-format-production-role-4"
+    },
+    {
+      "id": "role_5_production-editor",
+      "name": "Production Editor",
+      "type": "agent",
+      "agent_id": "verification",
+      "input_from": [
+        "role_4_output"
+      ],
+      "output_key": "role_5_output",
+      "depends_on": [
+        "role_4_video-audio-producer"
+      ],
+      "retry_policy": {
+        "max_attempts": 2,
+        "base_delay_ms": 0,
+        "max_delay_ms": 0,
+        "strategy": "none",
+        "retry_on_codes": [
+          "transient_error"
+        ]
+      },
+      "idempotency_key": "publishing-house-format-production-role-5"
+    },
+    {
+      "id": "final_report",
+      "name": "Workflow Report",
+      "type": "report",
+      "input_from": [
+        "role_5_output"
+      ],
+      "depends_on": [
+        "role_5_production-editor"
+      ],
+      "output_key": "final_output"
+    }
+  ],
+  "output_schema": {
+    "type": "dict"
+  },
+  "default_retry_policy": {
+    "max_attempts": 2,
+    "base_delay_ms": 0,
+    "max_delay_ms": 0,
+    "strategy": "none",
+    "retry_on_codes": [
+      "transient_error"
+    ]
+  },
+  "approval_config": {
+    "auto_approve": false
+  },
+  "bindings": [
+    {
+      "step_id": "newsletter-editor",
+      "canonical_role": "Newsletter Editor",
+      "role_slug": "newsletter-editor",
+      "canonical_agent": "kujo-agents/publishing-house/newsletter-editor/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/newsletter-editor/SKILL.md",
+      "allowed_tools": [
+        "storydesk",
+        "dossier",
+        "galleypack",
+        "bluepencil"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "newsletter-native package",
+      "handoff_destination": "Copy Chief",
+      "stop_condition": "newsletter-native package is versioned, blocked, or handed off"
+    },
+    {
+      "step_id": "social-community-editor",
+      "canonical_role": "Social & Community Editor",
+      "role_slug": "social-community-editor",
+      "canonical_agent": "kujo-agents/publishing-house/social-community-editor/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/social-community-editor/SKILL.md",
+      "allowed_tools": [
+        "storydesk",
+        "dossier",
+        "galleypack",
+        "bluepencil"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "social and community package",
+      "handoff_destination": "Copy Chief",
+      "stop_condition": "social and community package is versioned, blocked, or handed off"
+    },
+    {
+      "step_id": "case-study-editor",
+      "canonical_role": "Case Study Editor",
+      "role_slug": "case-study-editor",
+      "canonical_agent": "kujo-agents/publishing-house/case-study-editor/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/case-study-editor/SKILL.md",
+      "allowed_tools": [
+        "storydesk",
+        "dossier",
+        "galleypack",
+        "bluepencil"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "consent-bound case-study package",
+      "handoff_destination": "Standards & Evidence Editor",
+      "stop_condition": "consent-bound case-study package is versioned, blocked, or handed off"
+    },
+    {
+      "step_id": "video-audio-producer",
+      "canonical_role": "Video & Audio Producer",
+      "role_slug": "video-audio-producer",
+      "canonical_agent": "kujo-agents/publishing-house/video-audio-producer/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/video-audio-producer/SKILL.md",
+      "allowed_tools": [
+        "assetworks",
+        "dossier",
+        "galleypack",
+        "bluepencil"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "accessible video and audio production package",
+      "handoff_destination": "Production Editor",
+      "stop_condition": "accessible video and audio production package is versioned, blocked, or handed off"
+    },
+    {
+      "step_id": "production-editor",
+      "canonical_role": "Production Editor",
+      "role_slug": "production-editor",
+      "canonical_agent": "kujo-agents/publishing-house/production-editor/AGENT.md",
+      "canonical_skill": "kujo-agents/publishing-house/production-editor/SKILL.md",
+      "allowed_tools": [
+        "galleypack",
+        "assetworks",
+        "bluepencil"
+      ],
+      "maximum_permission": "PROPOSE",
+      "required_inputs": [
+        "workflow request",
+        "record references"
+      ],
+      "expected_output": "format package manifest",
+      "handoff_destination": "Editor-in-Chief",
+      "stop_condition": "format package manifest is versioned, blocked, or handed off"
+    }
+  ],
+  "format_profiles": []
+}

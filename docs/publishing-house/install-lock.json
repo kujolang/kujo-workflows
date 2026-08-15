@@ -16,36 +16,44 @@
       "commit": "0e56994f45f577f6e5dd68f2c3c0c7e06af46d71",
       "repository": "https://github.com/kujolang/agents-sdk.git"
     },
+    "kujo-agents": {
+      "commit": "823ea1291f3f0c9d402b8e47e1ef913ed4d3a2cb",
+      "repository": "https://github.com/kujolang/kujo-agents.git"
+    },
+    "kujo-skills": {
+      "commit": "50d299a5edf4ef69c778ff5f538b5c9760faaa1c",
+      "repository": "https://github.com/kujolang/kujo-skills.git"
+    },
     "storydesk": {
-      "commit": "1a05d1a6f50da4c9b5ced1bcc55a7c6db40dc411",
+      "commit": "e3707994b564c5b746493393c697424cc8503209",
       "repository": "https://github.com/kujolang/storydesk.git"
     },
     "dossier": {
-      "commit": "378a05f96a6bcc7b1b5417b7bdfeeab0ecb6e320",
+      "commit": "5c17bd7c77abee499fe9c67498bed6f2a1baf8fa",
       "repository": "https://github.com/kujolang/dossier.git"
     },
     "galleypack": {
-      "commit": "f9de506bd76b758d3a52ddb07580e43421b03be3",
+      "commit": "5a9ec247f943460aa759f1552ae14e48c7423d3e",
       "repository": "https://github.com/kujolang/galleypack.git"
     },
     "bluepencil": {
-      "commit": "29a99583a5b7e60c55580d871715a34664928396",
+      "commit": "87a9c38e30cf5a629441291a320bd6de40405ca1",
       "repository": "https://github.com/kujolang/bluepencil.git"
     },
     "versionseal": {
-      "commit": "6e1ae63492826dba36a64e639cc7ffc5e702cf78",
+      "commit": "4c84f2607f60011c5800790347d7479ec07554e9",
       "repository": "https://github.com/kujolang/versionseal.git"
     },
     "presswire": {
-      "commit": "e498e8afeba70d061601fd0f6c392ceea6e66843",
+      "commit": "566469012efbf10e86d48f61fdd64cdd050dddd6",
       "repository": "https://github.com/kujolang/presswire.git"
     },
     "readersignal": {
-      "commit": "a8d39c40db175e5875c47a57a34449ae4998b26f",
+      "commit": "389ef125f1a274289b6b3f69810abc8fccf75641",
       "repository": "https://github.com/kujolang/readersignal.git"
     },
     "assetworks": {
-      "commit": "9cc8e754049b68cc695425e1aa38df4b14b58ece",
+      "commit": "32ce0b2542100092dc22fea6fc1affd97dd861dc",
       "repository": "https://github.com/kujolang/assetworks.git"
     }
   }

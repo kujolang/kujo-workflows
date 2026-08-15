@@ -33,11 +33,11 @@ func main(){
         clean:=status_result.exitcode==0&&trim(to_string(status_result.stdout))==""
         ok:=commit_result.exitcode==0&&commit==expected["commit"]&&clean
         check:={"component":name,"ok":ok,"expected_commit":expected["commit"],"reported_commit":commit,"clean":clean}
-        if ok&&name!="dispatch"&&name!="agents-sdk"{
+        matrix:=read_object(path_join(root,"docs/publishing-house/compatibility-matrix.json"))
+        if ok&&has_key(get(matrix,"tools",{}),name)==1{
             version_result:=run(["env","KUJO_BIN="+kujo,path_join(repository,"bin/"+name),"version","--json"],root)
             reported:=read_object(path_join(root,"__missing__"))
             try{reported=parse_json(trim(to_string(version_result.stdout)))}except error{reported={}}
-            matrix:=read_object(path_join(root,"docs/publishing-house/compatibility-matrix.json"))
             tool_expected:=get(get(matrix,"tools",{}),name,{})
             contract_ok:=version_result.exitcode==0&&get(reported,"ok",false)==true&&get(reported,"tool_version","")==get(tool_expected,"version","")&&get(reported,"contract_version","")==get(tool_expected,"contract_version","")
             check["contract_ok"]=contract_ok
