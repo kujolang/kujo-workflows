@@ -1,29 +1,455 @@
 {
   "schema": "kujo.workflow-tool-integration/v1",
-  "audit_id": "kujo-workflows-audit-2026-08-15",
+  "audit_id": "kujo-workflows-audit-2026-08-22",
   "tools": [
-    {"tool": "tribunal", "canonical_repo": "../tribunal", "actual_version": "current main at a7499fb", "current_usage": ["tribunal-decision-gate"], "proposed_usage": ["advisory high-risk decision stage for feature-card and release/security review packets"], "gap": "High-impact workflows lacked a durable independent-review receipt and explicit advisory-versus-binding decision boundary.", "classification": "strongly-recommended-integration", "priority": "P2", "complexity": "medium", "risk": "Mock receipt is unsigned and advisory; production binding requires Tribunal signature/trust-policy verification and an explicit human approval policy.", "implementation": "implemented", "reason": "The dedicated gate runs a mock panel, verifies the persisted artifact set, and emits the versioned decision receipt without claiming quorum or binding approval beyond the fixture. The 2026-08-12 Tribunal regression work did not expand the workflow's advisory boundary.", "tests": ["tribunal mock review", "tribunal verify", "decision receipt schema"], "rollback": "Remove the optional advisory gate and retain the existing evidence packet; no workflow completion depends on the unsigned mock decision."},
-    {"tool": "relay", "canonical_repo": "../relay", "actual_version": "current main at 8aaa613", "current_usage": ["relay-lifecycle-handoff"], "proposed_usage": ["durable handoff for agent-backed feature cards and resumable workflow stages"], "gap": "Existing workflows had no reusable pause/resume handoff with correlated event/receipt export and explicit delivery semantics.", "classification": "dedicated-workflow-required", "priority": "P1", "complexity": "high", "risk": "Relay is a hardened local alpha; this integration proves local persistence, provider-tool execution through bounded policy workers, and operator resume, not remote exactly-once delivery or authenticated service durability. The 2026-08-12 Relay backlog refresh did not expand workflow-catalog guarantees.", "implementation": "implemented", "reason": "The dedicated workflow runs a worktree mission through pause/resume, validates the integrity-checked export, and emits versioned message and delivery receipts. Recent Relay repository changes were documentation/backlog updates that did not require catalog migration.", "tests": ["relay-lifecycle-handoff workflow", "mission pause/resume", "runs export integrity", "message and delivery receipt schemas"], "rollback": "Keep existing direct runners; remove the optional Relay handoff and retain the local run packet."},
-    {"tool": "ai-sdk", "canonical_repo": "../ai-sdk", "actual_version": "current main at 08e7704", "current_usage": ["ai-sdk-muzzle-benchmark", "ai-sdk-watchdog-showcase"], "proposed_usage": ["retain as provider-normalization and fixture/live boundary owner"], "gap": "None identified for current catalog; recent AI SDK evidence remains focused on provider contracts, regression gates, and fixture/live boundaries owned by AI SDK.", "classification": "required-integration", "priority": "P1", "complexity": "low", "risk": "Live-provider validation remains credential- and spend-gated; downstream workflows must not duplicate provider preference routing tables.", "implementation": "cataloged", "reason": "The cataloged benchmark and Watchdog showcase still match AI SDK's repo-backed fixture/live contract and model-preference ownership. The 2026-08-11 regression gate did not require workflow contract changes.", "tests": ["fixture benchmark", "fixture showcase", "AI SDK release quality gates", "AI SDK supply-chain policy check"], "rollback": "Use fixture mode and record live-provider skip boundaries."},
-    {"tool": "ai-chat", "canonical_repo": "../ai-chat", "actual_version": "current main at 479ce92", "current_usage": ["ai-sdk-watchdog-showcase"], "proposed_usage": ["retain as local multi-provider app and benchmark-pane consumer for provider/tool workflows"], "gap": "No catalog migration required; current AI Chat evidence improves capability guidance outside the current showcase runner.", "classification": "supporting-workflow-surface", "priority": "P2", "complexity": "medium", "risk": "Browser and web-search execution require explicit local configuration, credentials, Chromium availability, and artifact review; benchmark quality claims must remain model- and run-qualified. The sibling AI Chat checkout is dirty and includes unrelated local experiments, so repository-backed catalog claims use committed main evidence only.", "implementation": "preserved", "reason": "The current showcase only depends on AI Chat as a Watchdog-routed app surface. New AI Chat benchmark and tool surfaces remain related opportunities rather than supported workflow catalog entries.", "tests": ["npm test in sibling repo", "smoke", "smoke:browser when Chromium enabled", "benchmark:run when app and profile are configured"], "rollback": "Keep the current Watchdog showcase; defer benchmark/tool workflow promotion until a dedicated workflow contract exists."},
-    {"tool": "watchdog", "canonical_repo": "../watchdog", "actual_version": "current main at ccd849c", "current_usage": ["ai-sdk-watchdog-showcase"], "proposed_usage": ["retain as local proxy, telemetry, named-upstream, auth/rate-limit, and agent-insights observability layer"], "gap": "None identified for current catalog; recent Watchdog evidence documents audit and regression work without changing the existing fixture-showcase contract.", "classification": "required-integration", "priority": "P1", "complexity": "medium", "risk": "Production posture requires separate API/proxy tokens, redaction, rate-limit configuration, environment-specific upstream credentials, and dated pricing evidence.", "implementation": "preserved", "reason": "The showcase still routes AI traffic through Watchdog and exports telemetry. New audit evidence is compatible, not a required catalog migration.", "tests": ["fixture showcase", "proxy integration stub suite", "watchdog_api_route_suite.js", "frontend_contract_suite.js"], "rollback": "Use fixture/local proxy mode and record live upstream skips."},
-    {"tool": "workcell", "canonical_repo": "../workcell", "actual_version": "current main at aa18ef2", "current_usage": ["workcell-execution-gate"], "proposed_usage": ["bounded execution backend for future Workcell-aware Relay missions"], "gap": "Feature and agency workflows lacked a declared container boundary, resource policy, artifact export contract, and completion receipt.", "classification": "supporting-skill-required", "priority": "P2", "complexity": "high", "risk": "Docker daemon/host kernel remain trusted; Workcell 1.0 is not a microVM or hosted multi-tenant isolation boundary and does not provide scheduling, organization-specific egress enforcement, or compliance certification.", "implementation": "implemented", "reason": "The dedicated gate validates and inspects the Workcell definition, executes a clean fixture with network none and bounded resources, and validates package/completion receipts while preserving Workcell's documented host and daemon trust boundary. The 2026-08-11 failed-run cleanup hardening did not expand the workflow boundary.", "tests": ["workcell validate/inspect", "Docker execution", "workcell receipt", "package and completion receipt schemas"], "rollback": "Continue with current local fixture and Git worktree flows; remove the optional Workcell gate without claiming container isolation."},
-    {"tool": "dispatch", "canonical_repo": "../dispatch", "actual_version": "current main at 3e8a5ff", "current_usage": ["enterprise-dispatch-approval-router", "publishing-house-*"], "proposed_usage": ["continue owning orchestration and paused approval state"], "gap": "None identified for current catalog; persisted workflow resume hardening is compatible with the current workflow and Publishing House pause/resume contracts.", "classification": "required-integration", "priority": "P1", "complexity": "low", "risk": "External ChatOps delivery and callback authorization remain deployment-specific.", "implementation": "implemented", "reason": "Existing workflows already exercise the current Dispatch contract, and Publishing House fixture proof covers deterministic offline run state and approval pause/resume.", "tests": ["workflow fixture run", "Dispatch resume proof", "Publishing House all-eleven fixture"], "rollback": "Use local non-interactive Dispatch path."},
-    {"tool": "casefile", "canonical_repo": "../casefile", "actual_version": "current main", "current_usage": ["agency-verified-fix-loop", "casefile-incident-evidence-packet", "feature-card-workflow", "codebase-cleanup"], "proposed_usage": ["retain as failure evidence owner"], "gap": "None identified.", "classification": "required-integration", "priority": "P1", "complexity": "low", "risk": "Secrets and large logs must remain redacted/bounded.", "implementation": "implemented", "reason": "Codebase Cleanup reserves Casefile for actual verification failures and does not manufacture bundles on clean runs.", "tests": ["casefile workflow", "failure capture fixtures", "cleanup integration disposition"], "rollback": "Keep stage logs without CaseFile bundle."},
-    {"tool": "runledger", "canonical_repo": "../runledger", "actual_version": "current main", "current_usage": ["agency-runner", "agency-verified-fix-loop", "feature-card-workflow", "ai-sdk-muzzle-benchmark", "codebase-cleanup"], "proposed_usage": ["retain as execution history owner"], "gap": "None identified; optional writes must not mask finish failures.", "classification": "required-integration", "priority": "P1", "complexity": "low", "risk": "External receipt persistence can be unavailable; workflows must report partial status.", "implementation": "implemented", "reason": "Codebase Cleanup exposes RunLedger as a host-owned adapter instead of creating an unrelated task automatically.", "tests": ["RunLedger CLI smoke", "partial finish failure", "cleanup integration disposition"], "rollback": "Retain local report.json and REPORT.md evidence."},
-    {"tool": "scout", "canonical_repo": "../scout", "actual_version": "current main", "current_usage": ["agency-runner", "agency-verified-fix-loop", "feature-card-workflow", "codebase-cleanup"], "proposed_usage": ["repository reconnaissance for cleanup"], "gap": "Scout inventory does not prove that an unreferenced symbol is safe to delete.", "classification": "supporting-integration", "priority": "P1", "complexity": "low", "risk": "Static inventory can miss dynamic entry points.", "implementation": "implemented", "reason": "The cleanup workflow can run Scout read-only and retains independent deletion evidence guards.", "tests": ["cleanup integration disposition", "analysis-only dogfood"], "rollback": "Use repository-native inventory and keep cleanup classification unchanged."},
-    {"tool": "fence", "canonical_repo": "../fence", "actual_version": "current main", "current_usage": ["codebase-cleanup"], "proposed_usage": ["reviewed architecture boundary evidence"], "gap": "Arbitrary repositories may not have a Fence model.", "classification": "optional-integration", "priority": "P1", "complexity": "low", "risk": "Invented boundaries would create false cleanup findings.", "implementation": "implemented", "reason": "The integration is applicable only when the target owns fence.toml.", "tests": ["missing-boundary preservation", "cleanup integration disposition"], "rollback": "Skip Fence and preserve architecture as UNKNOWN."},
-    {"tool": "concord", "canonical_repo": "../concord", "actual_version": "current main", "current_usage": ["codebase-cleanup"], "proposed_usage": ["post-cleanup drift inspection"], "gap": "Concord detects convention drift but does not own source mutation.", "classification": "supporting-integration", "priority": "P1", "complexity": "low", "risk": "Convention findings require repository context.", "implementation": "implemented", "reason": "Read-only Concord scan evidence is recorded alongside the cleanup report.", "tests": ["documentation drift fixture", "cleanup integration disposition"], "rollback": "Use the workflow's conservative missing-path evidence only."},
-    {"tool": "kennel", "canonical_repo": "../kennel", "actual_version": "current main", "current_usage": ["codebase-cleanup"], "proposed_usage": ["Kujo manifest validation after dependency cleanup"], "gap": "Kennel is not applicable to non-Kujo package manifests.", "classification": "optional-integration", "priority": "P2", "complexity": "low", "risk": "Text absence does not prove a package is unused.", "implementation": "implemented", "reason": "Kennel runs only for a compatible target manifest and dependency removal remains human-reviewed.", "tests": ["unused dependency fixture", "cleanup integration disposition"], "rollback": "Use the target package manager's own validation."},
-    {"tool": "changebucket", "canonical_repo": "../changebucket", "actual_version": "current main", "current_usage": ["agency-verified-fix-loop", "feature-card-workflow", "codebase-cleanup"], "proposed_usage": ["cleanup batch blast-radius evidence"], "gap": "Change size is evidence, not a cleanup success metric.", "classification": "supporting-integration", "priority": "P1", "complexity": "low", "risk": "A small diff can still change behavior and a justified cleanup may be large.", "implementation": "implemented", "reason": "The workflow records ChangeBucket without using size as an acceptance target.", "tests": ["cleanup integration disposition", "verification rollback fixture"], "rollback": "Use git diff statistics and repository-owned review."},
-    {"tool": "patchbrief", "canonical_repo": "../patchbrief", "actual_version": "current main", "current_usage": ["agency-verified-fix-loop", "feature-card-workflow", "codebase-cleanup"], "proposed_usage": ["cleanup diff risk and handoff"], "gap": "PatchBrief summarizes a diff but cannot establish behavioral equivalence.", "classification": "supporting-integration", "priority": "P1", "complexity": "low", "risk": "Review briefs must remain subordinate to tests and explicit evidence.", "implementation": "implemented", "reason": "PatchBrief is captured as reviewer evidence after a repository diff exists.", "tests": ["cleanup integration disposition", "deterministic report fixture"], "rollback": "Review the raw diff and cleanup report directly."},
-    {"tool": "shipcheck", "canonical_repo": "../shipcheck", "actual_version": "current main", "current_usage": ["agency-verified-fix-loop", "feature-card-workflow", "codebase-cleanup"], "proposed_usage": ["final release-readiness inspection"], "gap": "Release readiness is broader than cleanup correctness.", "classification": "supporting-integration", "priority": "P2", "complexity": "low", "risk": "A ShipCheck scan is informational and must not replace repository tests.", "implementation": "implemented", "reason": "The workflow records ShipCheck scan evidence without treating it as the sole gate.", "tests": ["cleanup integration disposition", "analysis-only dogfood"], "rollback": "Use repository-owned release gates."},
-    {"tool": "eval", "canonical_repo": "../eval", "actual_version": "current main", "current_usage": ["agency-verified-fix-loop", "feature-card-workflow"], "proposed_usage": ["retain as deterministic acceptance owner"], "gap": "None identified.", "classification": "required-integration", "priority": "P1", "complexity": "low", "risk": "Missing eval artifact must not be interpreted as a pass.", "implementation": "implemented", "reason": "Existing workflows invoke Eval when a suite exists.", "tests": ["Eval fixture", "missing-result negative case"], "rollback": "Use explicit command verification only."}
+    {
+      "tool": "tribunal",
+      "canonical_repo": "../tribunal",
+      "actual_version": "current main at a7499fb",
+      "current_usage": [
+        "tribunal-decision-gate"
+      ],
+      "proposed_usage": [
+        "advisory high-risk decision stage for feature-card and release/security review packets"
+      ],
+      "gap": "High-impact workflows lacked a durable independent-review receipt and explicit advisory-versus-binding decision boundary.",
+      "classification": "strongly-recommended-integration",
+      "priority": "P2",
+      "complexity": "medium",
+      "risk": "Mock receipt is unsigned and advisory; production binding requires Tribunal signature/trust-policy verification and an explicit human approval policy.",
+      "implementation": "implemented",
+      "reason": "The dedicated gate runs a mock panel, verifies the persisted artifact set, and emits the versioned decision receipt without claiming quorum or binding approval beyond the fixture. The 2026-08-12 Tribunal regression work did not expand the workflow's advisory boundary.",
+      "tests": [
+        "tribunal mock review",
+        "tribunal verify",
+        "decision receipt schema"
+      ],
+      "rollback": "Remove the optional advisory gate and retain the existing evidence packet; no workflow completion depends on the unsigned mock decision."
+    },
+    {
+      "tool": "relay",
+      "canonical_repo": "../relay",
+      "actual_version": "current main at 8aaa613",
+      "current_usage": [
+        "relay-lifecycle-handoff"
+      ],
+      "proposed_usage": [
+        "durable handoff for agent-backed feature cards and resumable workflow stages"
+      ],
+      "gap": "Existing workflows had no reusable pause/resume handoff with correlated event/receipt export and explicit delivery semantics.",
+      "classification": "dedicated-workflow-required",
+      "priority": "P1",
+      "complexity": "high",
+      "risk": "Relay is a hardened local alpha; this integration proves local persistence, provider-tool execution through bounded policy workers, and operator resume, not remote exactly-once delivery or authenticated service durability. The 2026-08-12 Relay backlog refresh did not expand workflow-catalog guarantees.",
+      "implementation": "implemented",
+      "reason": "The dedicated workflow runs a worktree mission through pause/resume, validates the integrity-checked export, and emits versioned message and delivery receipts. Recent Relay repository changes were documentation/backlog updates that did not require catalog migration.",
+      "tests": [
+        "relay-lifecycle-handoff workflow",
+        "mission pause/resume",
+        "runs export integrity",
+        "message and delivery receipt schemas"
+      ],
+      "rollback": "Keep existing direct runners; remove the optional Relay handoff and retain the local run packet."
+    },
+    {
+      "tool": "ai-sdk",
+      "canonical_repo": "../ai-sdk",
+      "actual_version": "current main at 08e7704",
+      "current_usage": [
+        "ai-sdk-muzzle-benchmark",
+        "ai-sdk-watchdog-showcase"
+      ],
+      "proposed_usage": [
+        "retain as provider-normalization and fixture/live boundary owner"
+      ],
+      "gap": "None identified for current catalog; recent AI SDK evidence remains focused on provider contracts, regression gates, and fixture/live boundaries owned by AI SDK.",
+      "classification": "required-integration",
+      "priority": "P1",
+      "complexity": "low",
+      "risk": "Live-provider validation remains credential- and spend-gated; downstream workflows must not duplicate provider preference routing tables.",
+      "implementation": "cataloged",
+      "reason": "The cataloged benchmark and Watchdog showcase still match AI SDK's repo-backed fixture/live contract and model-preference ownership. The 2026-08-11 regression gate did not require workflow contract changes.",
+      "tests": [
+        "fixture benchmark",
+        "fixture showcase",
+        "AI SDK release quality gates",
+        "AI SDK supply-chain policy check"
+      ],
+      "rollback": "Use fixture mode and record live-provider skip boundaries."
+    },
+    {
+      "tool": "ai-chat",
+      "canonical_repo": "../ai-chat",
+      "actual_version": "current main at 8e4c6f0",
+      "current_usage": [
+        "ai-sdk-watchdog-showcase"
+      ],
+      "proposed_usage": [
+        "retain as local multi-provider app and benchmark-pane consumer for provider/tool workflows"
+      ],
+      "gap": "No catalog migration required; current AI Chat evidence improves capability guidance outside the current showcase runner.",
+      "classification": "supporting-workflow-surface",
+      "priority": "P2",
+      "complexity": "medium",
+      "risk": "Browser and web-search execution require explicit local configuration, credentials, Chromium availability, and artifact review; benchmark quality claims must remain model- and run-qualified. The sibling AI Chat checkout is dirty and includes unrelated local experiments, so repository-backed catalog claims use committed main evidence only.",
+      "implementation": "preserved",
+      "reason": "The current showcase only depends on AI Chat as a Watchdog-routed app surface. The committed stream timeout and tool-pathing fixes improve the sibling app but do not create a supported workflow entry; dirty local experiment files remain excluded from catalog evidence.",
+      "tests": [
+        "npm test in sibling repo",
+        "smoke",
+        "smoke:browser when Chromium enabled",
+        "benchmark:run when app and profile are configured"
+      ],
+      "rollback": "Keep the current Watchdog showcase; defer benchmark/tool workflow promotion until a dedicated workflow contract exists."
+    },
+    {
+      "tool": "watchdog",
+      "canonical_repo": "../watchdog",
+      "actual_version": "current main at e009ecd",
+      "current_usage": [
+        "ai-sdk-watchdog-showcase"
+      ],
+      "proposed_usage": [
+        "retain as local proxy, telemetry, named-upstream, auth/rate-limit, and agent-insights observability layer"
+      ],
+      "gap": "None identified for current catalog; recent Watchdog evidence documents audit and regression work without changing the existing fixture-showcase contract.",
+      "classification": "required-integration",
+      "priority": "P1",
+      "complexity": "medium",
+      "risk": "Production posture requires separate API/proxy tokens, redaction, rate-limit configuration, environment-specific upstream credentials, and dated pricing evidence.",
+      "implementation": "preserved",
+      "reason": "The showcase still routes AI traffic through Watchdog and exports telemetry. The 2026-08-16 pricing catalog refresh is compatible evidence and does not require a workflow contract migration.",
+      "tests": [
+        "fixture showcase",
+        "proxy integration stub suite",
+        "watchdog_api_route_suite.js",
+        "frontend_contract_suite.js"
+      ],
+      "rollback": "Use fixture/local proxy mode and record live upstream skips."
+    },
+    {
+      "tool": "workcell",
+      "canonical_repo": "../workcell",
+      "actual_version": "current main at 7bcdb7f",
+      "current_usage": [
+        "workcell-execution-gate"
+      ],
+      "proposed_usage": [
+        "bounded execution backend for future Workcell-aware Relay missions"
+      ],
+      "gap": "Feature and agency workflows lacked a declared container boundary, resource policy, artifact export contract, and completion receipt.",
+      "classification": "supporting-skill-required",
+      "priority": "P2",
+      "complexity": "high",
+      "risk": "Docker daemon/host kernel remain trusted; Workcell 1.0 is not a microVM or hosted multi-tenant isolation boundary and does not provide scheduling, organization-specific egress enforcement, or compliance certification.",
+      "implementation": "implemented",
+      "reason": "The dedicated gate validates and inspects the Workcell definition, executes or records host-runtime blockage with versioned receipts, and preserves Workcell's documented host and daemon trust boundary. The Git patch secret-redaction hardening tightens evidence handling without expanding the workflow boundary.",
+      "tests": [
+        "workcell validate/inspect",
+        "Docker execution",
+        "workcell receipt",
+        "package and completion receipt schemas"
+      ],
+      "rollback": "Continue with current local fixture and Git worktree flows; remove the optional Workcell gate without claiming container isolation."
+    },
+    {
+      "tool": "dispatch",
+      "canonical_repo": "../dispatch",
+      "actual_version": "current main at 3e8a5ff",
+      "current_usage": [
+        "enterprise-dispatch-approval-router",
+        "publishing-house-*"
+      ],
+      "proposed_usage": [
+        "continue owning orchestration and paused approval state"
+      ],
+      "gap": "None identified for current catalog; persisted workflow resume hardening is compatible with the current workflow and Publishing House pause/resume contracts.",
+      "classification": "required-integration",
+      "priority": "P1",
+      "complexity": "low",
+      "risk": "External ChatOps delivery and callback authorization remain deployment-specific.",
+      "implementation": "implemented",
+      "reason": "Existing workflows already exercise the current Dispatch contract, and Publishing House fixture proof covers deterministic offline run state and approval pause/resume.",
+      "tests": [
+        "workflow fixture run",
+        "Dispatch resume proof",
+        "Publishing House all-eleven fixture"
+      ],
+      "rollback": "Use local non-interactive Dispatch path."
+    },
+    {
+      "tool": "casefile",
+      "canonical_repo": "../casefile",
+      "actual_version": "current main",
+      "current_usage": [
+        "agency-verified-fix-loop",
+        "casefile-incident-evidence-packet",
+        "feature-card-workflow",
+        "codebase-cleanup"
+      ],
+      "proposed_usage": [
+        "retain as failure evidence owner"
+      ],
+      "gap": "None identified.",
+      "classification": "required-integration",
+      "priority": "P1",
+      "complexity": "low",
+      "risk": "Secrets and large logs must remain redacted/bounded.",
+      "implementation": "implemented",
+      "reason": "Codebase Cleanup reserves Casefile for actual verification failures and does not manufacture bundles on clean runs.",
+      "tests": [
+        "casefile workflow",
+        "failure capture fixtures",
+        "cleanup integration disposition"
+      ],
+      "rollback": "Keep stage logs without CaseFile bundle."
+    },
+    {
+      "tool": "runledger",
+      "canonical_repo": "../runledger",
+      "actual_version": "current main",
+      "current_usage": [
+        "agency-runner",
+        "agency-verified-fix-loop",
+        "feature-card-workflow",
+        "ai-sdk-muzzle-benchmark",
+        "codebase-cleanup"
+      ],
+      "proposed_usage": [
+        "retain as execution history owner"
+      ],
+      "gap": "None identified; optional writes must not mask finish failures.",
+      "classification": "required-integration",
+      "priority": "P1",
+      "complexity": "low",
+      "risk": "External receipt persistence can be unavailable; workflows must report partial status.",
+      "implementation": "implemented",
+      "reason": "Codebase Cleanup exposes RunLedger as a host-owned adapter instead of creating an unrelated task automatically.",
+      "tests": [
+        "RunLedger CLI smoke",
+        "partial finish failure",
+        "cleanup integration disposition"
+      ],
+      "rollback": "Retain local report.json and REPORT.md evidence."
+    },
+    {
+      "tool": "scout",
+      "canonical_repo": "../scout",
+      "actual_version": "current main",
+      "current_usage": [
+        "agency-runner",
+        "agency-verified-fix-loop",
+        "feature-card-workflow",
+        "codebase-cleanup"
+      ],
+      "proposed_usage": [
+        "repository reconnaissance for cleanup"
+      ],
+      "gap": "Scout inventory does not prove that an unreferenced symbol is safe to delete.",
+      "classification": "supporting-integration",
+      "priority": "P1",
+      "complexity": "low",
+      "risk": "Static inventory can miss dynamic entry points.",
+      "implementation": "implemented",
+      "reason": "The cleanup workflow can run Scout read-only and retains independent deletion evidence guards.",
+      "tests": [
+        "cleanup integration disposition",
+        "analysis-only dogfood"
+      ],
+      "rollback": "Use repository-native inventory and keep cleanup classification unchanged."
+    },
+    {
+      "tool": "fence",
+      "canonical_repo": "../fence",
+      "actual_version": "current main",
+      "current_usage": [
+        "codebase-cleanup"
+      ],
+      "proposed_usage": [
+        "reviewed architecture boundary evidence"
+      ],
+      "gap": "Arbitrary repositories may not have a Fence model.",
+      "classification": "optional-integration",
+      "priority": "P1",
+      "complexity": "low",
+      "risk": "Invented boundaries would create false cleanup findings.",
+      "implementation": "implemented",
+      "reason": "The integration is applicable only when the target owns fence.toml.",
+      "tests": [
+        "missing-boundary preservation",
+        "cleanup integration disposition"
+      ],
+      "rollback": "Skip Fence and preserve architecture as UNKNOWN."
+    },
+    {
+      "tool": "concord",
+      "canonical_repo": "../concord",
+      "actual_version": "current main",
+      "current_usage": [
+        "codebase-cleanup"
+      ],
+      "proposed_usage": [
+        "post-cleanup drift inspection"
+      ],
+      "gap": "Concord detects convention drift but does not own source mutation.",
+      "classification": "supporting-integration",
+      "priority": "P1",
+      "complexity": "low",
+      "risk": "Convention findings require repository context.",
+      "implementation": "implemented",
+      "reason": "Read-only Concord scan evidence is recorded alongside the cleanup report.",
+      "tests": [
+        "documentation drift fixture",
+        "cleanup integration disposition"
+      ],
+      "rollback": "Use the workflow's conservative missing-path evidence only."
+    },
+    {
+      "tool": "kennel",
+      "canonical_repo": "../kennel",
+      "actual_version": "current main",
+      "current_usage": [
+        "codebase-cleanup"
+      ],
+      "proposed_usage": [
+        "Kujo manifest validation after dependency cleanup"
+      ],
+      "gap": "Kennel is not applicable to non-Kujo package manifests.",
+      "classification": "optional-integration",
+      "priority": "P2",
+      "complexity": "low",
+      "risk": "Text absence does not prove a package is unused.",
+      "implementation": "implemented",
+      "reason": "Kennel runs only for a compatible target manifest and dependency removal remains human-reviewed.",
+      "tests": [
+        "unused dependency fixture",
+        "cleanup integration disposition"
+      ],
+      "rollback": "Use the target package manager's own validation."
+    },
+    {
+      "tool": "changebucket",
+      "canonical_repo": "../changebucket",
+      "actual_version": "current main",
+      "current_usage": [
+        "agency-verified-fix-loop",
+        "feature-card-workflow",
+        "codebase-cleanup"
+      ],
+      "proposed_usage": [
+        "cleanup batch blast-radius evidence"
+      ],
+      "gap": "Change size is evidence, not a cleanup success metric.",
+      "classification": "supporting-integration",
+      "priority": "P1",
+      "complexity": "low",
+      "risk": "A small diff can still change behavior and a justified cleanup may be large.",
+      "implementation": "implemented",
+      "reason": "The workflow records ChangeBucket without using size as an acceptance target.",
+      "tests": [
+        "cleanup integration disposition",
+        "verification rollback fixture"
+      ],
+      "rollback": "Use git diff statistics and repository-owned review."
+    },
+    {
+      "tool": "patchbrief",
+      "canonical_repo": "../patchbrief",
+      "actual_version": "current main",
+      "current_usage": [
+        "agency-verified-fix-loop",
+        "feature-card-workflow",
+        "codebase-cleanup"
+      ],
+      "proposed_usage": [
+        "cleanup diff risk and handoff"
+      ],
+      "gap": "PatchBrief summarizes a diff but cannot establish behavioral equivalence.",
+      "classification": "supporting-integration",
+      "priority": "P1",
+      "complexity": "low",
+      "risk": "Review briefs must remain subordinate to tests and explicit evidence.",
+      "implementation": "implemented",
+      "reason": "PatchBrief is captured as reviewer evidence after a repository diff exists.",
+      "tests": [
+        "cleanup integration disposition",
+        "deterministic report fixture"
+      ],
+      "rollback": "Review the raw diff and cleanup report directly."
+    },
+    {
+      "tool": "shipcheck",
+      "canonical_repo": "../shipcheck",
+      "actual_version": "current main",
+      "current_usage": [
+        "agency-verified-fix-loop",
+        "feature-card-workflow",
+        "codebase-cleanup"
+      ],
+      "proposed_usage": [
+        "final release-readiness inspection"
+      ],
+      "gap": "Release readiness is broader than cleanup correctness.",
+      "classification": "supporting-integration",
+      "priority": "P2",
+      "complexity": "low",
+      "risk": "A ShipCheck scan is informational and must not replace repository tests.",
+      "implementation": "implemented",
+      "reason": "The workflow records ShipCheck scan evidence without treating it as the sole gate.",
+      "tests": [
+        "cleanup integration disposition",
+        "analysis-only dogfood"
+      ],
+      "rollback": "Use repository-owned release gates."
+    },
+    {
+      "tool": "eval",
+      "canonical_repo": "../eval",
+      "actual_version": "current main",
+      "current_usage": [
+        "agency-verified-fix-loop",
+        "feature-card-workflow"
+      ],
+      "proposed_usage": [
+        "retain as deterministic acceptance owner"
+      ],
+      "gap": "None identified.",
+      "classification": "required-integration",
+      "priority": "P1",
+      "complexity": "low",
+      "risk": "Missing eval artifact must not be interpreted as a pass.",
+      "implementation": "implemented",
+      "reason": "Existing workflows invoke Eval when a suite exists.",
+      "tests": [
+        "Eval fixture",
+        "missing-result negative case"
+      ],
+      "rollback": "Use explicit command verification only."
+    }
   ],
-  "canonical_alias_findings": [{"input": "Workso", "result": "no repository or manifest found", "canonical_replacement": "workcell", "status": "deferred-until-product-decision"}],
+  "canonical_alias_findings": [
+    {
+      "input": "Workso",
+      "result": "no repository or manifest found",
+      "canonical_replacement": "workcell",
+      "status": "deferred-until-product-decision"
+    }
+  ],
   "cross_tool_patterns": [
-    {"pattern": "Workcell -> Relay -> Tribunal", "status": "contract-ready-but-not-composed", "reason": "The three boundaries now have versioned package, handoff, completion, and decision receipts, but no catalog workflow composes them; Relay and Workcell recovery/scheduling remain bounded local capabilities."},
-    {"pattern": "Dispatch -> Relay -> RunLedger", "status": "deferred", "reason": "Dispatch already owns current orchestration and approval state; adding Relay would duplicate ownership without a handoff contract."},
-    {"pattern": "Feature card -> Tribunal", "status": "deferred", "reason": "The advisory decision receipt exists, but feature-card binding policy, participant authority, threshold, dissent handling, and paused-workflow resume ownership still require a product decision."}
+    {
+      "pattern": "Workcell -> Relay -> Tribunal",
+      "status": "contract-ready-but-not-composed",
+      "reason": "The three boundaries now have versioned package, handoff, completion, and decision receipts, but no catalog workflow composes them; Relay and Workcell recovery/scheduling remain bounded local capabilities."
+    },
+    {
+      "pattern": "Dispatch -> Relay -> RunLedger",
+      "status": "deferred",
+      "reason": "Dispatch already owns current orchestration and approval state; adding Relay would duplicate ownership without a handoff contract."
+    },
+    {
+      "pattern": "Feature card -> Tribunal",
+      "status": "deferred",
+      "reason": "The advisory decision receipt exists, but feature-card binding policy, participant authority, threshold, dissent handling, and paused-workflow resume ownership still require a product decision."
+    }
   ]
 }

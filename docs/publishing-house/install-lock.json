@@ -4,7 +4,7 @@
   "workflow_version": "0.1.0",
   "kujo": {
     "version": "1.0.1",
-    "commit": "5059695d14d6726bc17fef55e0b95511624967cf",
+    "commit": "b03e3d5e7876a7e36eafcd803790d7ffa6cbfb76",
     "repository": "https://github.com/kujolang/kujo.git"
   },
   "repositories": {
@@ -17,11 +17,11 @@
       "repository": "https://github.com/kujolang/agents-sdk.git"
     },
     "kujo-agents": {
-      "commit": "823ea1291f3f0c9d402b8e47e1ef913ed4d3a2cb",
+      "commit": "6c9b499378bca6992d38746cad44939b03b0011b",
       "repository": "https://github.com/kujolang/kujo-agents.git"
     },
     "kujo-skills": {
-      "commit": "b931c681070bddd807391b9590ba90b1d09b5400",
+      "commit": "f0cf74044735f1feab9816229eb547006d671050",
       "repository": "https://github.com/kujolang/kujo-skills.git"
     },
     "storydesk": {
