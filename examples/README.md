@@ -1,6 +1,19 @@
 # Workflow Examples
 
-The workflow directories at the repository root are the executable examples. This index provides two low-risk starting points.
+The workflow directories at the repository root are the executable examples. This index provides low-risk starting points.
+
+## Repository-owned Agent Project
+
+Scaffolds, installs, diagnoses, inspects, runs, and evaluates a deterministic
+Agent Project while retaining the JSON evidence from every stage:
+
+```bash
+export KUJO_BIN=/absolute/path/to/kujo
+(cd owned-agent-project && bash scripts/run.sh)
+```
+
+See [`owned-agent-project/README.md`](../owned-agent-project/README.md) for the
+dependency and boundary contract.
 
 ## Portable Agent Loop
 

@@ -8,6 +8,8 @@ The format follows Keep a Changelog and Semantic Versioning.
 
 ### Added
 
+- An executable Owned Agent Project lifecycle kit with pinned installation,
+  doctor, inspection, fixture execution, Eval, and retained JSON evidence.
 - Governance, adaptation, and format-production workflow kits complete the
   eleven-stage Publishing House lifecycle and cover the four previously
   unbound specialist roles.
@@ -16,7 +18,7 @@ The format follows Keep a Changelog and Semantic Versioning.
 
 ### Changed
 
-- Expanded the workflow catalog from 34 to 37 entries and the locked
+- Expanded the workflow catalog from 34 to 38 entries and the locked
   Publishing House installation from eight to eleven kits.
 - Refreshed all locked Publishing House tool, agent, and skill checkouts to the
   exact tested commits.

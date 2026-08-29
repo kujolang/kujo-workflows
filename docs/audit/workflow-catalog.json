@@ -13,6 +13,53 @@
   },
   "active_workflows": [
     {
+      "id": "owned-agent-project",
+      "path": "owned-agent-project",
+      "status": "production-capable-with-limitations",
+      "purpose": "Prove the complete repository-owned Kujo Agent Project lifecycle with inspectable evidence.",
+      "entry": "owned-agent-project/scripts/run.sh",
+      "skills": [
+        {
+          "name": "kujo-agents-sdk-workflows",
+          "path": "skills/kujo-agents-sdk-workflows/SKILL.md",
+          "compatibility": "compatible"
+        }
+      ],
+      "tools": [
+        "kujo",
+        "kennel",
+        "agents-sdk",
+        "eval"
+      ],
+      "inputs": [
+        "Kujo binary",
+        "Kennel executable",
+        "profile selection"
+      ],
+      "outputs": [
+        "generated Agent Project",
+        "doctor JSON",
+        "inspection JSON",
+        "run JSON",
+        "evaluation JSON",
+        "SUMMARY.md"
+      ],
+      "approval_boundaries": [
+        "Initial dependency installation may access pinned Git sources; fixture execution needs no provider credential."
+      ],
+      "state_and_recovery": "Each invocation creates a new timestamped evidence directory and refuses project overwrite.",
+      "evidence": "Scaffold, doctor, inspect, run, and Eval JSON plus a summary packet.",
+      "tests": [
+        "bash -n owned-agent-project/scripts/run.sh",
+        "owned Agent Project end-to-end workflow"
+      ],
+      "documentation": [
+        "owned-agent-project/README.md",
+        "owned-agent-project/HOWTO.md"
+      ],
+      "production_readiness": "production-capable-with-limitations"
+    },
+    {
       "id": "agency-runner",
       "path": "agency-runner",
       "status": "experimental",

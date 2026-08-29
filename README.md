@@ -78,6 +78,7 @@ All commands below run from the repository root.
 
 | Workflow | Readiness | Audience | What it proves | Run command |
 | --- | --- | --- | --- | --- |
+| [`owned-agent-project/`](owned-agent-project/) | Limited | Agent builders | A repository-owned agent can be scaffolded, installed, diagnosed, inspected, run, evaluated, and evidenced through the canonical Kujo CLI. | `(cd owned-agent-project && bash scripts/run.sh)` |
 | [`agency-runner/`](agency-runner/) | Experimental | Agency owners | Client tasks can become reusable local run packets. | `agency-runner/bin/agency-loop --help` |
 | [`agency-verified-fix-loop/`](agency-verified-fix-loop/) | Limited | Agencies, developers | A bug fix can move through spec, context, proof, briefs, and handoff artifacts. | `(cd agency-verified-fix-loop && STRICT=1 bash scripts/run-loop.sh)` |
 | [`feature-card-workflow/`](feature-card-workflow/) | Limited | Developers | A task card can drive implementation, verification, proof, and reviewer handoff. | `feature-card-workflow/muzzle-template/workflows/feature-card-full.sh --help` |
@@ -193,7 +194,7 @@ See the current [launch checklist](docs/launch-checklist.md) and [release-readin
 
 ## Release and Support Status
 
-This repository is the MIT-licensed `0.3.0` technical preview of the Kujo workflow-kit distribution. The checkout covers 37 local workflows, including the eleven-workflow Publishing House lifecycle, shared contracts, documentation, versioned evidence contracts, and repository-owned validation gates. It does not publish a package, container image, hosted runner, or workflow service.
+This repository is the MIT-licensed `0.3.0` technical preview of the Kujo workflow-kit distribution. The checkout covers 38 local workflows, including the Owned Agent Project proof and the eleven-workflow Publishing House lifecycle, shared contracts, documentation, versioned evidence contracts, and repository-owned validation gates. It does not publish a package, container image, hosted runner, or workflow service.
 
 For contribution, support, conduct, and vulnerability-reporting guidance, see [CONTRIBUTING.md](CONTRIBUTING.md), [SUPPORT.md](SUPPORT.md), [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), and [SECURITY.md](SECURITY.md).
 
