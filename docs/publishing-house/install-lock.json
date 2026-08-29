@@ -3,25 +3,25 @@
   "schema_version": "1.0.0",
   "workflow_version": "0.1.0",
   "kujo": {
-    "version": "1.0.1",
-    "commit": "b03e3d5e7876a7e36eafcd803790d7ffa6cbfb76",
+    "version": "1.0.2",
+    "commit": "7e2b185c338f1dcb500a1eda47759b0db0b7b298",
     "repository": "https://github.com/kujolang/kujo.git"
   },
   "repositories": {
     "dispatch": {
-      "commit": "3e8a5ff74919fd01e3674cfe47e3740206cd0afb",
+      "commit": "662417c264bd55f8d802eef3fc21f9f372590753",
       "repository": "https://github.com/kujolang/dispatch.git"
     },
     "agents-sdk": {
-      "commit": "0e56994f45f577f6e5dd68f2c3c0c7e06af46d71",
+      "commit": "d3904d348754b492bda298b6c30f49c1eb24b7ea",
       "repository": "https://github.com/kujolang/agents-sdk.git"
     },
     "kujo-agents": {
-      "commit": "6c9b499378bca6992d38746cad44939b03b0011b",
+      "commit": "abe00dcffee2933877cf5a85d3c68c2176515194",
       "repository": "https://github.com/kujolang/kujo-agents.git"
     },
     "kujo-skills": {
-      "commit": "f0cf74044735f1feab9816229eb547006d671050",
+      "commit": "db4a7f3c290b45a87339c4ab805ec34e7ca85c8c",
       "repository": "https://github.com/kujolang/kujo-skills.git"
     },
     "storydesk": {

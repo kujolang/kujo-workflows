@@ -1,22 +1,23 @@
 # Publishing House validation record
 
-Captured on 2026-08-22 from the `main` branch. Generated run directories were
+Captured on 2026-08-29 from the `main` branch. Generated run directories were
 kept outside the repository or under ignored paths.
 
 | Command | Exit | Result |
 | --- | ---: | --- |
-| `python3 scripts/validate_catalog.py --json` | 0 | 37 workflows; no catalog errors |
+| `python3 scripts/validate_catalog.py --json` | 0 | 38 workflows; no catalog errors |
 | `python3 scripts/validate_contracts.py` | 0 | 19 schemas, 16 examples, 314 required-field negative checks |
-| `python3 scripts/validate_docs.py` | 0 | 132 Markdown files and 10 release files |
-| `bash scripts/run-publishing-house-fixture.sh --out <temporary-directory>` | 0 | 11 workflows, 46 resolved record references, 34 exact tool-contract preflights, 38 contract-loaded agent receipts, matching approval/publication checksum |
-| `bash tests/publishing-house-install.sh` | 0 | tracked-only archive installed with twelve clean locked dependency checkouts; Kujo-native doctor and all-eleven fixture passed from the final install path |
-| `python3 -m unittest discover -s tests -p 'test_*.py'` | 0 | 24 tests passed against the exact compatibility-matrix commits, including `kujo-agents` `6c9b499` and `kujo-skills` `f0cf740` |
-| `bash tests/release-readiness.sh` | 0 | documentation, static, catalog, contract, unit, codebase-cleanup, artifact, and whitespace gates passed |
+| `python3 scripts/validate_docs.py` | 0 | 137 Markdown files and 10 release files |
+| `bash scripts/run-publishing-house-fixture.sh --out <temporary-directory>` | 0 | 11 workflows, 46 resolved record references, 34 exact tool-contract preflights, 38 contract-loaded agent receipts, matching approval/publication checksum; timed direct run completed in 431.24 seconds |
+| `bash tests/publishing-house-install.sh` | not run | Separate clean-install proof remains covered by the 2026-08-22 record until rerun |
+| `python3 -m unittest discover -s tests -p 'test_*.py'` | 0 | 24 tests passed in 667.352 seconds after stale Publishing House fixture timeout was raised to 600 seconds |
+| `bash tests/release-readiness.sh` | not run | Full release-readiness gate is outside this weekly drift slice |
 
-The 2026-08-22 refresh advanced the locked `kujo`, `kujo-agents`, and
-`kujo-skills` checkouts after sibling audit, documentation, and skill-evidence
-commits; `kujo-publishing-house-workflows` itself was not changed by those
-sibling commits. Every Agents SDK receipt proves that the
+The 2026-08-29 refresh advanced the locked `kujo`, Dispatch, Agents SDK,
+`kujo-agents`, and `kujo-skills` checkouts after Agent Project, router,
+conversion-metadata, provider-neutral adapter, and skill-audit commits;
+`kujo-publishing-house-workflows` itself was not changed by those sibling
+commits. Every Agents SDK receipt from the fixture proof proves that the
 canonical house contracts, role contract, role skill, and Publishing House
 workflow skill were loaded by matching the instruction checksum returned by
 the runner. Fixture execution is offline and credential-free. PressWire

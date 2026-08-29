@@ -1,29 +1,29 @@
 {
   "schema_name": "publishing-house.compatibility-matrix",
   "schema_version": "1.0.0",
-  "tested_at": "2026-08-22T06:20:00Z",
+  "tested_at": "2026-08-29T09:40:00Z",
   "kujo": {
-    "version": "1.0.1",
-    "commit": "b03e3d5e7876a7e36eafcd803790d7ffa6cbfb76"
+    "version": "1.0.2",
+    "commit": "7e2b185c338f1dcb500a1eda47759b0db0b7b298"
   },
   "dispatch": {
-    "version": "1.0.0",
-    "commit": "3e8a5ff74919fd01e3674cfe47e3740206cd0afb",
+    "version": "1.2.0",
+    "commit": "662417c264bd55f8d802eef3fc21f9f372590753",
     "artifact_contract_version": "dispatch-artifact/v1"
   },
   "agents_sdk": {
     "version": "1.0.0",
-    "commit": "0e56994f45f577f6e5dd68f2c3c0c7e06af46d71",
+    "commit": "d3904d348754b492bda298b6c30f49c1eb24b7ea",
     "runner_contract_version": "0.1.0"
   },
   "kujo_agents": {
     "version": "1.2.0",
-    "commit": "6c9b499378bca6992d38746cad44939b03b0011b",
+    "commit": "abe00dcffee2933877cf5a85d3c68c2176515194",
     "publishing_house_contract_version": "1.0.0"
   },
   "kujo_skills": {
-    "version": "0.3.0",
-    "commit": "f0cf74044735f1feab9816229eb547006d671050",
+    "version": "0.4.1",
+    "commit": "db4a7f3c290b45a87339c4ab805ec34e7ca85c8c",
     "publishing_house_skill": "kujo-publishing-house-workflows"
   },
   "tools": {

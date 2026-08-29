@@ -1,6 +1,6 @@
 {
   "schema": "kujo.workflow-tool-integration/v1",
-  "audit_id": "kujo-workflows-audit-2026-08-22",
+  "audit_id": "kujo-workflows-audit-2026-08-29",
   "tools": [
     {
       "tool": "tribunal",
@@ -29,7 +29,7 @@
     {
       "tool": "relay",
       "canonical_repo": "../relay",
-      "actual_version": "current main at 8aaa613",
+      "actual_version": "current main at 0480733",
       "current_usage": [
         "relay-lifecycle-handoff"
       ],
@@ -42,7 +42,7 @@
       "complexity": "high",
       "risk": "Relay is a hardened local alpha; this integration proves local persistence, provider-tool execution through bounded policy workers, and operator resume, not remote exactly-once delivery or authenticated service durability. The 2026-08-12 Relay backlog refresh did not expand workflow-catalog guarantees.",
       "implementation": "implemented",
-      "reason": "The dedicated workflow runs a worktree mission through pause/resume, validates the integrity-checked export, and emits versioned message and delivery receipts. Recent Relay repository changes were documentation/backlog updates that did not require catalog migration.",
+      "reason": "The dedicated workflow runs a worktree mission through pause/resume, validates the integrity-checked export, and emits versioned message and delivery receipts. Relay v1.1.0 hardening/refactor commits preserve local persistence and delivery semantics without expanding this workflow boundary.",
       "tests": [
         "relay-lifecycle-handoff workflow",
         "mission pause/resume",
@@ -54,7 +54,7 @@
     {
       "tool": "ai-sdk",
       "canonical_repo": "../ai-sdk",
-      "actual_version": "current main at 08e7704",
+      "actual_version": "current main at be9617a",
       "current_usage": [
         "ai-sdk-muzzle-benchmark",
         "ai-sdk-watchdog-showcase"
@@ -68,7 +68,7 @@
       "complexity": "low",
       "risk": "Live-provider validation remains credential- and spend-gated; downstream workflows must not duplicate provider preference routing tables.",
       "implementation": "cataloged",
-      "reason": "The cataloged benchmark and Watchdog showcase still match AI SDK's repo-backed fixture/live contract and model-preference ownership. The 2026-08-11 regression gate did not require workflow contract changes.",
+      "reason": "The cataloged benchmark and Watchdog showcase still match AI SDK 1.1.0 fixture/live contracts. Native provider-driver and lockfile package contract work belongs to AI SDK/provider-package adoption and does not add workflow-runner claims here.",
       "tests": [
         "fixture benchmark",
         "fixture showcase",
@@ -80,7 +80,7 @@
     {
       "tool": "ai-chat",
       "canonical_repo": "../ai-chat",
-      "actual_version": "current main at 8e4c6f0",
+      "actual_version": "current main at ed3ff2c",
       "current_usage": [
         "ai-sdk-watchdog-showcase"
       ],
@@ -91,9 +91,9 @@
       "classification": "supporting-workflow-surface",
       "priority": "P2",
       "complexity": "medium",
-      "risk": "Browser and web-search execution require explicit local configuration, credentials, Chromium availability, and artifact review; benchmark quality claims must remain model- and run-qualified. The sibling AI Chat checkout is dirty and includes unrelated local experiments, so repository-backed catalog claims use committed main evidence only.",
+      "risk": "Browser, web-search, and managed-provider execution require explicit local configuration, credentials, Chromium availability, and artifact review; benchmark quality claims must remain model- and run-qualified.",
       "implementation": "preserved",
-      "reason": "The current showcase only depends on AI Chat as a Watchdog-routed app surface. The committed stream timeout and tool-pathing fixes improve the sibling app but do not create a supported workflow entry; dirty local experiment files remain excluded from catalog evidence.",
+      "reason": "The current showcase only depends on AI Chat as a Watchdog-routed app surface. Managed Hermes profile, tool-selection, and startup-binding fixes improve the sibling app but do not create a new supported workflow entry.",
       "tests": [
         "npm test in sibling repo",
         "smoke",
@@ -105,7 +105,7 @@
     {
       "tool": "watchdog",
       "canonical_repo": "../watchdog",
-      "actual_version": "current main at e009ecd",
+      "actual_version": "current main at 1af292b",
       "current_usage": [
         "ai-sdk-watchdog-showcase"
       ],
@@ -118,7 +118,7 @@
       "complexity": "medium",
       "risk": "Production posture requires separate API/proxy tokens, redaction, rate-limit configuration, environment-specific upstream credentials, and dated pricing evidence.",
       "implementation": "preserved",
-      "reason": "The showcase still routes AI traffic through Watchdog and exports telemetry. The 2026-08-16 pricing catalog refresh is compatible evidence and does not require a workflow contract migration.",
+      "reason": "The showcase still routes AI traffic through Watchdog and exports telemetry. Hermes routing and pricing catalog refreshes are compatible sibling evidence and do not require a workflow contract migration.",
       "tests": [
         "fixture showcase",
         "proxy integration stub suite",
@@ -143,7 +143,7 @@
       "complexity": "high",
       "risk": "Docker daemon/host kernel remain trusted; Workcell 1.0 is not a microVM or hosted multi-tenant isolation boundary and does not provide scheduling, organization-specific egress enforcement, or compliance certification.",
       "implementation": "implemented",
-      "reason": "The dedicated gate validates and inspects the Workcell definition, executes or records host-runtime blockage with versioned receipts, and preserves Workcell's documented host and daemon trust boundary. The Git patch secret-redaction hardening tightens evidence handling without expanding the workflow boundary.",
+      "reason": "The dedicated gate validates and inspects the Workcell definition, executes or records host-runtime blockage with versioned receipts, and preserves Workcell's documented host and daemon trust boundary. No newer Workcell commit was present this week.",
       "tests": [
         "workcell validate/inspect",
         "Docker execution",
@@ -155,7 +155,7 @@
     {
       "tool": "dispatch",
       "canonical_repo": "../dispatch",
-      "actual_version": "current main at 3e8a5ff",
+      "actual_version": "current main at 662417c",
       "current_usage": [
         "enterprise-dispatch-approval-router",
         "publishing-house-*"
@@ -169,7 +169,7 @@
       "complexity": "low",
       "risk": "External ChatOps delivery and callback authorization remain deployment-specific.",
       "implementation": "implemented",
-      "reason": "Existing workflows already exercise the current Dispatch contract, and Publishing House fixture proof covers deterministic offline run state and approval pause/resume.",
+      "reason": "Existing workflows already exercise the current Dispatch contract, and Publishing House fixture proof covers deterministic offline run state and approval pause/resume. Dispatch 1.2.0 router/runtime hardening and pinned AI SDK release gates preserve the catalog boundary.",
       "tests": [
         "workflow fixture run",
         "Dispatch resume proof",
@@ -207,7 +207,7 @@
     {
       "tool": "runledger",
       "canonical_repo": "../runledger",
-      "actual_version": "current main",
+      "actual_version": "current main at 12bbf2b",
       "current_usage": [
         "agency-runner",
         "agency-verified-fix-loop",
@@ -307,23 +307,26 @@
     {
       "tool": "kennel",
       "canonical_repo": "../kennel",
-      "actual_version": "current main",
+      "actual_version": "current main at 012c0a2",
       "current_usage": [
-        "codebase-cleanup"
+        "codebase-cleanup",
+        "owned-agent-project"
       ],
       "proposed_usage": [
-        "Kujo manifest validation after dependency cleanup"
+        "Kujo manifest validation after dependency cleanup",
+        "pinned dependency installation for owned Agent Project proofs"
       ],
       "gap": "Kennel is not applicable to non-Kujo package manifests.",
       "classification": "optional-integration",
       "priority": "P2",
       "complexity": "low",
-      "risk": "Text absence does not prove a package is unused.",
+      "risk": "Kennel must be available on PATH for owned Agent Project execution; text absence does not prove a package is unused.",
       "implementation": "implemented",
-      "reason": "Kennel runs only for a compatible target manifest and dependency removal remains human-reviewed.",
+      "reason": "Kennel package discovery remains relevant for Codebase Cleanup and owned Agent Project dependency installation; lockfile import clarification does not change workflow outputs.",
       "tests": [
         "unused dependency fixture",
-        "cleanup integration disposition"
+        "cleanup integration disposition",
+        "bash -n owned-agent-project/scripts/run.sh"
       ],
       "rollback": "Use the target package manager's own validation."
     },
@@ -408,7 +411,8 @@
       "actual_version": "current main",
       "current_usage": [
         "agency-verified-fix-loop",
-        "feature-card-workflow"
+        "feature-card-workflow",
+        "owned-agent-project"
       ],
       "proposed_usage": [
         "retain as deterministic acceptance owner"
@@ -419,10 +423,11 @@
       "complexity": "low",
       "risk": "Missing eval artifact must not be interpreted as a pass.",
       "implementation": "implemented",
-      "reason": "Existing workflows invoke Eval when a suite exists.",
+      "reason": "Existing workflows invoke Eval when a suite exists; owned Agent Project delegates deterministic generated-agent evaluation through `kujo agent eval`.",
       "tests": [
         "Eval fixture",
-        "missing-result negative case"
+        "missing-result negative case",
+        "owned Agent Project evaluation JSON"
       ],
       "rollback": "Use explicit command verification only."
     }
