@@ -111,4 +111,3 @@ Bundles pin compatible ranges; they do not force all adapters to release with co
 - mutation smoke tests run only in disposable resources with explicit authorization;
 - adapters warn before version expiry and fail closed after an unsupported version;
 - capability drift changes runtime availability rather than silently changing behavior.
-

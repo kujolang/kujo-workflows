@@ -1,0 +1,109 @@
+{
+  "schema_version": "webops.platform-adapter-contract-proposal/v1",
+  "status": "proposal",
+  "design_rule": "An adapter binds narrow Kujo Abilities to provider operations; it does not own reasoning, workflows, evaluation, reporting, or receipts storage.",
+  "manifest": {
+    "required": ["contract", "adapter_id", "adapter_version", "provider", "layers", "abilities", "auth", "fixture_sets"],
+    "properties": {
+      "contract": {"const": "webops.platform-adapter/v1"},
+      "adapter_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9.-]+$"},
+      "adapter_version": {"type": "string", "description": "Adapter release version, independent from WebOps core."},
+      "provider": {"type": "string"},
+      "provider_api_version": {"type": ["string", "null"], "description": "Captured when the provider exposes versioned APIs."},
+      "layers": {"type": "array", "items": {"enum": ["framework", "content", "commerce", "deployment", "edge", "analytics", "search"]}, "minItems": 1, "uniqueItems": true},
+      "abilities": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": ["id", "effect", "handler", "input_schema", "output_schema"],
+          "properties": {
+            "id": {"type": "string"},
+            "effect": {"enum": ["OBSERVE", "ACT"]},
+            "handler": {"type": "string"},
+            "input_schema": {"type": "string"},
+            "output_schema": {"type": "string"},
+            "rollback": {"enum": ["supported", "manual", "unavailable"]},
+            "required_scopes": {"type": "array", "items": {"type": "string"}},
+            "limits": {"type": "object", "description": "Hard pagination, payload, target, and timeout bounds."}
+          },
+          "additionalProperties": false
+        }
+      },
+      "auth": {
+        "type": "object",
+        "required": ["methods", "credential_references_only"],
+        "properties": {
+          "methods": {"type": "array", "items": {"enum": ["none", "api_token", "oauth", "service_account", "cli", "git"]}},
+          "credential_references_only": {"const": true},
+          "required_scopes_by_ability": {"type": "object"}
+        },
+        "additionalProperties": false
+      },
+      "fixture_sets": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+      "rate_limit_policy": {"type": "object"},
+      "error_mapping": {"type": "string"},
+      "redaction_policy": {"type": "string"}
+    },
+    "additionalProperties": false
+  },
+  "invocation": {
+    "contract": "webops.ability-invocation/v1",
+    "required": ["run_id", "site_profile_ref", "layer_instance_id", "ability", "effect", "input", "bounds"],
+    "properties": {
+      "run_id": {"type": "string"},
+      "site_profile_ref": {"type": "string"},
+      "layer_instance_id": {"type": "string"},
+      "ability": {"type": "string"},
+      "effect": {"enum": ["OBSERVE", "ACT"]},
+      "input": {"type": "object"},
+      "bounds": {"type": "object"},
+      "approval": {
+        "type": ["object", "null"],
+        "description": "Required for ACT; contains approval id, approved ability, site/layer target, input digest, and expiry. Never contains credentials."
+      },
+      "credential_reference": {"type": ["string", "null"], "description": "Symbolic reference resolved at execution time."},
+      "fixture_mode": {"type": "boolean"}
+    }
+  },
+  "result": {
+    "contract": "webops.ability-result/v1",
+    "required": ["status", "provider", "ability", "site_binding", "data", "evidence", "pagination", "rate_limit", "redactions"],
+    "properties": {
+      "status": {"enum": ["ok", "partial", "failed"]},
+      "provider": {"type": "string"},
+      "ability": {"type": "string"},
+      "site_binding": {"type": "object", "description": "Stable provider account/site/project identifiers and verified domains."},
+      "data": {"type": ["object", "array", "null"], "description": "Normalized and bounded output, never a giant raw provider payload."},
+      "evidence": {"type": "array", "items": {"type": "object"}},
+      "pagination": {"type": "object", "description": "Cursor, returned count, truncation, and next-page availability."},
+      "rate_limit": {"type": "object", "description": "Known quota/cost state and retry advice."},
+      "redactions": {"type": "array", "items": {"type": "string"}},
+      "provider_request_id": {"type": ["string", "null"]},
+      "provider_api_version": {"type": ["string", "null"]}
+    }
+  },
+  "error": {
+    "contract": "webops.adapter-error/v1",
+    "codes": ["auth_missing", "auth_scope_insufficient", "binding_mismatch", "capability_unavailable", "conflict_unresolved", "invalid_input", "approval_missing", "approval_mismatch", "rate_limited", "provider_unavailable", "provider_rejected", "pagination_bound_reached", "payload_bound_reached", "concurrency_conflict", "fixture_missing"],
+    "required_fields": ["code", "message", "retryable", "provider", "ability", "safe_details"],
+    "rules": ["never include secrets", "never include full response bodies by default", "preserve provider request id when safe", "normalize rate-limit retry metadata"]
+  },
+  "act_receipt_fragment": {
+    "contract": "webops.platform-operation-receipt/v1",
+    "required": ["operation_id", "run_id", "site_profile_ref", "layer_instance_id", "provider", "ability", "resource", "effect", "approval_id", "input_digest", "before_reference", "after_reference", "status", "rollback", "provider_request_id", "started_at", "finished_at", "evidence"],
+    "forbidden": ["credential values", "authorization headers", "full provider payloads", "unredacted personal data"],
+    "ownership": "RunLedger stores and correlates this normalized fragment; the adapter returns it."
+  },
+  "resolution_rules": [
+    "Explicit profile binding wins.",
+    "A single verified provider may satisfy an unbound OBSERVE ability.",
+    "Multiple eligible providers remain provider-labeled for measurements and never silently merge.",
+    "An unbound ACT with multiple eligible providers fails closed.",
+    "Profile binding, adapter manifest, credentials, and approval must agree on site/project identity before ACT."
+  ],
+  "conformance": {
+    "required": ["manifest_validation", "identity", "capability_truthfulness", "auth_reference_only", "observe_fixture", "pagination", "rate_limit", "error_normalization", "secret_redaction", "bounded_output", "receipt_metadata"],
+    "conditional_for_act": ["approval_required", "approval_digest_match", "tenant_guard", "bounded_target", "idempotency_or_concurrency_guard", "rollback_declaration", "mutation_fixture"],
+    "prohibited": ["network in default CI", "hidden mutation during OBSERVE or PROPOSE", "workflow orchestration", "SEO reasoning", "raw provider API passthrough"]
+  }
+}

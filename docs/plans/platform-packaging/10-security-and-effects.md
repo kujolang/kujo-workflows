@@ -82,4 +82,3 @@ Never say “rollback supported” without enumerating covered and excluded stat
 ## Webhook receive boundary
 
 `webhook.register` is ACT. Receiving and validating a delivery is OBSERVE but still network-exposed. Use a narrow local/optional ingress component with signature policy, timestamp/replay protection, size/content-type bounds, provider/site identity matching, event allowlist, dead-letter evidence, and no direct mutation. A verified event may enqueue Dispatch; it cannot bypass approval.
-

@@ -48,4 +48,3 @@ The defensible boundary is:
 ## Research limitations
 
 Official API surfaces and distribution policies change. Netlify analytics/log export, AWS Amplify rollback, Cloudflare integration-directory submission, and current framework-catalog review requirements require re-verification during implementation. Absence of a documented capability is represented as unsupported, not inferred from a provider UI.
-

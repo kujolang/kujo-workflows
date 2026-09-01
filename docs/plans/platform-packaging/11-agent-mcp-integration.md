@@ -66,4 +66,3 @@ Dispatch owns the workflow DAG. Each platform action is a tool/Ability step with
 - RunLedger correlation.
 
 Adapters never resume workflows or choose the next step.
-

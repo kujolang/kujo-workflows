@@ -65,4 +65,3 @@ All ten produce `state.json`, `capabilities.json`, `steps/*.json`, `findings.jso
 ## Repository ownership conclusion
 
 `kujo-workflows` should own site-profile, WebOps Ability catalog, adapter/binding manifests, resolver, workflow integration, fixtures, conformance, support-bundle manifests, docs, and release proof. Canonical `kujo.ability/v1` remains owned by the Ability package. Provider measurement implementations remain in SearchBridge. Site inspection remains in SiteProbe. Content relationships remain in ContentGraph. Runtime orchestration remains in Dispatch.
-

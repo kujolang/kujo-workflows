@@ -91,4 +91,3 @@ Heuristics are evidence, not authority. Do not infer a Cloudflare edge binding s
 ## v1 migration
 
 `webops.site-profile/v1` remains readable. Migration maps `site.platform` to a detected legacy hint, retains all existing fields, maps current SearchBridge integration keys to `analytics`/`search` instances, and emits a v2 profile requiring verification before ACT. The original file is never overwritten without explicit `--write` authorization; default init produces a proposal/diff.
-

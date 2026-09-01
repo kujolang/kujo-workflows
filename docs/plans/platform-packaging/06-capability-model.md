@@ -70,4 +70,3 @@ Statuses: `available`, `unconfigured`, `unverified`, `unauthorized`, `unsupporte
 ## Retry and idempotency
 
 Ability definitions use existing idempotency modes. Reads may be retry-safe within budgets. Mutations are either keyed, provider-idempotent, compensating-only, or never automatically retried. An asynchronous `202` or provider request ID is not success; the final receipt distinguishes `accepted`, `in_progress`, `succeeded`, `failed`, and `unknown`.
-

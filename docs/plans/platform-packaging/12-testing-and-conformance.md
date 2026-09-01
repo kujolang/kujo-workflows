@@ -88,4 +88,3 @@ Normal CI is offline. Scheduled opt-in smoke tests:
 ## Clean-machine proof
 
 Archive tracked files, install from the exact release manifest, use a temporary user-owned prefix, run bundle install/doctor/offline workflow/JSON validation/uninstall, verify no undeclared sibling checkout or developer cache is required, and retain a bounded receipt. Live-provider proof remains a separate optional phase.
-

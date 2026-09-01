@@ -44,4 +44,3 @@ Platform-facing documentation leads with outcomes:
 - Static: add local/CI site health and post-publish verification to any generated output.
 
 Internal tool names appear in architecture/reference docs, not onboarding headlines.
-

@@ -49,4 +49,3 @@ Add a platform Ability only when it unlocks one of four outcomes unavailable fro
 2. provider-native preview/deployment state;
 3. a bounded provider mutation needed by a WebOps workflow;
 4. provider-native measurements that SearchBridge can normalize and label.
-

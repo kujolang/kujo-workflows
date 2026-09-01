@@ -48,4 +48,3 @@ Kujo already uses “workflow pack” for CLI extension packaging. A monolithic 
 ## Platform-specific workflow exception rule
 
 A distinct workflow is allowed only when the sequence, approvals, and evidence are intrinsically provider-specific and cannot be expressed as optional Ability steps. No batch-1 case meets that threshold. Shopify theme review and Webflow full-site publishing are adapter/preset concerns, not new workflow families.
-

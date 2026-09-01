@@ -1,0 +1,236 @@
+{
+  "schema_version": "webops.platform-matrix/v1",
+  "research_date": "2026-09-01",
+  "rating_scale": "low|medium|high",
+  "platforms": [
+    {
+      "id": "generic-static",
+      "category": "generic website/static output",
+      "official_API": "none required; optional host APIs compose separately",
+      "authentication": ["none", "filesystem", "git credentials where needed"],
+      "OAuth": false,
+      "read_capabilities": ["site.read", "route.list", "metadata.read", "robots.read", "sitemap.read", "headers.inspect", "asset.list", "asset.inspect"],
+      "write_capabilities": ["none in base adapter"],
+      "content": "local files or generated output", "deployments": false, "previews": "local server or composed deploy adapter", "redirects": "inspect generated rules only", "analytics": false, "performance": "SiteProbe/Lens/SearchBridge", "cache": false, "webhooks": false,
+      "rate_limits": "crawl bounds only", "API_stability": "high", "fixture_feasibility": "high", "implementation_difficulty": "low",
+      "distribution_channels": ["Kujo/Kennel", "GitHub Actions", "Agent Skills", "MCP catalog", "GitHub examples"],
+      "strategic_value": "highest portable fallback and architecture proof", "recommended_tier": "tier_1_batch_1",
+      "sources": ["https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages"]
+    },
+    {
+      "id": "shopify", "category": "hosted commerce/CMS", "official_API": "GraphQL Admin API",
+      "authentication": ["OAuth access token", "custom app token"], "OAuth": true,
+      "read_capabilities": ["site.read", "content.list", "content.read", "metadata.read", "redirect.list", "asset.list", "webhook.receive"],
+      "write_capabilities": ["content.write", "content.publish", "metadata.write", "redirect.write", "webhook.register"],
+      "content": "products, collections, pages, blogs/articles, metafields, themes", "deployments": "theme publication only; Hydrogen hosting composes separately", "previews": "theme preview", "redirects": true, "analytics": "provider-native commerce data; normalized web measurements stay in SearchBridge", "performance": "external measurement", "cache": false, "webhooks": true,
+      "rate_limits": "GraphQL calculated query cost", "API_stability": "high with quarterly versions", "fixture_feasibility": "high", "implementation_difficulty": "high",
+      "distribution_channels": ["Shopify App Store", "custom distribution", "Shopify Partner ecosystem", "GitHub", "agency ecosystem"],
+      "strategic_value": "deep WebOps value and strong discovery channel", "recommended_tier": "tier_1_batch_1",
+      "sources": ["https://shopify.dev/docs/api/admin-graphql/latest", "https://shopify.dev/docs/api/usage/limits", "https://shopify.dev/docs/apps/launch/distribution"]
+    },
+    {
+      "id": "webflow", "category": "hosted visual site/CMS", "official_API": "Data API v2",
+      "authentication": ["OAuth", "site token"], "OAuth": true,
+      "read_capabilities": ["site.read", "content.list", "content.read", "metadata.read", "asset.list", "webhook.receive"],
+      "write_capabilities": ["content.write", "content.publish", "metadata.write", "deploy.trigger", "webhook.register"],
+      "content": "CMS collections/items and page metadata", "deployments": "site/domain publish", "previews": "staging domain", "redirects": "not a dependable public Data API capability", "analytics": "not adapter-owned", "performance": "external measurement", "cache": false, "webhooks": true,
+      "rate_limits": "plan-dependent request limits", "API_stability": "medium-high", "fixture_feasibility": "high", "implementation_difficulty": "medium",
+      "distribution_channels": ["Webflow Marketplace", "Webflow Apps", "agency ecosystem", "GitHub"],
+      "strategic_value": "strong agency distribution and meaningful CMS actions", "recommended_tier": "tier_1_batch_1",
+      "sources": ["https://developers.webflow.com/data/reference/authentication", "https://developers.webflow.com/data/docs/working-with-the-cms/publishing", "https://developers.webflow.com/data-beta/docs/marketplace/overview"]
+    },
+    {
+      "id": "vercel", "category": "application/deployment platform", "official_API": "REST API and webhooks",
+      "authentication": ["bearer token", "OAuth integration"], "OAuth": true,
+      "read_capabilities": ["environment.inspect", "deploy.inspect", "preview.resolve", "webhook.receive"],
+      "write_capabilities": ["deploy.trigger", "deploy.promote", "deploy.rollback", "webhook.register"],
+      "content": false, "deployments": true, "previews": true, "redirects": "repository/framework configuration, not generic runtime mutation", "analytics": "provider-native data may feed SearchBridge", "performance": "Speed Insights may feed SearchBridge", "cache": "do not expose broad purge initially", "webhooks": true,
+      "rate_limits": "endpoint/account dependent", "API_stability": "high", "fixture_feasibility": "high", "implementation_difficulty": "medium",
+      "distribution_channels": ["Vercel integrations", "community integration", "GitHub", "framework ecosystem"],
+      "strategic_value": "excellent preview/Lens and deployment verification fit", "recommended_tier": "tier_1_batch_1",
+      "sources": ["https://vercel.com/docs/rest-api", "https://vercel.com/docs/deployments/overview", "https://vercel.com/docs/integrations/submit-integration"]
+    },
+    {
+      "id": "cloudflare", "category": "edge/network/deployment platform", "official_API": "Cloudflare API and GraphQL Analytics API",
+      "authentication": ["scoped API token"], "OAuth": false,
+      "read_capabilities": ["environment.inspect", "deploy.inspect", "preview.resolve", "edge.analytics", "redirect.list", "headers.inspect"],
+      "write_capabilities": ["cache.purge.url", "deploy.rollback", "redirect.write", "webhook.register"],
+      "content": false, "deployments": "Pages/Workers", "previews": true, "redirects": true, "analytics": "edge analytics routed through SearchBridge", "performance": "Browser Insights/GraphQL inputs", "cache": true, "webhooks": "deployment events vary by product",
+      "rate_limits": "REST and GraphQL product limits", "API_stability": "high but product-diverse", "fixture_feasibility": "high", "implementation_difficulty": "high",
+      "distribution_channels": ["GitHub templates", "Workers/Pages examples", "Wrangler ecosystem", "Cloudflare community"],
+      "strategic_value": "validates edge composition and high-risk bounded ACT", "recommended_tier": "tier_1_batch_1",
+      "sources": ["https://developers.cloudflare.com/api/overview/", "https://developers.cloudflare.com/api/resources/cache/methods/purge/", "https://developers.cloudflare.com/pages/configuration/preview-deployments/"]
+    },
+    {
+      "id": "netlify", "category": "deployment/static hosting platform", "official_API": "REST API, hooks, build plugins",
+      "authentication": ["personal access token", "OAuth"], "OAuth": true,
+      "read_capabilities": ["environment.inspect", "deploy.inspect", "preview.resolve"],
+      "write_capabilities": ["deploy.trigger", "deploy.promote", "deploy.rollback"],
+      "content": false, "deployments": true, "previews": true, "redirects": "configuration inspection/proposal; mutation normally repository-owned", "analytics": "do not advertise until API scope is verified", "performance": "external measurement", "cache": false, "webhooks": true,
+      "rate_limits": "documented API limits and response headers", "API_stability": "high", "fixture_feasibility": "high", "implementation_difficulty": "medium",
+      "distribution_channels": ["Netlify Build Plugins", "GitHub", "Jamstack community"],
+      "strategic_value": "strong static/deploy diversity; follows first five", "recommended_tier": "tier_1_batch_2",
+      "sources": ["https://docs.netlify.com/api-and-cli-guides/api-guides/get-started-with-api/", "https://docs.netlify.com/deploy/deploy-types/deploy-previews/", "https://docs.netlify.com/extend/develop-and-share/develop-build-plugins/"]
+    },
+    {
+      "id": "squarespace", "category": "hosted visual site/commerce", "official_API": "Commerce APIs plus read-only Website API",
+      "authentication": ["OAuth", "API key where supported"], "OAuth": true,
+      "read_capabilities": ["site.read", "content.list for limited commerce/site data"],
+      "write_capabilities": ["limited commerce operations; no general page/CMS WebOps surface"],
+      "content": "insufficient general website content API", "deployments": false, "previews": false, "redirects": false, "analytics": false, "performance": "external measurement", "cache": false, "webhooks": "commerce subset",
+      "rate_limits": "documented per endpoint/application", "API_stability": "medium", "fixture_feasibility": "high", "implementation_difficulty": "medium",
+      "distribution_channels": ["Squarespace Extensions for eligible commerce use cases", "GitHub"],
+      "strategic_value": "generic crawl useful; dedicated automation depth too low", "recommended_tier": "do_not_build_dedicated_now",
+      "sources": ["https://developers.squarespace.com/commerce-apis/website-overview", "https://developers.squarespace.com/commerce-apis/authentication-and-permissions"]
+    },
+    {
+      "id": "github-pages", "category": "static hosting", "official_API": "GitHub Pages REST API and Actions",
+      "authentication": ["GitHub token", "Git credentials"], "OAuth": true,
+      "read_capabilities": ["environment.inspect", "deploy.inspect", "site.read"], "write_capabilities": ["deploy.trigger through bounded Actions workflow"],
+      "content": "repository-owned", "deployments": true, "previews": "not native as a general Pages contract", "redirects": "repository-owned", "analytics": false, "performance": "external measurement", "cache": false, "webhooks": true,
+      "rate_limits": "GitHub API limits", "API_stability": "high", "fixture_feasibility": "high", "implementation_difficulty": "low",
+      "distribution_channels": ["GitHub Marketplace/Actions", "starter workflows", "GitHub repositories"], "strategic_value": "broad static distribution, shallow adapter", "recommended_tier": "tier_2",
+      "sources": ["https://docs.github.com/en/rest/pages/pages", "https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages"]
+    },
+    {
+      "id": "astro", "category": "static/full-stack framework", "official_API": "integration API and build output", "authentication": ["none"], "OAuth": false,
+      "read_capabilities": ["route.list", "metadata.read", "asset.list"], "write_capabilities": ["repository patch proposal only"],
+      "content": "repository/content collections", "deployments": false, "previews": "composed deployment adapter", "redirects": "adapter/host configuration", "analytics": false, "performance": "generic", "cache": false, "webhooks": false,
+      "rate_limits": "none", "API_stability": "high", "fixture_feasibility": "high", "implementation_difficulty": "low",
+      "distribution_channels": ["Astro integrations catalog", "npm", "GitHub"], "strategic_value": "thin integration offers unusually strong discovery", "recommended_tier": "tier_2_batch_2",
+      "sources": ["https://docs.astro.build/en/guides/integrations-guide/sitemap/", "https://astro.build/integrations/"]
+    },
+    {
+      "id": "nextjs", "category": "full-stack framework", "official_API": "build/metadata conventions", "authentication": ["none"], "OAuth": false,
+      "read_capabilities": ["route.list", "metadata.read", "asset.list"], "write_capabilities": ["repository patch proposal only"],
+      "content": "repository or composed CMS", "deployments": false, "previews": "composed deploy adapter", "redirects": "next.config or host config", "analytics": false, "performance": "generic/SearchBridge", "cache": "framework-specific mutation excluded initially", "webhooks": false,
+      "rate_limits": "none", "API_stability": "medium-high", "fixture_feasibility": "high", "implementation_difficulty": "medium",
+      "distribution_channels": ["npm", "GitHub", "Vercel ecosystem"], "strategic_value": "large developer audience but generic support covers most needs", "recommended_tier": "tier_2_profile",
+      "sources": ["https://nextjs.org/docs/pages/guides/static-exports", "https://nextjs.org/docs/app/getting-started/metadata-and-og-images"]
+    },
+    {
+      "id": "nuxt", "category": "full-stack framework", "official_API": "Nitro/build conventions", "authentication": ["none"], "OAuth": false,
+      "read_capabilities": ["route.list", "metadata.read", "asset.list"], "write_capabilities": ["repository patch proposal only"],
+      "content": "repository or composed CMS", "deployments": false, "previews": "composed deploy adapter", "redirects": "framework/host configuration", "analytics": false, "performance": "generic", "cache": false, "webhooks": false,
+      "rate_limits": "none", "API_stability": "high", "fixture_feasibility": "high", "implementation_difficulty": "low",
+      "distribution_channels": ["Nuxt modules", "npm", "GitHub"], "strategic_value": "profile first; module only if distribution evidence warrants", "recommended_tier": "tier_2_profile",
+      "sources": ["https://nuxt.com/docs/4.x/getting-started/deployment"]
+    },
+    {
+      "id": "sveltekit", "category": "full-stack framework", "official_API": "adapter/build conventions", "authentication": ["none"], "OAuth": false,
+      "read_capabilities": ["route.list", "metadata.read", "asset.list"], "write_capabilities": ["repository patch proposal only"],
+      "content": "repository or composed CMS", "deployments": false, "previews": "composed deploy adapter", "redirects": "framework/host configuration", "analytics": false, "performance": "generic", "cache": false, "webhooks": false,
+      "rate_limits": "none", "API_stability": "high", "fixture_feasibility": "high", "implementation_difficulty": "low",
+      "distribution_channels": ["Svelte packages", "npm", "GitHub"], "strategic_value": "generic support plus profile is sufficient initially", "recommended_tier": "tier_2_profile",
+      "sources": ["https://svelte.dev/packages"]
+    },
+    {
+      "id": "hugo", "category": "static site generator", "official_API": "build output/config", "authentication": ["none"], "OAuth": false,
+      "read_capabilities": ["route.list", "metadata.read"], "write_capabilities": ["repository patch proposal only"],
+      "content": "local content", "deployments": false, "previews": "local server/composed host", "redirects": "host-specific", "analytics": false, "performance": "generic", "cache": false, "webhooks": false,
+      "rate_limits": "none", "API_stability": "high", "fixture_feasibility": "high", "implementation_difficulty": "low", "distribution_channels": ["GitHub", "Hugo community"], "strategic_value": "covered by generic static", "recommended_tier": "generic_support_only", "sources": ["https://gohugo.io/host-and-deploy/"]
+    },
+    {
+      "id": "eleventy", "category": "static site generator", "official_API": "build output/config", "authentication": ["none"], "OAuth": false,
+      "read_capabilities": ["route.list", "metadata.read"], "write_capabilities": ["repository patch proposal only"],
+      "content": "local content", "deployments": false, "previews": "local server/composed host", "redirects": "host-specific", "analytics": false, "performance": "generic", "cache": false, "webhooks": false,
+      "rate_limits": "none", "API_stability": "high", "fixture_feasibility": "high", "implementation_difficulty": "low", "distribution_channels": ["npm", "GitHub", "Eleventy community"], "strategic_value": "covered by generic static", "recommended_tier": "generic_support_only", "sources": ["https://www.11ty.dev/"]
+    },
+    {
+      "id": "jekyll", "category": "static site generator", "official_API": "plugins/build output", "authentication": ["none"], "OAuth": false,
+      "read_capabilities": ["route.list", "metadata.read"], "write_capabilities": ["repository patch proposal only"],
+      "content": "local content", "deployments": false, "previews": "local server/composed host", "redirects": "host-specific", "analytics": false, "performance": "generic", "cache": false, "webhooks": false,
+      "rate_limits": "none", "API_stability": "high", "fixture_feasibility": "high", "implementation_difficulty": "low", "distribution_channels": ["RubyGems", "GitHub Pages", "GitHub"], "strategic_value": "covered by generic static", "recommended_tier": "generic_support_only", "sources": ["https://jekyllrb.com/docs/plugins/installation/"]
+    },
+    {
+      "id": "docusaurus", "category": "documentation static framework", "official_API": "plugins/build output", "authentication": ["none"], "OAuth": false,
+      "read_capabilities": ["route.list", "metadata.read"], "write_capabilities": ["repository patch proposal only"],
+      "content": "local docs", "deployments": false, "previews": "local server/composed host", "redirects": "host-specific", "analytics": false, "performance": "generic", "cache": false, "webhooks": false,
+      "rate_limits": "none", "API_stability": "high", "fixture_feasibility": "high", "implementation_difficulty": "low", "distribution_channels": ["npm", "GitHub", "documentation community"], "strategic_value": "covered by generic static", "recommended_tier": "generic_support_only", "sources": ["https://www.docusaurus.io/docs/deployment"]
+    },
+    {
+      "id": "remix", "category": "full-stack framework", "official_API": "framework/build conventions", "authentication": ["none"], "OAuth": false,
+      "read_capabilities": ["route.list", "metadata.read"], "write_capabilities": ["repository patch proposal only"],
+      "content": "repository or composed CMS", "deployments": false, "previews": "composed deploy adapter", "redirects": "framework/host", "analytics": false, "performance": "generic", "cache": false, "webhooks": false,
+      "rate_limits": "none", "API_stability": "medium", "fixture_feasibility": "high", "implementation_difficulty": "low", "distribution_channels": ["npm", "GitHub"], "strategic_value": "generic support; ecosystem transition reduces dedicated value", "recommended_tier": "generic_support_only", "sources": ["https://remix.run/docs/en/main"]
+    },
+    {
+      "id": "sanity", "category": "headless CMS/content platform", "official_API": "Content Lake HTTP APIs", "authentication": ["scoped token"], "OAuth": true,
+      "read_capabilities": ["content.list", "content.read", "metadata.read"], "write_capabilities": ["content.write", "content.publish", "metadata.write"],
+      "content": true, "deployments": false, "previews": "presentation tooling; deploy adapter remains separate", "redirects": false, "analytics": false, "performance": false, "cache": false, "webhooks": true,
+      "rate_limits": "plan/API dependent", "API_stability": "high with date versioning", "fixture_feasibility": "high", "implementation_difficulty": "medium", "distribution_channels": ["Sanity integrations/exchange", "npm", "GitHub", "agency community"], "strategic_value": "strong compositional CMS proof", "recommended_tier": "tier_2_batch_2", "sources": ["https://www.sanity.io/docs/content-lake/http-auth", "https://www.sanity.io/docs/content-lake/api-versioning"]
+    },
+    {
+      "id": "contentful", "category": "headless CMS/content platform", "official_API": "Content Delivery/Preview/Management APIs", "authentication": ["API keys", "management token", "OAuth app"], "OAuth": true,
+      "read_capabilities": ["content.list", "content.read", "metadata.read"], "write_capabilities": ["content.write", "content.publish", "metadata.write"],
+      "content": true, "deployments": false, "previews": "Preview API; site preview via composed deploy adapter", "redirects": false, "analytics": false, "performance": false, "cache": false, "webhooks": true,
+      "rate_limits": "API/plan dependent", "API_stability": "high", "fixture_feasibility": "high", "implementation_difficulty": "medium", "distribution_channels": ["Contentful Marketplace", "apps", "GitHub", "agency ecosystem"], "strategic_value": "mature API and enterprise distribution", "recommended_tier": "tier_2_batch_2", "sources": ["https://www.contentful.com/developers/docs/references/authentication/", "https://www.contentful.com/developers/docs/references/content-management-api/"]
+    },
+    {
+      "id": "storyblok", "category": "headless CMS/content platform", "official_API": "Content Delivery and Management APIs", "authentication": ["access token", "OAuth app"], "OAuth": true,
+      "read_capabilities": ["content.list", "content.read", "metadata.read"], "write_capabilities": ["content.write", "content.publish"],
+      "content": true, "deployments": false, "previews": "visual editor integration", "redirects": false, "analytics": false, "performance": false, "cache": false, "webhooks": true,
+      "rate_limits": "documented API limits", "API_stability": "high", "fixture_feasibility": "high", "implementation_difficulty": "medium", "distribution_channels": ["Storyblok apps/integrations", "npm", "GitHub"], "strategic_value": "good API; follows Sanity/Contentful", "recommended_tier": "tier_2", "sources": ["https://www.storyblok.com/docs/api/management", "https://www.storyblok.com/docs/api/content-delivery"]
+    },
+    {
+      "id": "datocms", "category": "headless CMS/content platform", "official_API": "Content Management API", "authentication": ["API token"], "OAuth": false,
+      "read_capabilities": ["content.list", "content.read", "metadata.read"], "write_capabilities": ["content.write", "content.publish"],
+      "content": true, "deployments": false, "previews": "composed", "redirects": false, "analytics": false, "performance": false, "cache": false, "webhooks": true,
+      "rate_limits": "documented technical limits", "API_stability": "high", "fixture_feasibility": "high", "implementation_difficulty": "medium", "distribution_channels": ["DatoCMS marketplace/plugins", "npm", "GitHub"], "strategic_value": "clean API and restore semantics; smaller channel", "recommended_tier": "tier_2", "sources": ["https://www.datocms.com/docs/content-management-api", "https://www.datocms.com/docs/content-management-api/authentication"]
+    },
+    {
+      "id": "ghost", "category": "hosted/open-source publishing CMS", "official_API": "Admin and Content APIs", "authentication": ["integration token", "staff token"], "OAuth": false,
+      "read_capabilities": ["content.list", "content.read", "metadata.read"], "write_capabilities": ["content.write", "content.publish", "metadata.write"],
+      "content": true, "deployments": false, "previews": "editor/site mechanisms", "redirects": "upload configuration, high-risk", "analytics": false, "performance": false, "cache": false, "webhooks": true,
+      "rate_limits": "service dependent", "API_stability": "high", "fixture_feasibility": "high", "implementation_difficulty": "medium", "distribution_channels": ["Ghost integrations directory", "GitHub"], "strategic_value": "useful publishing semantics but lower priority", "recommended_tier": "tier_3", "sources": ["https://docs.ghost.org/admin-api", "https://docs.ghost.org/admin-api/webhooks/overview"]
+    },
+    {
+      "id": "prismic", "category": "headless CMS/content platform", "official_API": "Content API plus migration-oriented write tools", "authentication": ["repository token", "OAuth app"], "OAuth": true,
+      "read_capabilities": ["content.list", "content.read"], "write_capabilities": ["not recommended for routine WebOps until stable write fit is proven"],
+      "content": true, "deployments": false, "previews": true, "redirects": false, "analytics": false, "performance": false, "cache": false, "webhooks": true,
+      "rate_limits": "API dependent", "API_stability": "medium", "fixture_feasibility": "high", "implementation_difficulty": "medium", "distribution_channels": ["Prismic integrations", "npm", "GitHub"], "strategic_value": "read support possible; routine mutation fit unclear", "recommended_tier": "tier_3", "sources": ["https://prismic.io/features/migration"]
+    },
+    {
+      "id": "framer", "category": "hosted visual site builder", "official_API": "Server API (open beta)", "authentication": ["project API token"], "OAuth": false,
+      "read_capabilities": ["content.list", "content.read"], "write_capabilities": ["content.write", "content.publish where beta API supports it"],
+      "content": true, "deployments": "limited project publication semantics", "previews": true, "redirects": "not established", "analytics": false, "performance": false, "cache": false, "webhooks": "not established",
+      "rate_limits": "beta/service dependent", "API_stability": "low-medium", "fixture_feasibility": "medium", "implementation_difficulty": "medium", "distribution_channels": ["Framer Marketplace/community", "GitHub"], "strategic_value": "promising modern channel but beta stability", "recommended_tier": "tier_3_experimental", "sources": ["https://www.framer.com/developers/server-api-introduction"]
+    },
+    {
+      "id": "cloudflare-pages", "category": "static/edge deployment platform", "official_API": "Cloudflare Pages API", "authentication": ["scoped API token"], "OAuth": false,
+      "read_capabilities": ["environment.inspect", "deploy.inspect", "preview.resolve"], "write_capabilities": ["deploy.trigger", "deploy.rollback"],
+      "content": false, "deployments": true, "previews": true, "redirects": true, "analytics": "through Cloudflare/SearchBridge", "performance": "through Cloudflare/SearchBridge", "cache": "through edge adapter", "webhooks": true,
+      "rate_limits": "Cloudflare API limits", "API_stability": "high", "fixture_feasibility": "high", "implementation_difficulty": "low", "distribution_channels": ["Pages templates", "GitHub", "Cloudflare community"], "strategic_value": "implemented as Cloudflare adapter capability set, not separate package", "recommended_tier": "composed_under_cloudflare", "sources": ["https://developers.cloudflare.com/pages/configuration/preview-deployments/", "https://developers.cloudflare.com/pages/configuration/rollbacks/"]
+    },
+    {
+      "id": "aws-amplify", "category": "application/deployment platform", "official_API": "AWS Amplify API/CLI", "authentication": ["AWS IAM credentials"], "OAuth": false,
+      "read_capabilities": ["environment.inspect", "deploy.inspect", "preview.resolve"], "write_capabilities": ["deploy.trigger"],
+      "content": false, "deployments": true, "previews": true, "redirects": true, "analytics": "separate AWS services", "performance": "external", "cache": "service-specific", "webhooks": true,
+      "rate_limits": "AWS quotas", "API_stability": "high", "fixture_feasibility": "medium", "implementation_difficulty": "high", "distribution_channels": ["AWS Marketplace/solutions", "GitHub", "AWS community"], "strategic_value": "broad reach but credential and service complexity", "recommended_tier": "tier_3", "sources": ["https://docs.aws.amazon.com/amplify/latest/userguide/pr-previews.html"]
+    },
+    {
+      "id": "firebase-hosting", "category": "static/application hosting", "official_API": "Firebase Hosting REST API/CLI", "authentication": ["Google OAuth/service account", "CLI auth"], "OAuth": true,
+      "read_capabilities": ["environment.inspect", "deploy.inspect"], "write_capabilities": ["deploy.trigger", "deploy.rollback"],
+      "content": false, "deployments": true, "previews": true, "redirects": "configuration", "analytics": "SearchBridge/GA4", "performance": "external", "cache": "headers/configuration", "webhooks": false,
+      "rate_limits": "Google API quotas", "API_stability": "high", "fixture_feasibility": "medium", "implementation_difficulty": "medium", "distribution_channels": ["Firebase Extensions/community", "GitHub", "Google developer ecosystem"], "strategic_value": "strong alternate deploy proof after initial platforms", "recommended_tier": "tier_2", "sources": ["https://firebase.google.com/docs/hosting/api-deploy"]
+    },
+    {
+      "id": "render", "category": "application/deployment platform", "official_API": "Render API", "authentication": ["API key"], "OAuth": false,
+      "read_capabilities": ["environment.inspect", "deploy.inspect"], "write_capabilities": ["deploy.trigger", "deploy.rollback"],
+      "content": false, "deployments": true, "previews": true, "redirects": false, "analytics": false, "performance": "external", "cache": false, "webhooks": true,
+      "rate_limits": "documented API limits", "API_stability": "high", "fixture_feasibility": "high", "implementation_difficulty": "low", "distribution_channels": ["Render blueprints", "GitHub", "community"], "strategic_value": "thin adapter; lower distribution than first waves", "recommended_tier": "tier_3", "sources": ["https://api-docs.render.com/reference/introduction"]
+    },
+    {
+      "id": "railway", "category": "application/deployment platform", "official_API": "GraphQL API/CLI", "authentication": ["API token"], "OAuth": false,
+      "read_capabilities": ["environment.inspect", "deploy.inspect"], "write_capabilities": ["deploy.trigger", "deploy.rollback"],
+      "content": false, "deployments": true, "previews": true, "redirects": false, "analytics": false, "performance": "external", "cache": false, "webhooks": true,
+      "rate_limits": "service dependent", "API_stability": "medium", "fixture_feasibility": "high", "implementation_difficulty": "medium", "distribution_channels": ["Railway templates", "GitHub", "community"], "strategic_value": "modern developer fit, smaller WebOps depth", "recommended_tier": "tier_3", "sources": ["https://docs.railway.com/reference/public-api"]
+    },
+    {
+      "id": "flyio", "category": "application/edge deployment platform", "official_API": "Machines API/CLI", "authentication": ["scoped access token"], "OAuth": false,
+      "read_capabilities": ["environment.inspect", "deploy.inspect"], "write_capabilities": ["deploy.trigger", "deploy.rollback"],
+      "content": false, "deployments": true, "previews": "application-defined", "redirects": false, "analytics": false, "performance": "external", "cache": false, "webhooks": false,
+      "rate_limits": "service dependent", "API_stability": "medium-high", "fixture_feasibility": "medium", "implementation_difficulty": "high", "distribution_channels": ["GitHub", "Fly.io community"], "strategic_value": "strong decentralized fit, modest discovery channel", "recommended_tier": "tier_3", "sources": ["https://fly.io/docs/machines/api/"]
+    }
+  ]
+}

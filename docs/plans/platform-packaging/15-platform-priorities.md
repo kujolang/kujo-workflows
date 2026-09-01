@@ -117,4 +117,3 @@ Expect roughly 1,000–2,500 lines of provider-specific implementation/tests for
 45. With no adapter, live URL + optional repo/build output still supports the full generic evidence workflow set.
 
 > **WordPress and Wix are intentionally excluded from Kujo's platform-specific WebOps strategy.**
-

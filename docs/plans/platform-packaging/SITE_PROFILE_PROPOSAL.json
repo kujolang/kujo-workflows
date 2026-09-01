@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kujolang.dev/contracts/webops/site-profile.v2.schema.json",
+  "title": "Kujo WebOps compositional site profile v2 proposal",
+  "description": "Additive successor to webops.site-profile/v1. It composes independently verified platform layers and stores credential references, never credential values.",
+  "type": "object",
+  "required": ["contract", "site", "composition"],
+  "properties": {
+    "contract": {"const": "webops.site-profile/v2"},
+    "extends": {"type": ["string", "null"], "description": "Optional v1 profile reference during migration."},
+    "site": {
+      "type": "object",
+      "required": ["id", "canonical_url"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9.-]+$"},
+        "canonical_url": {"type": "string", "format": "uri", "pattern": "^https?://"},
+        "repository": {"type": ["object", "null"], "properties": {"path": {"type": "string"}, "remote": {"type": ["string", "null"]}, "default_branch": {"type": ["string", "null"]}}, "additionalProperties": false},
+        "allowed_domains": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "tags": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+      },
+      "additionalProperties": false
+    },
+    "composition": {
+      "type": "object",
+      "properties": {
+        "framework": {"$ref": "#/$defs/layer_list"},
+        "content": {"$ref": "#/$defs/layer_list"},
+        "commerce": {"$ref": "#/$defs/layer_list"},
+        "deployment": {"$ref": "#/$defs/layer_list"},
+        "edge": {"$ref": "#/$defs/layer_list"},
+        "analytics": {"$ref": "#/$defs/layer_list"},
+        "search": {"$ref": "#/$defs/layer_list"}
+      },
+      "additionalProperties": false
+    },
+    "bindings": {
+      "type": "object",
+      "description": "Explicit semantic ability to layer-instance resolution. Required whenever resolution would otherwise be ambiguous, and always recommended for ACT.",
+      "additionalProperties": {"type": "string", "description": "Layer instance id."}
+    },
+    "preferences": {
+      "type": "object",
+      "properties": {
+        "enabled_workflows": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "active_skill_sets": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "default_mode": {"enum": ["OBSERVE", "PROPOSE"]},
+        "network_policy": {"enum": ["fixture", "declared_hosts_only", "offline"]}
+      },
+      "additionalProperties": false
+    },
+    "detection": {
+      "type": "object",
+      "description": "Provenance for detected, declared, and verified facts; never a substitute for explicit ACT binding.",
+      "properties": {
+        "generated_at": {"type": "string", "format": "date-time"},
+        "facts": {"type": "array", "items": {"$ref": "#/$defs/detection_fact"}}
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "layer_list": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/layer"},
+      "default": []
+    },
+    "layer": {
+      "type": "object",
+      "required": ["id", "provider", "adapter", "identity", "credential_ref", "status"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9.-]+$"},
+        "provider": {"type": "string"},
+        "adapter": {"type": "string"},
+        "identity": {
+          "type": "object",
+          "properties": {
+            "account_id": {"type": ["string", "null"]},
+            "site_id": {"type": ["string", "null"]},
+            "project_id": {"type": ["string", "null"]},
+            "environment": {"type": ["string", "null"]},
+            "domains": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+          },
+          "additionalProperties": false
+        },
+        "credential_ref": {"type": ["string", "null"], "description": "Environment/keychain/provider-native reference only; never a secret value."},
+        "status": {"enum": ["declared", "detected", "verified", "disabled"]},
+        "api_version": {"type": ["string", "null"]},
+        "ability_allowlist": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "settings": {"type": "object", "description": "Adapter-defined non-secret bounded settings."}
+      },
+      "additionalProperties": false
+    },
+    "detection_fact": {
+      "type": "object",
+      "required": ["subject", "value", "status", "source", "observed_at", "confidence"],
+      "properties": {
+        "subject": {"type": "string"},
+        "value": {},
+        "status": {"enum": ["detected", "declared", "verified", "conflict"]},
+        "source": {"enum": ["repository_file", "package_manifest", "framework_config", "hosting_config", "dns", "http_header", "html_marker", "api", "user"]},
+        "source_reference": {"type": ["string", "null"]},
+        "observed_at": {"type": "string", "format": "date-time"},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "examples": [
+    {
+      "contract": "webops.site-profile/v2",
+      "site": {"id": "example-store", "canonical_url": "https://example.com", "repository": {"path": ".", "remote": null, "default_branch": "main"}, "allowed_domains": ["example.com"]},
+      "composition": {
+        "framework": [{"id": "next", "provider": "nextjs", "adapter": "webops-framework-nextjs", "identity": {"account_id": null, "site_id": null, "project_id": null, "environment": null, "domains": ["example.com"]}, "credential_ref": null, "status": "verified", "api_version": null, "ability_allowlist": ["route.list", "metadata.read"], "settings": {}}],
+        "content": [{"id": "sanity-main", "provider": "sanity", "adapter": "webops-adapter-sanity", "identity": {"account_id": null, "site_id": null, "project_id": "project-id", "environment": "production", "domains": []}, "credential_ref": "env:SANITY_WEBOPS_TOKEN", "status": "verified", "api_version": "2026-08-01", "ability_allowlist": ["content.list", "content.read"], "settings": {"dataset": "production"}}],
+        "commerce": [{"id": "shopify-store", "provider": "shopify", "adapter": "webops-adapter-shopify", "identity": {"account_id": null, "site_id": "example.myshopify.com", "project_id": null, "environment": "production", "domains": ["example.com"]}, "credential_ref": "env:SHOPIFY_WEBOPS_TOKEN", "status": "verified", "api_version": "2026-07", "ability_allowlist": ["content.list", "content.read", "metadata.read"], "settings": {}}],
+        "deployment": [{"id": "vercel-prod", "provider": "vercel", "adapter": "webops-adapter-vercel", "identity": {"account_id": "team-id", "site_id": null, "project_id": "project-id", "environment": "production", "domains": ["example.com"]}, "credential_ref": "env:VERCEL_WEBOPS_TOKEN", "status": "verified", "api_version": null, "ability_allowlist": ["environment.inspect", "deploy.inspect", "preview.resolve"], "settings": {}}],
+        "edge": [{"id": "cloudflare-zone", "provider": "cloudflare", "adapter": "webops-adapter-cloudflare", "identity": {"account_id": "account-id", "site_id": "zone-id", "project_id": null, "environment": "production", "domains": ["example.com"]}, "credential_ref": "env:CLOUDFLARE_WEBOPS_TOKEN", "status": "verified", "api_version": null, "ability_allowlist": ["environment.inspect", "edge.analytics"], "settings": {}}],
+        "analytics": [{"id": "ga4", "provider": "ga4", "adapter": "searchbridge-ga4", "identity": {"account_id": null, "site_id": "property-id", "project_id": null, "environment": null, "domains": ["example.com"]}, "credential_ref": "env:GA4_WEBOPS_CREDENTIAL", "status": "verified", "api_version": null, "ability_allowlist": ["analytics.read"], "settings": {}}],
+        "search": [{"id": "gsc", "provider": "google-search-console", "adapter": "searchbridge-gsc", "identity": {"account_id": null, "site_id": "sc-domain:example.com", "project_id": null, "environment": null, "domains": ["example.com"]}, "credential_ref": "env:GSC_WEBOPS_CREDENTIAL", "status": "verified", "api_version": null, "ability_allowlist": ["search.performance.read", "sitemap.submit"], "settings": {}}]
+      },
+      "bindings": {"content.read": "sanity-main", "content.publish": "shopify-store", "deploy.inspect": "vercel-prod", "edge.analytics": "cloudflare-zone", "analytics.read": "ga4", "search.performance.read": "gsc"},
+      "preferences": {"enabled_workflows": ["weekly-site-health", "weekly-search-intelligence", "post-publish"], "active_skill_sets": ["site-health", "search-intelligence", "post-publish"], "default_mode": "OBSERVE", "network_policy": "declared_hosts_only"}
+    }
+  ]
+}

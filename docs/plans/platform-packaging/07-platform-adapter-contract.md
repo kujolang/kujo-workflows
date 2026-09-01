@@ -86,4 +86,3 @@ A new semantic Ability requires core review; a new provider binding does not.
 - Webflow binding preserves staged/live state and treats staged writes as ACT.
 - Vercel binding resolves project/deployment IDs and returns preview protection metadata.
 - Cloudflare binding separates zone Pages, cache, rules, and analytics scopes and never exposes `purge_everything` under URL purge authority.
-

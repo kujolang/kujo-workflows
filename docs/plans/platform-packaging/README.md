@@ -1,7 +1,7 @@
 # Kujo WebOps Platform Packaging
 
-Status: architecture and implementation handoff, researched 2026-09-01  
-Audience: Kujo maintainers and the implementation agent  
+Status: architecture and implementation handoff, researched 2026-09-01
+Audience: Kujo maintainers and the implementation agent
 Decision horizon: batch 1 and batch 2 of platform-aware WebOps packaging
 
 > **WordPress and Wix are intentionally excluded from Kujo's platform-specific WebOps strategy.**
@@ -80,4 +80,3 @@ Implement `webops.site-profile/v2`, the resolver, seven read-only static-site Ab
 ## Governing non-goals
 
 WebOps is not a provider control panel, deployment orchestrator, generic CMS SDK, all-in-one SEO SaaS, or mandatory hosted service. Platform support is an enhancement; generic WebOps remains first-class when no adapter exists.
-
