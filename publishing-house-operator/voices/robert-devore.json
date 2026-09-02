@@ -1,0 +1,9 @@
+{
+  "schema_name": "publishing-house.voice-profile", "schema_version": "1.0.0", "id": "robert-devore",
+  "scope": "author", "sources": ["../../robertdevore.com/content/posts"],
+  "principles": ["Write from a real point of view", "Use concrete technical detail", "Keep useful rough edges when they carry voice", "Make claims earn their certainty"],
+  "first_person": "preferred for observations and arguments", "technical_depth": "implementation-aware", "structure": "thesis-led but not formulaic",
+  "avoid": ["generic scene-setting", "synthetic epiphanies", "filler transitions", "corporate Kujo voice", "unearned certainty", "repetitive conclusion summaries"],
+  "negative_examples": ["The bigger idea became...", "It started from a simple frustration...", "Let's dive in...", "In today's fast-paced...", "This distinction matters because..."],
+  "evaluation": {"generic_ai_phrase_detection": true, "voice_evidence_required": true, "minimum_source_samples": 5}
+}

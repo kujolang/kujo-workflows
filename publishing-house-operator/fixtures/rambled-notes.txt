@@ -1,0 +1,4 @@
+I keep coming back to the same problem: an agent should be a software project,
+not a prompt pasted into whichever chat window happens to be open. A real agent
+has a contract, tools, tests, a budget, state boundaries, and a release history.
+Use the Kujo agent-project implementation and tests as the evidence source.

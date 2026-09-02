@@ -1,0 +1,1 @@
+{"schema_name":"publishing-house.voice-profile","schema_version":"1.0.0","id":"kujo-docs","scope":"publication","principles":["Answer the task directly","Use tested commands","Explain failure states","Distinguish fact from intent"],"avoid":["marketing language","plausibility-only behavior","needless preamble"],"technical_depth":"exact and reproducible"}

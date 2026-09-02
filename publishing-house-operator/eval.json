@@ -1,0 +1,14 @@
+{
+  "name": "publishing-house-operator-contract",
+  "description": "Deterministic operator, profile, intake, plan, event, and safety gates.",
+  "version": "1.0.0",
+  "output_dir": ".eval_publishing_house_operator",
+  "stop_on_failure": false,
+  "tests": [
+    {"name":"operator tests pass","check":"command_succeeds","params":{"command":"python3 -m unittest publishing-house-operator/tests/test_operator.py -v"},"timeout_seconds":180},
+    {"name":"publication profile schema exists","check":"file_exists","params":{"path":"publishing-house-operator/schemas/publication-profile.schema.json"}},
+    {"name":"sourcepack schema exists","check":"file_exists","params":{"path":"publishing-house-operator/schemas/sourcepack.schema.json"}},
+    {"name":"monthly fixture exists","check":"file_exists","params":{"path":"publishing-house-operator/fixtures/september-2026.json"}},
+    {"name":"no secret fixture language","check":"file_contains","params":{"path":"publishing-house-operator/README.md","expected":"No profile, SourcePack, plan, prompt, receipt, log, or export may contain a"}}
+  ]
+}

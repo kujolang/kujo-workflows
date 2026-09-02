@@ -1,0 +1,16 @@
+{
+  "schema_name": "publishing-house.publication-profile", "schema_version": "1.0.0", "id": "kujolang-ai",
+  "identity": {"name": "kujolang.ai", "canonical_url": "https://kujolang.ai"}, "publication_type": "product-and-ecosystem-site",
+  "canonical_repository": "../kujolang.ai",
+  "source_of_truth": {"content": ["content/pages", "content/ecosystem", "content/skills", "content/workflows", "content/posts"], "assets": ["howl-social.json", "assets"], "generated": ["output"], "never_edit": ["output"]},
+  "audience": "developers and teams evaluating or using Kujo", "editorial_mission": "Explain the Kujo language and ecosystem accurately through source-backed, useful content.",
+  "voice_profile": "voices/kujolang.json", "style_rules": ["Lead with verified capability", "State readiness boundaries", "Avoid inflated claims"], "terminology": {"Kujo": "Kujo", "SiteKit": "SiteKit"}, "avoided_patterns": ["revolutionary", "game-changing", "effortless"],
+  "content_formats": ["writing-post", "ecosystem-page", "workflow-page", "skill-page", "release-note", "metadata-fix", "social-card-sync"],
+  "frontmatter": {"format": "yaml", "required": ["title", "description", "slug"], "ecosystem_fields": ["install_command", "github_url", "launch_story", "scope_note"]},
+  "author_policy": {"default": "Kujo Publishing House"}, "claim_policy": {"new_public_claims": "escalate", "readiness": "must-match-source"}, "evidence_policy": {"source_mapping": true, "required_for": ["capability", "readiness", "performance", "security"]}, "research_policy": {"prefer": ["repository", "tests", "release-artifacts", "official-docs"]},
+  "linking_policy": {"internal": "contentgraph", "external": "verified"}, "seo_policy": {"canonical": true, "sitemap": true, "structured_data": true}, "ai_search_policy": {"llms_txt": true, "source_clarity": true}, "asset_policy": {"social_card": "required", "howl_manifest": "howl-social.json", "alt_text": "required", "rights_metadata": "required"}, "accessibility": {"wcag": "2.2 AA"},
+  "build": {"commands": ["npm run social:cards", "kujo run ./build.kujo -- --site-url https://kujolang.ai"], "tests": ["bash scripts/verify-site-contract.sh output", "bash scripts/validate-generated-output.sh output", "npm run social:verify", "node --check assets/js/site.js", "npm audit --omit=dev"], "preview": "bash scripts/dev.sh 4178"},
+  "deployment": {"adapter": "presswire-git-static", "branch": "main", "mechanism": "GitHub Pages workflow", "destination": "https://kujolang.ai", "generated_output_committed": false},
+  "verification": {"status": 200, "metadata": ["canonical", "og", "x", "structured-data"], "checks": ["links", "accessibility", "desktop", "mobile", "console", "sitemap"]}, "measurement": {"adapters": ["readersignal", "webops-post-publish"]},
+  "approval_policy": {"default": "REQUIRE_EXACT_HUMAN_APPROVAL", "automatic_classes": ["metadata-fix", "social-card-sync"], "escalate": ["new-public-claim", "security", "breaking-change", "positioning"]}, "refresh_policy": {"cadence_days": 90, "signals": ["release", "content-decay", "search-opportunity"]}, "correction_policy": {"invalidate_approval_on_change": true, "record_reason": true, "rollback": "git-revert"}
+}

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>Label</key><string>ai.kujolang.publishing-house</string>
+  <key>ProgramArguments</key><array>
+    <string>/absolute/kujo-workflows/publishing-house-operator/bin/publishing-house</string>
+    <string>--state</string><string>/absolute/publishing-house-state</string>
+    <string>--repos</string><string>/absolute/kujo-repos</string>
+    <string>--json</string><string>tick</string>
+  </array>
+  <key>StartCalendarInterval</key><dict><key>Hour</key><integer>7</integer><key>Minute</key><integer>17</integer></dict>
+  <key>ProcessType</key><string>Background</string>
+  <key>StandardOutPath</key><string>/absolute/publishing-house-state/operator.log</string>
+  <key>StandardErrorPath</key><string>/absolute/publishing-house-state/operator-error.log</string>
+</dict></plist>

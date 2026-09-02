@@ -1,0 +1,2 @@
+# Replace paths locally. Do not commit credentials into this file.
+17 7 * * * /absolute/kujo-workflows/publishing-house-operator/bin/publishing-house --state /absolute/publishing-house-state --repos /absolute/kujo-repos --json tick >>/absolute/publishing-house-state/operator.log 2>&1

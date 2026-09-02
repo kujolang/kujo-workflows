@@ -1,0 +1,9 @@
+{
+  "schema_name": "publishing-house.editorial-plan", "schema_version": "1.0.0", "kind": "monthly", "month": "2026-09",
+  "items": [
+    {"id":"agents-are-projects","publication":"personal-blog","type":"technical-essay","priority":"high","source":"./fixtures/rambled-notes.txt","publish_window":{"start":"2026-09-05","end":"2026-09-08"},"adaptations":["x-thread"]},
+    {"id":"kujo-agent-walkthrough","publication":"kujolang-ai","type":"writing-post","source":"./fixtures/rambled-notes.txt","depends_on":["agents-are-projects"]},
+    {"id":"agent-catalog-sync","publication":"agents-kujolang-ai","type":"canonical-agent-sync","source":"../kujo-agents","priority":"normal"},
+    {"id":"docs-metadata-correction","publication":"docs-kujolang-ai","type":"docs-correction","source":"../kujo","priority":"normal"}
+  ]
+}
