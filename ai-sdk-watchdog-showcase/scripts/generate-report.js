@@ -68,9 +68,12 @@ const stats = readJson(path.join(runDir, "watchdog", "stats.json"), {});
 const requestsPayload = readJson(path.join(runDir, "watchdog", "requests.json"), {});
 const toolsPayload = readJson(path.join(runDir, "watchdog", "tool-calls.json"), {});
 const stepsPayload = readJson(path.join(runDir, "watchdog", "agent-steps.json"), {});
+const telemetryV2Payload = readJson(path.join(runDir, "watchdog", "telemetry-v2-records.json"), {});
+const exportStatusPayload = readJson(path.join(runDir, "watchdog", "export-status.json"), {});
 const requests = dataArray(requestsPayload, "requests");
 const toolCalls = dataArray(toolsPayload, "tool_calls");
 const agentSteps = dataArray(stepsPayload, "agent_steps");
+const telemetryV2 = dataArray(telemetryV2Payload, "records");
 const responses = listResponses();
 
 const successCount = requests.filter((row) => row.status === "success").length;
@@ -122,23 +125,25 @@ lines.push(`| Successful requests | ${successCount} |`);
 lines.push(`| Error requests | ${errorCount} |`);
 lines.push(`| Proxy tool-call records | ${toolCalls.length} |`);
 lines.push(`| Proxy agent-step records | ${agentSteps.length} |`);
+lines.push(`| Canonical telemetry v2 records | ${telemetryV2.length} |`);
 lines.push(`| Total provider tokens | ${totalTokens} |`);
 lines.push(`| Estimated cost USD | ${totalCost.toFixed(6)} |`);
 lines.push(`| Average latency ms | ${avgLatency} |`);
 lines.push("");
 lines.push("## Recent Watchdog Requests");
 lines.push("");
-lines.push("| Status | Model | Latency | Tokens | Error | Prompt Summary |");
-lines.push("|---|---|---:|---:|---|---|");
+lines.push("| Status | Model | Latency | Tokens | Error |");
+lines.push("|---|---|---:|---:|---|");
 for (const row of requests.slice(0, 8)) {
-	const prompt = firstString(row.prompt_summary, "").slice(0, 80).replace(/\|/g, "\\|");
 	const error = firstString(row.error_code, row.error_message, "");
-	lines.push(`| ${row.status || ""} | \`${row.model || ""}\` | ${numberValue(row.latency_ms)} | ${numberValue(row.total_tokens)} | ${error.replace(/\|/g, "\\|")} | ${prompt} |`);
+	lines.push(`| ${row.status || ""} | \`${row.model || ""}\` | ${numberValue(row.latency_ms)} | ${numberValue(row.total_tokens)} | ${error.replace(/\|/g, "\\|")} |`);
 }
 lines.push("");
 lines.push("## Artifacts");
 lines.push("");
 lines.push("- `watchdog/export.json` contains the complete Watchdog export for this demo run.");
+lines.push("- `watchdog/telemetry-v2-records.json` and `watchdog/telemetry-v2.jsonl` prove the normalized, replayable interoperability contract.");
+lines.push("- `watchdog/export-status.json` proves exporter health is observable without coupling the application to a destination.");
 lines.push("- `watchdog/requests.json`, `watchdog/tool-calls.json`, and `watchdog/agent-steps.json` are the fastest files to inspect manually.");
 lines.push("- `logs/watchdog.log` contains the Watchdog service log.");
 if ((meta.upstream_mode || "fixture") === "fixture") {
@@ -169,6 +174,8 @@ const compact = {
 		errors: errorCount,
 		tool_calls: toolCalls.length,
 		agent_steps: agentSteps.length,
+		canonical_v2_records: telemetryV2.length,
+		export_status: exportStatusPayload && exportStatusPayload.data ? exportStatusPayload.data : exportStatusPayload,
 		total_tokens: totalTokens,
 		estimated_cost_usd: Number(totalCost.toFixed(8)),
 		average_latency_ms: avgLatency,

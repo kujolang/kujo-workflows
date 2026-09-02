@@ -258,6 +258,9 @@ fetch_watchdog "/api/tool-calls?page_size=50" "$WATCHDOG_OUT/tool-calls.json"
 fetch_watchdog "/api/agent-steps?page_size=100" "$WATCHDOG_OUT/agent-steps.json"
 fetch_watchdog "/api/charts/status-breakdown" "$WATCHDOG_OUT/status-breakdown.json"
 fetch_watchdog "/api/export?format=json&max_rows=200" "$WATCHDOG_OUT/export.json"
+fetch_watchdog "/api/telemetry/v2/records?page_size=200" "$WATCHDOG_OUT/telemetry-v2-records.json"
+fetch_watchdog "/api/telemetry/v2/export-status" "$WATCHDOG_OUT/export-status.json"
+curl -fsS "$WATCHDOG_URL/telemetry/v2/jsonl?max_rows=200" > "$WATCHDOG_OUT/telemetry-v2.jsonl"
 
 node "$ROOT/scripts/generate-report.js" "$RUN_DIR"
 

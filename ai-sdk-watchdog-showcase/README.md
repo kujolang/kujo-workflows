@@ -45,6 +45,9 @@ ai-sdk-watchdog-showcase/.runs/<timestamp>/
     agent-steps.json
     status-breakdown.json
     export.json
+    telemetry-v2-records.json
+    telemetry-v2.jsonl
+    export-status.json
   logs/
     mock-upstream.log
     watchdog.log
@@ -82,11 +85,17 @@ Without Watchdog, the app gets only the normalized AI SDK response. With Watchdo
 - request status and latency
 - normalized model and token usage
 - cost estimate
-- prompt and response summaries
+- metadata-only canonical trace/span/event records
 - provider errors
 - proxy lifecycle agent steps
 - proxy forward tool-call records
 - JSON export for dashboards, tests, and regression checks
+- versioned, replayable JSONL v2 and isolated exporter status
+
+Content capture remains off by default. The workflow does not enable prompt,
+response, tool input/output, retrieval, shell, or error-detail capture. The
+legacy request views are retained as compatibility evidence; the canonical v2
+record API and JSONL stream are the interoperability proof.
 
 ## Live Provider Variant
 
