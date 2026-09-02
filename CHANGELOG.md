@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+- Added the Publishing House Operator with portable publication and voice
+  profiles for RobertDeVore.com, kujolang.ai, docs.kujolang.ai, and
+  agents.kujolang.ai; SourcePack intake; StoryDesk plan import; dependency-aware
+  daily ticks; event commissioning; exact-version approval routing; local
+  leases/checkpoints; exception notifications; scheduler templates; Eval gates;
+  fixtures; tests; and operating documentation.
+
 All notable changes to Kujo Workflows are documented here.
 
 The format follows Keep a Changelog and Semantic Versioning.

@@ -14,6 +14,14 @@ Format Production -> Approval and Publication -> Post-Publication Learning
 Post-Publication Learning -> future StoryDesk input
 ```
 
+The [`Publishing House Operator`](../../publishing-house-operator/) composes
+these bounded kits into an inspectable daily control loop. It adds SourcePack
+intake, publication/author profiles, backlog plans, event candidates, leases,
+checkpoints, limits, approval queues, and exception notifications while leaving
+durable editorial state in StoryDesk and publication authority in PressWire.
+Its live worker and authenticated Git adapters fail closed until configured;
+fixture mode exercises the autonomous control loop without external effects.
+
 Daily Desk chooses the narrowest applicable child workflow. It can route under
 `PROPOSE`, but it cannot create commissions, evidence decisions, review
 verdicts, approvals, or publication receipts. Follow-up recommendations begin

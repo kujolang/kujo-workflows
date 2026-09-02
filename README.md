@@ -22,6 +22,24 @@ python3 webops-dashboard/dashboard.py sync
 python3 webops-dashboard/dashboard.py serve --open
 ```
 
+## Publishing House Operator
+
+[`publishing-house-operator/`](publishing-house-operator/) is the durable,
+low-touch control loop above the eleven Publishing House workflow kits. It
+adds portable publication and voice profiles, SourcePack intake, weekly/monthly/
+campaign plans imported into StoryDesk, dependency-aware daily ticks, event
+commissioning, exact-version approval routing, checkpoints, leases, exception
+notifications, fixture verification, and cron/launchd templates. It reuses the
+existing Publishing House tools and authority boundaries instead of creating a
+second queue, approval store, evidence system, package system, or publisher.
+
+```bash
+publishing-house-operator/bin/publishing-house --json init
+publishing-house-operator/bin/publishing-house --json plan import \
+  publishing-house-operator/fixtures/september-2026.json
+publishing-house-operator/bin/publishing-house --json tick --fixture
+```
+
 ## Why Use These Workflows?
 
 - Start from bounded, runnable examples instead of assembling a multi-tool workflow from scratch.
@@ -116,6 +134,7 @@ All commands below run from the repository root.
 | [`publishing-house-format-production/`](publishing-house-format-production/) | Limited | Format desks and producers | Approved lineage becomes reviewable newsletter, social, case-study, and audiovisual packages. | `(cd publishing-house-format-production && bash bin/run --request fixtures/request.fixture.json --json)` |
 | [`publishing-house-approval-publication/`](publishing-house-approval-publication/) | Limited | Publishing operators and approvers | Dispatch pauses for checksum-bound VersionSeal approval before a bounded PressWire fixture effect. | `(cd publishing-house-approval-publication && bash scripts/test.sh)` |
 | [`publishing-house-post-publication/`](publishing-house-post-publication/) | Limited | Audience and strategy teams | A verified receipt and compatible measurements become bounded learning and a StoryDesk follow-up. | `(cd publishing-house-post-publication && bash bin/run --request fixtures/request.fixture.json --json)` |
+| [`publishing-house-operator/`](publishing-house-operator/) | Limited | Publishing operators | Publication-profile-driven intake, plans, event candidates, daily bounded progression, checkpoint/resume, approval pauses, and exception-only notifications. | `publishing-house-operator/bin/publishing-house --json doctor` |
 
 ### Install Publishing House locally
 
@@ -179,6 +198,7 @@ See the current [launch checklist](docs/launch-checklist.md) and [release-readin
 - [`contracts/`](contracts/) contains versioned Tribunal, Relay, and Workcell evidence contracts.
 - [`docs/audit/`](docs/audit/) contains the machine-readable workflow catalog and compatibility evidence.
 - [`docs/publishing-house/`](docs/publishing-house/) documents the eleven-kit editorial lifecycle, ownership boundaries, fixture proof, and compatibility matrix.
+- [`publishing-house-operator/`](publishing-house-operator/) contains the operator, publication and voice profiles, SourcePack/plan schemas, scheduler templates, Eval suite, fixtures, and tests.
 - [`examples/`](examples/) identifies low-risk starting points.
 - [`scripts/`](scripts/) contains repository validators.
 - [`tests/`](tests/) contains portable release and integration checks.
