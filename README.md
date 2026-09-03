@@ -1,13 +1,13 @@
 # Kujo Workflows
 
-[![Version](https://img.shields.io/badge/version-0.3.0-black)](https://github.com/kujolang/kujo-workflows)
+[![Version](https://img.shields.io/badge/version-0.4.0-black)](https://github.com/kujolang/kujo-workflows)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
 [![built with Kujo](https://img.shields.io/badge/built%20with-Kujo-white.svg)](https://github.com/kujolang/kujo)
 [![CI](https://github.com/kujolang/kujo-workflows/actions/workflows/validate.yml/badge.svg)](https://github.com/kujolang/kujo-workflows/actions/workflows/validate.yml)
 
 Repository-backed, local-first workflow kits for the [Kujo programming language](https://kujolang.ai) and its agency and AI tooling ecosystem. Each kit demonstrates one concrete outcome and leaves behind inspectable evidence instead of relying on an opaque hosted runner.
 
-Current release scope: **locally verified support/distribution technical preview** (`0.3.0`). Hosted runners, live-provider coverage, clean-machine installation on a separate host, and production or enterprise readiness are not claimed.
+Current release scope: **locally verified support/distribution technical preview** (`0.4.0`). Hosted runners, live-provider coverage, clean-machine installation on a separate host, and production or enterprise readiness are not claimed.
 
 ## Visual WebOps Reports
 
@@ -202,7 +202,7 @@ See the current [launch checklist](docs/launch-checklist.md) and [release-readin
 - [`examples/`](examples/) identifies low-risk starting points.
 - [`scripts/`](scripts/) contains repository validators.
 - [`tests/`](tests/) contains portable release and integration checks.
-- [`kujo-workflows.spec.yml`](kujo-workflows.spec.yml) is the canonical `0.3.0` acceptance contract.
+- [`kujo-workflows.spec.yml`](kujo-workflows.spec.yml) is the canonical `0.4.0` acceptance contract.
 
 ## Documentation
 
@@ -210,11 +210,11 @@ See the current [launch checklist](docs/launch-checklist.md) and [release-readin
 - [`docs/audit/README.md`](docs/audit/README.md) — catalog, compatibility, and weekly drift evidence.
 - [`docs/publishing-house/README.md`](docs/publishing-house/README.md) — Publishing House lifecycle, fixture/live boundaries, approval, inspection, and recovery.
 - [`docs/launch-checklist.md`](docs/launch-checklist.md) — verified launch gates and remaining external proof.
-- [`docs/specs/showcase-release-readiness.md`](docs/specs/showcase-release-readiness.md) — rendered `0.3.0` acceptance contract.
+- [`docs/specs/showcase-release-readiness.md`](docs/specs/showcase-release-readiness.md) — rendered `0.4.0` acceptance contract.
 
 ## Release and Support Status
 
-This repository is the MIT-licensed `0.3.0` technical preview of the Kujo workflow-kit distribution. The checkout covers 38 local workflows, including the Owned Agent Project proof and the eleven-workflow Publishing House lifecycle, shared contracts, documentation, versioned evidence contracts, and repository-owned validation gates. It does not publish a package, container image, hosted runner, or workflow service.
+This repository is the MIT-licensed `0.4.0` technical preview of the Kujo workflow-kit distribution. The checkout covers 38 local workflows, including the Owned Agent Project proof, the eleven-workflow Publishing House lifecycle, and the Publishing House Operator control layer, plus shared contracts, documentation, versioned evidence contracts, and repository-owned validation gates. It does not publish a package, container image, hosted runner, or workflow service.
 
 For contribution, support, conduct, and vulnerability-reporting guidance, see [CONTRIBUTING.md](CONTRIBUTING.md), [SUPPORT.md](SUPPORT.md), [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), and [SECURITY.md](SECURITY.md).
 

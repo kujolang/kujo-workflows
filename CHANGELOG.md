@@ -1,25 +1,23 @@
 # Changelog
 
-## Unreleased
-
-- Added the live phase-adapter boundary, checksum-bound receipt validation,
-  bounded live retries, and explicit blocked-item resume to the Publishing
-  House Operator.
-- Added the Publishing House Operator with portable publication and voice
-  profiles for RobertDeVore.com, kujolang.ai, docs.kujolang.ai, and
-  agents.kujolang.ai; SourcePack intake; StoryDesk plan import; dependency-aware
-  daily ticks; event commissioning; exact-version approval routing; local
-  leases/checkpoints; exception notifications; scheduler templates; Eval gates;
-  fixtures; tests; and operating documentation.
-
 All notable changes to Kujo Workflows are documented here.
 
 The format follows Keep a Changelog and Semantic Versioning.
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-09-02
+
 ### Added
 
+- The Publishing House Operator control layer with portable publication and
+  voice profiles for RobertDeVore.com, kujolang.ai, docs.kujolang.ai, and
+  agents.kujolang.ai; SourcePack intake; StoryDesk plan import; dependency-aware
+  daily ticks; event commissioning; exact-version approval routing; local
+  leases and checkpoints; exception notifications; scheduler templates; Eval
+  gates; fixtures; tests; and operating documentation.
+- A live phase-adapter boundary with checksum-bound receipt validation, bounded
+  retries, explicit blocked-item resume, and readiness diagnostics.
 - An executable Owned Agent Project lifecycle kit with pinned installation,
   doctor, inspection, fixture execution, Eval, and retained JSON evidence.
 - Governance, adaptation, and format-production workflow kits complete the
@@ -27,6 +25,8 @@ The format follows Keep a Changelog and Semantic Versioning.
   unbound specialist roles.
 - Canonical role, shared-contract, role-skill, and workflow-skill loading for
   every Agents SDK step, with checksum-bound execution receipts.
+- Canonical Watchdog v2 workflow output proof and WebOps platform packaging and
+  implementation guidance.
 
 ### Changed
 
@@ -34,6 +34,8 @@ The format follows Keep a Changelog and Semantic Versioning.
   Publishing House installation from eight to eleven kits.
 - Refreshed all locked Publishing House tool, agent, and skill checkouts to the
   exact tested commits.
+- Made host-dependent integration checks skip cleanly when their locked
+  dependencies are unavailable.
 
 ## [0.3.0] - 2026-08-14
 

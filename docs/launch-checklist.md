@@ -1,6 +1,6 @@
 # Launch Checklist
 
-Current launch scope: `locally verified support/distribution technical preview` (`0.3.0`). Repository-owned validation, WebOps fixture workflows, and the locked Publishing House all-eleven installation proof pass on the development host. Hosted runner behavior, live external-provider workflows, and clean-machine installation on a separate host are not complete.
+Current launch scope: `locally verified support/distribution technical preview` (`0.4.0`). Repository-owned validation, WebOps fixture workflows, the locked Publishing House all-eleven installation proof, and the Publishing House Operator control layer pass on the development host. Hosted runner behavior, live external-provider workflows, and clean-machine installation on a separate host are not complete.
 
 The synchronized three-tool contract is `docs/webops-toolchain-contract.json`.
 Its release evidence is
@@ -70,4 +70,4 @@ Generated `.runs/` and `.workcell/` directories are ignored local evidence. A la
 
 ## Forbidden Launch Actions
 
-Hosted runner deployment, live-provider workflows, marketplace publication, public releases, final release tags, live credentials, branch-protection changes, and force-pushes remain out of scope.
+Hosted runner deployment, live-provider workflows, marketplace publication, live credentials, branch-protection changes, and force-pushes remain out of scope. Public releases and final tags require explicit maintainer authorization; v0.4.0 was authorized on 2026-09-02.
