@@ -92,6 +92,9 @@ print(json.dumps({'ok': True, 'data': receipt}))
             adapter.chmod(0o700)
             env = dict(os.environ, PUBLISHING_HOUSE_PHASE_ADAPTER=str(adapter))
             self.exec_cli(state, "init", env=env)
+            doctor = self.exec_cli(state, "doctor", env=env)["data"]
+            live_check = next(check for check in doctor["checks"] if check["name"] == "live-phase-adapter")
+            self.assertTrue(live_check["available"])
             self.exec_cli(state, "plan", "import", str(ROOT / "fixtures/september-2026.json"), env=env)
             result = self.exec_cli(state, "tick", "--limit", "1", env=env)["data"]
             self.assertEqual(result["selected"][0]["status"], "in_progress")

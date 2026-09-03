@@ -418,6 +418,12 @@ class House:
         ]:
             available = path.exists()
             checks.append({"name": name, "available": available, "required": required})
+        configured_adapter = os.environ.get("PUBLISHING_HOUSE_PHASE_ADAPTER", "").strip()
+        adapter_path = Path(configured_adapter).expanduser() if configured_adapter else None
+        checks.append({"name": "live-phase-adapter",
+                       "available": bool(adapter_path and adapter_path.is_file() and os.access(adapter_path, os.X_OK)),
+                       "required": False, "configured": bool(configured_adapter),
+                       "path": str(adapter_path.resolve()) if adapter_path else ""})
         try:
             profile_count = len(self.profiles()) if (self.state / "house.json").exists() else 0
         except OperatorError as exc:
