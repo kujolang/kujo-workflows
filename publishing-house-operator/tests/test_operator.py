@@ -12,9 +12,10 @@ HAS_RUNTIME = (REPOS / "kujo/target/release/kujo").is_file()
 
 
 class OperatorTests(unittest.TestCase):
-    def exec_cli(self, state, *args, input_text=None, ok=True):
+    def exec_cli(self, state, *args, input_text=None, ok=True, env=None):
         result = subprocess.run([str(CLI), "--state", str(state), "--repos", str(REPOS), "--json", *args],
-                                text=True, input=input_text, capture_output=True, timeout=120)
+                                text=True, input=input_text, capture_output=True, timeout=120,
+                                env=env)
         payload = json.loads(result.stdout)
         self.assertEqual(result.returncode == 0, ok, result.stdout + result.stderr)
         return payload
@@ -69,6 +70,52 @@ class OperatorTests(unittest.TestCase):
             self.assertEqual(first["data"]["actions"], ["documentation-obligation", "article-candidate", "social-candidate"])
             self.assertEqual(len(first["data"]["storydesk_idea_ids"]), 3)
             self.assertTrue(second["data"]["idempotent_replay"])
+
+    def test_live_phase_adapter_advances_with_checksum_bound_receipt(self):
+        if not HAS_RUNTIME: self.skipTest("Kujo release runtime unavailable")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            state = root / "house"
+            adapter = root / "adapter.py"
+            adapter.write_text("""#!/usr/bin/env python3
+import hashlib, json
+from pathlib import Path
+request = json.load(__import__('sys').stdin)
+artifact = Path(request['state_root']) / 'runs' / request['item']['id'] / request['phase'] / 'live.json'
+artifact.parent.mkdir(parents=True, exist_ok=True)
+artifact.write_text(json.dumps({'item': request['item']['id'], 'phase': request['phase']}) + '\\n')
+receipt = {'schema_name': 'publishing-house.phase-receipt', 'schema_version': '1.0.0',
+           'item_id': request['item']['id'], 'phase': request['phase'], 'artifact': str(artifact),
+           'sha256': hashlib.sha256(artifact.read_bytes()).hexdigest(), 'external_effect': False}
+print(json.dumps({'ok': True, 'data': receipt}))
+""", encoding="utf-8")
+            adapter.chmod(0o700)
+            env = dict(os.environ, PUBLISHING_HOUSE_PHASE_ADAPTER=str(adapter))
+            self.exec_cli(state, "init", env=env)
+            self.exec_cli(state, "plan", "import", str(ROOT / "fixtures/september-2026.json"), env=env)
+            result = self.exec_cli(state, "tick", "--limit", "1", env=env)["data"]
+            self.assertEqual(result["selected"][0]["status"], "in_progress")
+            item = json.loads((state / "items/agents-are-projects.json").read_text())
+            self.assertEqual(item["phase_index"], 1)
+            self.assertFalse(item["receipts"][0]["external_effect"])
+
+    def test_live_adapter_failure_retries_then_blocks_and_can_resume(self):
+        if not HAS_RUNTIME: self.skipTest("Kujo release runtime unavailable")
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            state = root / "house"
+            adapter = root / "adapter.py"
+            adapter.write_text("#!/usr/bin/env python3\nimport json\nprint(json.dumps({'ok': False, 'error_code': 'provider_unavailable', 'error': 'offline'}))\n", encoding="utf-8")
+            adapter.chmod(0o700)
+            env = dict(os.environ, PUBLISHING_HOUSE_PHASE_ADAPTER=str(adapter))
+            self.exec_cli(state, "init", env=env)
+            self.exec_cli(state, "plan", "import", str(ROOT / "fixtures/september-2026.json"), env=env)
+            first = self.exec_cli(state, "tick", "--limit", "1", env=env)["data"]
+            self.assertEqual(first["selected"][0]["status"], "retry_pending")
+            second = self.exec_cli(state, "tick", "--limit", "1", env=env)["data"]
+            self.assertEqual(second["selected"][0]["status"], "blocked")
+            resumed = self.exec_cli(state, "resume", "agents-are-projects", env=env)["data"]
+            self.assertEqual(resumed["status"], "in_progress")
 
 
 if __name__ == "__main__": unittest.main()

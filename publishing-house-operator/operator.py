@@ -101,7 +101,7 @@ class House:
             raise OperatorError("not_initialized", f"run init for {self.state}")
 
     def init(self) -> dict[str, Any]:
-        for name in ["sourcepacks", "plans", "items", "runs", "receipts", "notifications", "locks", "profiles", "voices", "events"]:
+        for name in ["sourcepacks", "plans", "items", "runs", "receipts", "notifications", "locks", "profiles", "voices", "events", "adapters"]:
             (self.state / name).mkdir(parents=True, exist_ok=True)
         for profile in sorted((ROOT / "profiles").glob("*.json")):
             target = self.state / "profiles" / profile.name
@@ -299,9 +299,23 @@ class House:
                     item["phase_index"] += 1
                     item["status"] = "completed" if item["phase_index"] == len(PHASES) else "in_progress"
                 else:
-                    item["status"] = "blocked"
-                    item["blocker"] = {"code": "live_worker_adapter_unavailable", "phase": phase, "created_at": now()}
-                    self._notify("HARD_BLOCKER", f"live worker adapter unavailable for {item['id']}", item["blocker"])
+                    try:
+                        receipt = self._live_phase(item, phase)
+                        item.setdefault("receipts", []).append(receipt)
+                        item["phase_index"] += 1
+                        item["status"] = "completed" if item["phase_index"] == len(PHASES) else "in_progress"
+                        item.pop("blocker", None)
+                    except OperatorError as exc:
+                        attempts = item.setdefault("attempts", {})
+                        attempts[phase] = int(attempts.get(phase, 0)) + 1
+                        retry_limit = int(read_data(self.state / "house.json")["limits"]["retry_limit"])
+                        item["blocker"] = {"code": exc.code, "message": str(exc), "phase": phase,
+                                           "attempt": attempts[phase], "retry_limit": retry_limit, "created_at": now()}
+                        if attempts[phase] >= retry_limit or exc.code == "live_worker_adapter_unavailable":
+                            item["status"] = "blocked"
+                            self._notify("HARD_BLOCKER", f"live phase blocked for {item['id']}", item["blocker"])
+                        else:
+                            item["status"] = "retry_pending"
                 item["updated_at"] = now()
                 atomic_json(self.state / "items" / f"{item['id']}.json", item)
                 moved.append({"id": item["id"], "phase": phase, "status": item["status"]})
@@ -330,6 +344,21 @@ class House:
         item["status"] = "in_progress"
         atomic_json(path, item)
         return {"id": approval_id, "item": item_id}
+
+    def resume(self, item_id: str) -> dict[str, Any]:
+        """Release a blocked item after an operator has corrected its blocker."""
+        self.require_initialized()
+        path = self.state / "items" / f"{item_id}.json"
+        if not path.is_file():
+            raise OperatorError("unknown_item", item_id)
+        item = read_data(path)
+        if item.get("status") != "blocked":
+            raise OperatorError("item_not_blocked", item_id)
+        prior = item.pop("blocker", None)
+        item["status"] = "in_progress"
+        item["updated_at"] = now()
+        atomic_json(path, item)
+        return {"id": item_id, "status": "in_progress", "released_blocker": prior}
 
     def status(self) -> dict[str, Any]:
         self.require_initialized()
@@ -424,6 +453,50 @@ class House:
         atomic_json(path, body)
         return {"phase": phase, "artifact": str(path), "sha256": sha256(path), "external_effect": False}
 
+    def _live_phase(self, item: dict[str, Any], phase: str) -> dict[str, Any]:
+        """Invoke one explicitly configured, bounded production phase adapter."""
+        configured = os.environ.get("PUBLISHING_HOUSE_PHASE_ADAPTER", "").strip()
+        if not configured:
+            raise OperatorError("live_worker_adapter_unavailable", "PUBLISHING_HOUSE_PHASE_ADAPTER is not configured")
+        adapter = Path(configured).expanduser().resolve()
+        if not adapter.is_file() or not os.access(adapter, os.X_OK):
+            raise OperatorError("live_worker_adapter_unavailable", f"phase adapter is not executable: {adapter}")
+        request = {
+            "schema_name": "publishing-house.phase-request", "schema_version": SCHEMA_VERSION,
+            "item": item, "phase": phase, "profile": self._profile(item["publication"]),
+            "state_root": str(self.state), "repos_root": str(self.repos),
+            "approval_reference": item.get("approval_reference"),
+        }
+        timeout = int(os.environ.get("PUBLISHING_HOUSE_PHASE_TIMEOUT_SECONDS", "900"))
+        try:
+            result = subprocess.run([str(adapter)], input=json.dumps(request), text=True, capture_output=True,
+                                    timeout=max(1, min(timeout, 3600)), env=dict(os.environ))
+        except subprocess.TimeoutExpired as exc:
+            raise OperatorError("live_worker_timeout", f"phase adapter timed out for {phase}") from exc
+        try:
+            response = json.loads(result.stdout)
+        except json.JSONDecodeError as exc:
+            raise OperatorError("invalid_live_worker_receipt", "phase adapter did not return JSON") from exc
+        if result.returncode or not response.get("ok"):
+            message = str(response.get("error") or result.stderr.strip() or "phase adapter failed")
+            raise OperatorError(str(response.get("error_code") or "live_worker_failure"), message)
+        receipt = response.get("data")
+        if not isinstance(receipt, dict):
+            raise OperatorError("invalid_live_worker_receipt", "phase adapter data must be an object")
+        required = {"schema_name", "schema_version", "item_id", "phase", "artifact", "sha256", "external_effect"}
+        if receipt.get("schema_name") != "publishing-house.phase-receipt" or receipt.get("schema_version") != SCHEMA_VERSION or not required.issubset(receipt):
+            raise OperatorError("invalid_live_worker_receipt", "phase adapter receipt is incomplete")
+        if receipt["item_id"] != item["id"] or receipt["phase"] != phase:
+            raise OperatorError("invalid_live_worker_receipt", "phase adapter receipt does not match the request")
+        artifact = Path(str(receipt["artifact"])).expanduser().resolve()
+        if not artifact.is_file() or sha256(artifact) != receipt["sha256"]:
+            raise OperatorError("live_worker_checksum_mismatch", "phase artifact is missing or its checksum does not match")
+        if phase != "approval-publication" and receipt["external_effect"]:
+            raise OperatorError("policy_violation", f"{phase} may not report a publication effect")
+        if phase == "approval-publication" and receipt["external_effect"] and receipt.get("effect_status") not in {"published", "corrected", "unpublished"}:
+            raise OperatorError("invalid_publication_receipt", "publication effects require an explicit effect_status")
+        return receipt
+
     def _latest_artifact_checksum(self, item: dict[str, Any]) -> str:
         receipts = item.get("receipts", [])
         if not receipts:
@@ -501,6 +574,7 @@ def parser() -> argparse.ArgumentParser:
     sub.add_parser("run").add_argument("--fixture", action="store_true")
     sub.add_parser("status"); sub.add_parser("approvals"); sub.add_parser("blocked"); sub.add_parser("history"); sub.add_parser("doctor")
     approve = sub.add_parser("approve"); approve.add_argument("item_id"); approve.add_argument("--checksum", required=True); approve.add_argument("--approver", required=True)
+    resume = sub.add_parser("resume"); resume.add_argument("item_id")
     golden = sub.add_parser("golden-path"); golden.add_argument("--out", required=True)
     return p
 
@@ -520,6 +594,7 @@ def main(argv: list[str] | None = None) -> int:
         elif args.command == "event": result = house.ingest_event(Path(args.input))
         elif args.command in {"tick", "run"}: result = house.tick(getattr(args, "limit", 4), args.fixture)
         elif args.command == "approve": result = house.approve(args.item_id, args.checksum, args.approver)
+        elif args.command == "resume": result = house.resume(args.item_id)
         elif args.command == "doctor": result = house.doctor()
         elif args.command == "golden-path": result = house.golden_path(Path(args.out))
         else:

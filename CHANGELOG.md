@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Added the live phase-adapter boundary, checksum-bound receipt validation,
+  bounded live retries, and explicit blocked-item resume to the Publishing
+  House Operator.
 - Added the Publishing House Operator with portable publication and voice
   profiles for RobertDeVore.com, kujolang.ai, docs.kujolang.ai, and
   agents.kujolang.ai; SourcePack intake; StoryDesk plan import; dependency-aware

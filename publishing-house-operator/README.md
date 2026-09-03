@@ -5,10 +5,11 @@ House workflow kits. It wakes, reads StoryDesk-backed work, acquires one local
 lease, selects bounded work, records checkpoints and receipts, and exits. It is
 not an agent, publication database, approval authority, or deployment system.
 
-This repository-owned implementation is operational in deterministic fixture
-mode. Live model workers and authenticated publication effects remain
-fail-closed until their adapters and credentials are configured. The operator
-does not treat a written file or successful push as verified publication.
+This repository-owned implementation is a production-capable control plane.
+It runs deterministic fixtures for rehearsal and invokes a configured bounded
+phase adapter for live work. Missing adapters, credentials, approvals, evidence,
+or verification fail closed. The operator never treats a written file or a
+successful push as verified publication.
 
 ## Ownership
 
@@ -194,8 +195,41 @@ publishing-house --state /absolute/state --repos /absolute/kujo-repos --json tic
 ```
 
 Use `--fixture` only for rehearsal. Event systems call `event --input FILE` and
-then trigger the same `tick`. Manual resume is another tick after resolving the
-blocked capability or exact approval.
+then trigger the same `tick`. After correcting a hard blocker, release that item
+and resume normal scheduling:
+
+```bash
+publishing-house resume ITEM_ID
+publishing-house tick
+```
+
+### Live phase adapter
+
+Live operation uses one explicit executable boundary rather than embedding a
+model provider or publication credential in the operator:
+
+```bash
+export PUBLISHING_HOUSE_PHASE_ADAPTER=/absolute/path/to/phase-adapter
+export PUBLISHING_HOUSE_PHASE_TIMEOUT_SECONDS=900
+publishing-house tick
+```
+
+The adapter reads one `publishing-house.phase-request` JSON object from stdin
+and writes a JSON envelope to stdout. A successful envelope contains a
+`publishing-house.phase-receipt` with the matching item and phase, an existing
+artifact path, its SHA-256 checksum, and an explicit `external_effect` value.
+Only the `approval-publication` phase may report an external effect; a real
+effect must also report `effect_status` as `published`, `corrected`, or
+`unpublished`. The operator verifies this receipt before advancing state.
+
+Adapters are deployment configuration. They compose Agents SDK and AI SDK
+workers, retrieval, and Kujo tools for editorial phases; the publication phase
+must delegate effects to PressWire. Credentials stay in the adapter's OS-backed
+credential environment and never enter requests, profiles, or artifacts.
+
+Failures are retried up to the state-configured bound, then block only the
+affected item and emit `HARD_BLOCKER`. `resume ITEM_ID` is explicit so a blocked
+item cannot silently re-enter the queue before an operator fixes its cause.
 
 ## Notifications
 
@@ -244,17 +278,20 @@ credential references. Observe/propose workers never inherit publication
 authority. Missing credentials, adapters, evidence, approval, or verification
 fail closed. State paths should be private to the operator account.
 
-## Known limitations
+## Deployment dependencies
 
-- The checked-in operator worker is fixture-backed. Live Agents SDK model and
-  retrieval adapters are not configured here.
-- PressWire has a production-shaped Git/static conformance contract but no
-  authenticated GitHub push/PR/merge adapter in this checkout.
-- Public analytics/search/social provider credentials are not installed, so
-  ReaderSignal and WebOps live measurement remain adapter work.
+- A live phase adapter must be installed and configured for the selected model,
+  retrieval, and tool providers. The operator contract is provider-portable;
+  provider transports remain deployment choices.
+- PressWire has a production-shaped Git/static conformance contract. An
+  authenticated GitHub push/PR/merge provider must be configured and proven for
+  repositories where the adapter is expected to create publication effects.
+- ReaderSignal and WebOps measurement require the applicable analytics, search,
+  and social provider credentials when those signals are enabled.
 - The local lease prevents duplicate work on one filesystem, not distributed
   multi-host execution.
 - A physically separate clean host and controlled production publication were
   not authorized by repository policy in this implementation run.
 
-These limits are explicit blockers, not silent fallbacks or claimed successes.
+These are explicit deployment gates, not fixture-only architecture. A missing
+gate blocks its item without weakening approval or publication authority.
