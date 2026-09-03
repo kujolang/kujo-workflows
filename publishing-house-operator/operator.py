@@ -467,7 +467,10 @@ class House:
             "state_root": str(self.state), "repos_root": str(self.repos),
             "approval_reference": item.get("approval_reference"),
         }
-        timeout = int(os.environ.get("PUBLISHING_HOUSE_PHASE_TIMEOUT_SECONDS", "900"))
+        try:
+            timeout = int(os.environ.get("PUBLISHING_HOUSE_PHASE_TIMEOUT_SECONDS", "900"))
+        except ValueError as exc:
+            raise OperatorError("invalid_live_worker_timeout", "phase timeout must be an integer") from exc
         try:
             result = subprocess.run([str(adapter)], input=json.dumps(request), text=True, capture_output=True,
                                     timeout=max(1, min(timeout, 3600)), env=dict(os.environ))
@@ -477,8 +480,12 @@ class House:
             response = json.loads(result.stdout)
         except json.JSONDecodeError as exc:
             raise OperatorError("invalid_live_worker_receipt", "phase adapter did not return JSON") from exc
+        if not isinstance(response, dict):
+            raise OperatorError("invalid_live_worker_receipt", "phase adapter response must be an object")
         if result.returncode or not response.get("ok"):
-            message = str(response.get("error") or result.stderr.strip() or "phase adapter failed")
+            # Adapter stderr can contain provider diagnostics or credentials and
+            # is deliberately excluded from durable operator state.
+            message = str(response.get("error") or "phase adapter failed")[:1000]
             raise OperatorError(str(response.get("error_code") or "live_worker_failure"), message)
         receipt = response.get("data")
         if not isinstance(receipt, dict):
