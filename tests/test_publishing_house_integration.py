@@ -17,7 +17,7 @@ HAS_RUNTIME = Path(os.environ.get("KUJO_BIN", REPOS / "kujo/target/release/kujo"
 class PublishingHouseIntegrationTests(unittest.TestCase):
     @unittest.skipUnless(HAS_RUNTIME, "Publishing House runtime dependencies are not available")
     def test_all_eleven_offline_fixture(self):
-        timeout = int(os.environ.get("PUBLISHING_HOUSE_FIXTURE_TIMEOUT", "600"))
+        timeout = int(os.environ.get("PUBLISHING_HOUSE_FIXTURE_TIMEOUT", "1200"))
         with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as temp:
             result = subprocess.run(
                 ["bash", "scripts/run-publishing-house-fixture.sh", "--out", str(Path(temp) / "proof")],

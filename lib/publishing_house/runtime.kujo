@@ -330,7 +330,7 @@ func run_dispatch(ctx, approval_pause, resume) {
         argv = [ctx["kujo"], "run", path_join(ctx["repos"], "dispatch/dispatch.kujo"), "demo", ctx["workflow_id"], "--workflow-file", spec, "--input-json", to_json({"topic": ctx["workflow_id"], "run_id": ctx["request"]["run_id"]}), "--non-interactive", "--output-root", output_root]
         if !approval_pause { argv = push(argv, "--yes") }
     }
-    process := spawn_process(concat(["env", "DISPATCH_OFFLINE_FIXTURE=true", "DISPATCH_ALLOW_ANY_OUTPUT_ROOT=true", "DISPATCH_ALLOW_ANY_CONFIG_PATH=true", "KUJO_BIN=" + ctx["kujo"]], argv), {"cwd": path_join(ctx["repos"], "dispatch"), "timeout_ms": 120000, "max_output_bytes": 2097152})
+    process := spawn_process(concat(["env", "DISPATCH_OFFLINE_FIXTURE=true", "DISPATCH_ALLOW_ANY_OUTPUT_ROOT=true", "DISPATCH_ALLOW_ANY_CONFIG_PATH=true", "KUJO_BIN=" + ctx["kujo"]], argv), {"cwd": path_join(ctx["repos"], "dispatch"), "timeout_ms": 180000, "max_output_bytes": 2097152})
     run_id := find_dispatch_run(output_root)
     if resume { prior := read_json_object(path_join(ctx["run_dir"], "dispatch-receipt.json")); if prior["ok"] { run_id = prior["value"]["run_id"] } }
     dispatch_state_path := path_join(output_root, run_id + "/state.json")
