@@ -2,7 +2,7 @@ name: "VideoOps v1 agent and stage contracts"
 goal: "Deliver five Kujo-native VideoOps agent packages, reusable skills, deterministic stage workflows, and an offline review/revision proof in the existing Kujo repositories."
 version: "1.0.0"
 priority: "high"
-status: "in-progress"
+status: "completed"
 background: "The original standalone kujo-videoops implementation was placed in the wrong repository and language. VideoOps must follow the established WebOps distribution pattern while keeping its executable workflow logic in Kujo."
 scope: "Add five provider-neutral role packages and shared policy under kujo-agents/videoops; reusable role and production-method skills under kujo-skills/skills/videoops-*; and five stage kits, shared Kujo runtime, fixtures, Eval, PackWrite, Howl, and evidence contracts under kujo-workflows."
 non_goals:

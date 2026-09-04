@@ -22,6 +22,9 @@ was not modified during this implementation.
   audio muxing, ffprobe inspection, and checksum-bound finalization.
 - Negative-path proof for unresolved assets, non-`GENERATE` selection, the
   first critic failure, bounded fix application, and revision-limit stop.
+- Native Kujo JSON Schema validation of all successful stage receipts, shared
+  planning/review artifacts, lifecycle state, escalation evidence, and each
+  agent handoff emitted by the fixture.
 
 ## Verified fixture boundary
 
