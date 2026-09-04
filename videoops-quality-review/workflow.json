@@ -1,0 +1,16 @@
+{
+  "schema": "videoops.workflow/v1",
+  "id": "videoops-quality-review",
+  "version": "1.0.0",
+  "purpose": "Run deterministic QA and independent structured video review with bounded revision routing.",
+  "default_permission": "PROPOSE",
+  "fixture_mode": true,
+  "live_mode": false,
+  "agent": "videoops.video-critic",
+  "model_profile": "economical-multimodal",
+  "max_economical_attempts": 2,
+  "max_revision_cycles": 3,
+  "skills": ["videoops-video-spec-comparison", "videoops-pacing-analysis", "videoops-visual-hierarchy-review", "videoops-motion-quality-review", "videoops-audio-visual-review", "videoops-technical-render-review", "videoops-actionable-fix-writing", "videoops-approval-decision"],
+  "outputs": ["review/critique.md", "review/approval.json", "review/fix-list.json"],
+  "next_workflow": null
+}

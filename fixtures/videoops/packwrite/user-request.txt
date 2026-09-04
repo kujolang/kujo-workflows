@@ -1,0 +1,3 @@
+Create a six-second Kujo video about inspectable agent projects for X. Fast,
+editorial, lots of cuts. Show real first-party project artwork and end with the
+CTA “kujo run agent.kujo.”

@@ -1,0 +1,16 @@
+{
+  "schema": "videoops.workflow/v1",
+  "id": "videoops-hyperframes-edit",
+  "version": "1.0.0",
+  "purpose": "Build, validate, render, and revise a deterministic HyperFrames composition.",
+  "default_permission": "ACT",
+  "fixture_mode": true,
+  "live_mode": false,
+  "agent": "videoops.hyperframes-editor",
+  "model_profile": "economical-code",
+  "max_economical_attempts": 2,
+  "max_revision_cycles": 3,
+  "skills": ["videoops-hyperframes-project-bootstrap", "videoops-shot-list-to-timeline", "videoops-kinetic-typography", "videoops-media-compositing", "videoops-shader-and-transition-selection", "videoops-audio-sync", "videoops-render-validation", "videoops-fix-list-application"],
+  "outputs": ["production/hyperframes/", "production/render-log.md", "production/production-notes.md", "output/draft.mp4", "output/final.mp4", "output/metadata.json"],
+  "next_workflow": "videoops-quality-review"
+}

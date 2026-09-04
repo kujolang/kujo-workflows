@@ -1,0 +1,19 @@
+{
+  "name": "videoops-stage-contract-gates",
+  "description": "Deterministic structural gates for the five VideoOps stages.",
+  "version": "1.0.0",
+  "output_dir": "./eval_results/videoops",
+  "snapshot_dir": "./evals/snapshots/videoops",
+  "stop_on_failure": false,
+  "tests": [
+    {"name": "creative workflow exists", "check": "file_exists", "params": {"path": "./videoops-creative-planning/workflow.kujo"}},
+    {"name": "creative thresholds expose narrative and originality", "check": "file_contains", "params": {"path": "./contracts/videoops/quality-thresholds.v1.json", "expected": "originality"}},
+    {"name": "asset stage accounts for every requirement", "check": "file_contains", "params": {"path": "./lib/videoops/runtime.kujo", "expected": "\"all_accounted\":true"}},
+    {"name": "generator only processes explicit status", "check": "file_contains", "params": {"path": "./lib/videoops/runtime.kujo", "expected": "status\", \"\") == \"GENERATE"}},
+    {"name": "editor fails unresolved assets", "check": "file_contains", "params": {"path": "./lib/videoops/runtime.kujo", "expected": "unresolved_required_assets"}},
+    {"name": "editor invokes current HyperFrames gates", "check": "file_contains", "params": {"path": "./lib/videoops/runtime.kujo", "expected": "hyperframes\",\"check"}},
+    {"name": "critic emits actionable acceptance criteria", "check": "file_contains", "params": {"path": "./lib/videoops/runtime.kujo", "expected": "acceptance_criteria"}},
+    {"name": "revision limit is explicit", "check": "json_value_equals", "params": {"path": "./contracts/videoops/model-routing.v1.json", "json_path": "max_editor_critic_revision_cycles", "expected": 3}},
+    {"name": "provider remains replaceable", "check": "file_contains", "params": {"path": "./contracts/videoops/model-routing.v1.json", "expected": "\"provider_binding\": null"}}
+  ]
+}

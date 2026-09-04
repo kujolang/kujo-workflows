@@ -1,0 +1,15 @@
+{
+  "schema": "videoops.workflow/v1",
+  "id": "videoops-asset-resolution",
+  "version": "1.0.0",
+  "purpose": "Resolve every asset requirement with rights-aware terminal status and provenance.",
+  "default_permission": "PROPOSE",
+  "fixture_mode": true,
+  "live_mode": false,
+  "agent": "videoops.asset-scout",
+  "model_profile": "economical-general",
+  "max_economical_attempts": 2,
+  "skills": ["videoops-first-party-asset-discovery", "videoops-lens-product-capture", "videoops-licensed-media-research", "videoops-asset-rights-triage", "videoops-media-normalization", "videoops-asset-manifest-maintenance", "videoops-generation-handoff"],
+  "outputs": ["assets/asset-manifest.json", "assets/licenses.md", "assets/source-log.md"],
+  "next_workflow": "videoops-media-generation"
+}

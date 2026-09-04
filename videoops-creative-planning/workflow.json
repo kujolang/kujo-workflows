@@ -1,0 +1,15 @@
+{
+  "schema": "videoops.workflow/v1",
+  "id": "videoops-creative-planning",
+  "version": "1.0.0",
+  "purpose": "Turn validated PackWrite intake into a timed executable video plan.",
+  "default_permission": "PROPOSE",
+  "fixture_mode": true,
+  "live_mode": false,
+  "agent": "videoops.creative-director",
+  "model_profile": "economical-general",
+  "max_economical_attempts": 2,
+  "skills": ["videoops-video-brief-synthesis", "videoops-transcript-and-onscreen-copy", "videoops-shot-planning", "videoops-visual-reference-decomposition", "videoops-asset-requirement-specification", "videoops-platform-duration-planning"],
+  "outputs": ["planning/creative-brief.md", "planning/transcript.md", "planning/shot-list.json", "planning/style-plan.md", "planning/asset-requirements.json"],
+  "next_workflow": "videoops-asset-resolution"
+}

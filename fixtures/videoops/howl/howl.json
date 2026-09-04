@@ -1,0 +1,12 @@
+{
+  "project": {"name": "Kujo VideoOps", "tagline": "The stage performs bounded work; the system proves acceptance.", "url": ""},
+  "theme": {"name": "minimal", "mode": "light"},
+  "cards": [
+    {"id": "planning-ready", "title": "PLANNING_READY", "tagline": "Five validated files, one explicit handoff.", "file": "planning-ready.kujo", "language": "kujo", "concepts": ["artifacts", "handoff", "eval"], "expected_output": "PLANNING_READY", "caption": "VideoOps makes creative intent inspectable before media work begins.", "cta": "Kujo VideoOps"},
+    {"id": "revision-required", "title": "REVISION_REQUIRED", "tagline": "Timestamped defect, exact acceptance criteria.", "file": "revision-required.kujo", "language": "kujo", "concepts": ["critic", "fix-list", "revision"], "expected_output": "REVISION_REQUIRED", "caption": "A failed draft becomes a bounded repair, not a pipeline restart.", "cta": "Kujo VideoOps"},
+    {"id": "approved", "title": "APPROVED", "tagline": "Deterministic checks plus independent review.", "file": "approved.kujo", "language": "kujo", "concepts": ["quality", "evidence", "approval"], "expected_output": "APPROVED", "caption": "Economical inference is acceptable when explicit gates prove the artifact.", "cta": "Kujo VideoOps"},
+    {"id": "project-blocked", "title": "BLOCKED", "tagline": "Missing rights or required inputs stop only the affected path.", "file": "project-blocked.kujo", "language": "kujo", "concepts": ["blocker", "rights", "operator"], "expected_output": "BLOCKED", "caption": "VideoOps fails closed when a required asset or its rights evidence is unresolved.", "cta": "Operator action required"},
+    {"id": "stage-escalated", "title": "STAGE_ESCALATED", "tagline": "Only the failing stage may cross the economical boundary.", "file": "stage-escalated.kujo", "language": "kujo", "concepts": ["routing", "cost", "evidence"], "expected_output": "STAGE_ESCALATED", "caption": "Escalation is stage-local, justified by a failed gate, and recorded.", "cta": "Review cost and evidence"},
+    {"id": "revision-limit", "title": "REVISION_LIMIT_EXHAUSTED", "tagline": "Three failed cycles stop automated revision.", "file": "revision-limit.kujo", "language": "kujo", "concepts": ["revision", "limit", "intervention"], "expected_output": "REVISION_LIMIT_EXHAUSTED", "caption": "VideoOps asks for human intervention instead of looping indefinitely.", "cta": "Operator action required"}
+  ]
+}

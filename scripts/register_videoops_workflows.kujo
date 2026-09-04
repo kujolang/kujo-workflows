@@ -1,0 +1,25 @@
+func get(value,key,fallback){if type(value)=="dict"&&has_key(value,key)==1{return value[key]};return fallback}
+func relation(name){return {"name":name,"path":"skills/"+name+"/SKILL.md","compatibility":"compatible"}}
+func entry(id,purpose,skill,outputs,next){return {
+    "id":id,"path":id,"status":"production-capable-with-limitations","purpose":purpose,"entry":id+"/bin/run",
+    "skills":[relation(skill)],"tools":["kujo"],"inputs":["validated VideoOps workspace","fixture mode","explicit run id"],"outputs":outputs,
+    "approval_boundaries":["Live providers, paid generation, accounts, cloud rendering, and publication require separate operator approval."],
+    "state_and_recovery":"Stage receipts and explicit artifact handoffs support bounded restart; the fixture driver is not a production master orchestrator.",
+    "evidence":"VideoOps stage receipt, handoff, deterministic gate evidence, and RunLedger fixture receipt.",
+    "tests":["kujo check "+id+"/workflow.kujo","bash tests/videoops-release-gate.sh"],
+    "documentation":[id+"/README.md",id+"/workflow.json"],"production_readiness":"production-capable-with-limitations","next_workflow":next
+}}
+func main(){
+    root:=path_absolute(".");path:=path_join(root,"docs/audit/workflow-catalog.json");catalog:=parse_json(read_file(path));existing:=get(catalog,"active_workflows",[]);mut kept:=[]
+    for item in existing {if !starts_with(get(item,"id",""),"videoops-"){kept=push(kept,item)}}
+    additions:=[
+        entry("videoops-creative-planning","Turn validated PackWrite intake into a timed executable video plan.","videoops-shot-planning",["planning artifacts","creative Eval receipt","handoff"],"videoops-asset-resolution"),
+        entry("videoops-asset-resolution","Resolve every asset requirement with rights-aware status and provenance.","videoops-asset-manifest-maintenance",["asset manifest","license record","source log","handoff"],"videoops-media-generation"),
+        entry("videoops-media-generation","Generate only explicit GENERATE items and register inspected outputs.","videoops-generated-asset-manifesting",["generated fixture asset","updated manifest","selection receipt","handoff"],"videoops-hyperframes-edit"),
+        entry("videoops-hyperframes-edit","Render and revise a deterministic HyperFrames composition after asset preflight.","videoops-render-validation",["HyperFrames project","real MP4 render","ffprobe evidence","fix outcomes","handoff"],"videoops-quality-review"),
+        entry("videoops-quality-review","Run deterministic and independent structured review with bounded revision routing.","videoops-approval-decision",["critique","approval","conditional fix list","handoff"],null)
+    ]
+    catalog["active_workflows"]=concat(kept,additions);catalog["audit_id"]="kujo-workflows-audit-2026-09-04"
+    write_file_atomic(path,to_json_pretty(catalog)+"\n",true);print("registered "+to_string(len(additions))+" VideoOps workflows")
+}
+main()

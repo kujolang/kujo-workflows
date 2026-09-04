@@ -1,0 +1,21 @@
+[prompt]
+file = "MEGA_PROMPT.md"
+
+[output]
+dir = "agent"
+overwrite = true
+
+[model]
+provider = "local"
+model = "offline-fixture"
+temperature = 0.0
+
+[repo_context]
+enabled = false
+
+[pack]
+min_phases = 1
+max_phases = 2
+include_deepseek_prompt = true
+include_codex_review_prompt = true
+include_review_checklist = true

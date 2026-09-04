@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <rect width="1920" height="1080" fill="#ffffff"/>
+  <rect x="1040" y="120" width="720" height="840" fill="#050505"/>
+  <g fill="#ffffff" font-family="monospace" font-size="42">
+    <text x="1110" y="230">agent/</text>
+    <text x="1160" y="330">AGENT.md</text>
+    <text x="1160" y="420">SKILL.md</text>
+    <text x="1160" y="510">manifest.json</text>
+    <text x="1160" y="600">input.schema.json</text>
+    <text x="1160" y="690">output.schema.json</text>
+  </g>
+</svg>

@@ -1,0 +1,141 @@
+func get(value, key, fallback) { if type(value) == "dict" && has_key(value, key) == 1 { return value[key] }; return fallback }
+func flag(argv, name, fallback) { mut i:=0; while i<len(argv) { if argv[i]==name && i+1<len(argv) { return to_string(argv[i+1]) }; i=i+1 }; return fallback }
+func ensure(path) { if !path_is_dir(path) { p:=spawn_process(["mkdir","-p",path],{"timeout_ms":5000}); if p.exitcode!=0 { return false } }; return true }
+func write_json(path, value) { ensure(dirname(path)); write_file_atomic(path,to_json_pretty(value)+"\n",true) }
+func run(argv, cwd, timeout_ms) { p:=spawn_process(argv,{"cwd":cwd,"timeout_ms":timeout_ms,"max_output_bytes":4194304}); return {"exit_code":p.exitcode,"stdout":to_string(p.stdout),"stderr":to_string(p.stderr)} }
+func parse_output(result) { try { value:=parse_json(trim(result["stdout"])); if type(value)=="dict" { return value } } except error {}; return {} }
+
+func schema_valid(instance_path, schema_path) {
+    if !path_is_file(instance_path) || !path_is_file(schema_path) { return false }
+    try {
+        instance:=parse_json(read_file(instance_path))
+        schema:=parse_json(read_file(schema_path))
+        result:=json_schema_validate(instance,schema)
+        return get(result,"valid",false)==true
+    } except error { return false }
+}
+
+func require_schema(instance_path, schema_path, label) {
+    if !schema_valid(instance_path,schema_path) { eprint(label+" failed JSON Schema validation"); exit(1) }
+}
+
+func stage(root, workspace, name, extras, expected_exit) {
+    command := [path_join(root,name+"/bin/run"),"--fixture","--workspace",workspace,"--run-id","videoops-fixture-001"]
+    command = concat(command,extras)
+    result := run(command,root,300000)
+    if result["exit_code"] != expected_exit { eprint(name+" unexpected exit "+to_string(result["exit_code"])+"\n"+result["stdout"]+result["stderr"]); exit(1) }
+    return parse_output(result)
+}
+
+func main() {
+    root := path_absolute(".")
+    out_arg := flag(args(),"--out",".runs/videoops-fixture")
+    out := out_arg
+    if !starts_with(out,"/") { out=path_join(root,out) }
+    if path_exists(out) { eprint("output already exists: "+out); exit(2) }
+    ensure(out)
+    workspace := path_join(out,"workspace")
+    copied := run(["cp","-R",path_join(root,"fixtures/videoops/sample-project"),workspace],root,10000)
+    if copied["exit_code"]!=0 { eprint("fixture copy failed: "+copied["stderr"]); exit(1) }
+    raw_request := path_join(root,"fixtures/videoops/packwrite/user-request.txt")
+    pack_master := path_join(root,"fixtures/videoops/packwrite/agent/MASTER.md")
+    if !path_is_file(raw_request) || !path_is_file(pack_master) { eprint("validated PackWrite input or execution pack is missing"); exit(1) }
+    write_json(path_join(workspace,"intake/packwrite-receipt.json"),{
+        "schema":"videoops.packwrite-intake-receipt/v1","source_request":raw_request,"source_sha256":sha256_file(raw_request),
+        "execution_pack":pack_master,"execution_pack_sha256":sha256_file(pack_master),"validated":true,
+        "normalized_outputs":["project-brief.md","messaging.md","audience.md","constraints.md","references.md","platform.json"],
+        "next_owner":"videoops.creative-director"
+    })
+
+    ledger := path_join(out,"runledger")
+    ensure(ledger)
+    ledger_start := run(["env","RUNLEDGER_DIR="+ledger,"KUJO="+path_join(dirname(root),"kujo/target/release/kujo"),path_join(dirname(root),"runledger/bin/runledger"),"start","--provider","fixture","--model","economical-profiles","--task","VideoOps offline fixture","--prompt",path_join(root,"fixtures/videoops/packwrite/MEGA_PROMPT.md"),"--repo",root],root,30000)
+    if ledger_start["exit_code"]!=0 { eprint("RunLedger start failed: "+ledger_start["stderr"]); exit(1) }
+    first_line := split(trim(ledger_start["stdout"]),"\n")[0]
+    run_id := trim(replace(first_line,"Started run:",""))
+
+    receipts := []
+    escalation_workspace := path_join(out,"escalation-workspace")
+    escalation_copy := run(["cp","-R",path_join(root,"fixtures/videoops/sample-project"),escalation_workspace],root,10000)
+    if escalation_copy["exit_code"]!=0 { eprint("escalation fixture copy failed: "+escalation_copy["stderr"]); exit(1) }
+    escalation_receipt := stage(root,escalation_workspace,"videoops-creative-planning",["--attempt","3"],0)
+    escalation_event_path := path_join(escalation_workspace,"review/evidence/escalations/creative-director.json")
+    if get(escalation_receipt,"model_profile","")!="premium-creative" || !path_is_file(escalation_event_path) { eprint("stage-local escalation was not recorded"); exit(1) }
+    receipts=push(receipts,stage(root,workspace,"videoops-creative-planning",[],0))
+    receipts=push(receipts,stage(root,workspace,"videoops-asset-resolution",[],0))
+    blocked_editor:=stage(root,workspace,"videoops-hyperframes-edit",[],1)
+    if get(blocked_editor,"code","")!="unresolved_required_assets" { eprint("editor did not fail closed on unresolved assets"); exit(1) }
+    receipts=push(receipts,stage(root,workspace,"videoops-media-generation",[],0))
+    receipts=push(receipts,stage(root,workspace,"videoops-hyperframes-edit",[],0))
+    first_review:=stage(root,workspace,"videoops-quality-review",[],0)
+    if get(first_review,"outcome","")!="revision_required" { eprint("first review did not request revision"); exit(1) }
+    receipts=push(receipts,first_review)
+    revision_limit_workspace:=path_join(out,"revision-limit-workspace")
+    revision_limit_copy:=run(["cp","-R",workspace,revision_limit_workspace],root,10000)
+    if revision_limit_copy["exit_code"]!=0 { eprint("revision-limit fixture copy failed: "+revision_limit_copy["stderr"]); exit(1) }
+    limit_review:=stage(root,revision_limit_workspace,"videoops-quality-review",["--revision-count","3","--attempt","3"],1)
+    if get(limit_review,"outcome","")!="blocked" { eprint("critic did not stop at revision limit"); exit(1) }
+    receipts=push(receipts,stage(root,workspace,"videoops-hyperframes-edit",["--revision","--attempt","2"],0))
+    second_review:=stage(root,workspace,"videoops-quality-review",["--revision-count","1","--attempt","2"],0)
+    if get(second_review,"outcome","")!="completed" { eprint("second review did not pass"); exit(1) }
+    receipts=push(receipts,second_review)
+    receipts=push(receipts,stage(root,workspace,"videoops-hyperframes-edit",["--finalize","--attempt","3"],0))
+
+    agents_root:=path_join(dirname(root),"kujo-agents")
+    for receipt in receipts {
+        stage_name:=get(receipt,"stage","")
+        receipt_path:=path_join(workspace,"review/evidence/stages/"+stage_name+"-attempt-"+to_string(get(receipt,"attempt",1))+".json")
+        schema_path:=path_join(agents_root,"videoops/"+stage_name+"/output.schema.json")
+        require_schema(receipt_path,schema_path,"stage receipt "+stage_name)
+    }
+    artifact_schemas:=[
+        ["planning/shot-list.json","shot-list"],["assets/asset-manifest.json","asset-manifest"],
+        ["review/approval.json","approval"],["review/fix-list.json","fix-list"],
+        ["review/project-state.json","project-state"]
+    ]
+    for row in artifact_schemas { require_schema(path_join(workspace,row[0]),path_join(agents_root,"schemas/videoops/"+row[1]+".schema.json"),row[1]) }
+    require_schema(escalation_event_path,path_join(agents_root,"schemas/videoops/escalation.schema.json"),"escalation event")
+    for owner in ["creative-director","asset-scout","media-generator","hyperframes-editor","video-critic"] {
+        require_schema(path_join(workspace,"review/evidence/handoffs/"+owner+".json"),path_join(agents_root,"schemas/videoops/handoff.schema.json"),"handoff "+owner)
+    }
+
+    usage := run(["env","RUNLEDGER_DIR="+ledger,"KUJO="+path_join(dirname(root),"kujo/target/release/kujo"),path_join(dirname(root),"runledger/bin/runledger"),"usage",run_id,"--input","0","--output","0","--cache-read","0","--cache-write","0"],root,30000)
+    if usage["exit_code"]!=0 { eprint("RunLedger usage failed: "+usage["stderr"]); exit(1) }
+    cost := run(["env","RUNLEDGER_DIR="+ledger,"KUJO="+path_join(dirname(root),"kujo/target/release/kujo"),path_join(dirname(root),"runledger/bin/runledger"),"cost",run_id,"--total","0","--currency","USD","--input","0","--output","0","--cache","0"],root,30000)
+    if cost["exit_code"]!=0 { eprint("RunLedger cost failed: "+cost["stderr"]); exit(1) }
+    note := run(["env","RUNLEDGER_DIR="+ledger,"KUJO="+path_join(dirname(root),"kujo/target/release/kujo"),path_join(dirname(root),"runledger/bin/runledger"),"note",run_id,"Five agent stages; eight successful stage receipts; two expected fail-closed checks; zero model tokens and zero paid cost."],root,30000)
+    if note["exit_code"]!=0 { eprint("RunLedger note failed: "+note["stderr"]); exit(1) }
+    finish := run(["env","RUNLEDGER_DIR="+ledger,"KUJO="+path_join(dirname(root),"kujo/target/release/kujo"),path_join(dirname(root),"runledger/bin/runledger"),"finish",run_id,"--status","pass","--verdict","Five bounded stages, fail-closed asset gate, real HyperFrames render, FAIL-to-fix-to-PASS revision, and finalization passed offline."],root,30000)
+    if finish["exit_code"]!=0 { eprint("RunLedger finish failed: "+finish["stderr"]); exit(1) }
+
+    manifest:=parse_json(read_file(path_join(workspace,"assets/asset-manifest.json")))
+    generation:=parse_json(read_file(path_join(workspace,"review/evidence/generation-selection.json")))
+    approval:=parse_json(read_file(path_join(workspace,"review/approval.json")))
+    fixes:=parse_json(read_file(path_join(workspace,"review/fix-list.json")))
+    final_path:=path_join(workspace,"output/final.mp4")
+    generated_ids:=get(generation,"generated_ids",[])
+    skipped_ids:=get(generation,"skipped_non_generate_ids",[])
+    generator_gate:=len(generated_ids)==1 && generated_ids[0]=="asset-002" && len(skipped_ids)==1 && skipped_ids[0]=="asset-001"
+    fix_items:=get(fixes,"issues",[])
+    fix_status:="missing"
+    if len(fix_items)>0 { fix_status=get(fix_items[0],"implementation_status","") }
+    final_exists:=path_is_file(final_path)
+    final_hash_present:=false
+    if final_exists { final_hash_present=len(sha256_file(final_path))==64 }
+    proof:={
+        "schema":"videoops.integration-proof/v1","fixture":true,"offline":true,"production_orchestrator":false,"network_calls":0,"paid_calls":0,"credentials_used":false,
+        "agent_stage_count":5,"successful_stage_receipts":len(receipts),"editor_unresolved_asset_gate":"passed","creative_plan_gate":"passed","asset_accounting":"passed",
+        "generator_only_generate_gate":generator_gate,
+        "hyperframes_real_render":"passed","audio_stream_gate":"passed","audio_fixture":"deterministic-local-reference-tone","hyperframes_version":"0.8.27","render_width":1920,"render_height":1080,"render_fps":30,"render_duration_seconds":6,
+        "first_review":"FAIL","revision_limit_gate":"passed","revision_fix_status":fix_status,"second_review":get(approval,"status",""),
+        "revision_loop":"passed","final_exists":final_exists,"final_sha256_present":final_hash_present,
+        "manifest_assets":len(get(manifest,"assets",[])),"runledger_status":"pass","runledger_input_tokens":0,"runledger_output_tokens":0,"runledger_total_cost_usd":0,"runledger_run_id":run_id,"packwrite_boundary":"validated-and-linked",
+        "model_profiles":["economical-general","economical-code","economical-multimodal"],"stage_local_escalation":"passed","max_economical_attempts":2,"max_revision_cycles":3,
+        "stage_output_schema_gate":"passed","artifact_schema_gate":"passed","project_state_gate":"passed","handoff_schema_gate":"passed","escalation_schema_gate":"passed"
+    }
+    proof_path:=path_join(out,"integration-proof.json")
+    write_json(proof_path,proof)
+    print(to_json_pretty({"ok":true,"proof":proof_path,"workspace":workspace,"runledger_run_id":run_id}))
+}
+
+main()

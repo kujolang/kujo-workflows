@@ -1,0 +1,27 @@
+{
+  "schema": "videoops.model-routing/v1",
+  "version": "1.0.0",
+  "provider_binding": null,
+  "quality_modes": ["economy", "standard", "flagship"],
+  "profiles": {
+    "economical-general": {"capabilities": ["instruction-following", "tool-use", "structured-output"]},
+    "economical-code": {"capabilities": ["coding", "tool-use", "structured-output", "project-context"]},
+    "economical-multimodal": {"capabilities": ["image-understanding", "video-understanding-or-sampled-frames", "structured-output", "reasoning"]},
+    "premium-creative": {"capabilities": ["high-quality-reasoning", "writing", "conceptual-creativity", "long-context"]},
+    "premium-multimodal": {"capabilities": ["strong-visual-understanding", "video-understanding", "reasoning", "actionable-critique"]}
+  },
+  "defaults": {
+    "packwrite": "economical-general",
+    "creative-director": "economical-general",
+    "asset-scout": "economical-general",
+    "media-generator": "economical-general",
+    "hyperframes-editor": "economical-code",
+    "video-critic": "economical-multimodal"
+  },
+  "max_economical_attempts_per_stage": 2,
+  "max_editor_critic_revision_cycles": 3,
+  "escalation_scope": "failing-stage-only",
+  "deterministic_checks_before_model_review": true,
+  "accept_failed_artifact_when_budget_exhausted": false,
+  "escalation_event_schema": "kujo-agents/schemas/videoops/escalation.schema.json"
+}

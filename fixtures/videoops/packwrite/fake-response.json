@@ -1,0 +1,12 @@
+{
+  "files": [
+    {"path": "agent/MASTER.md", "content": "# VideoOps Intake Pack\n\nNormalize user intent into six intake artifacts. Preserve claims and constraints. Stop before creative planning.\n"},
+    {"path": "agent/TODO.md", "content": "# TODO\n\n- [ ] Phase 00\n  - phases/00-project-brief.md\n"},
+    {"path": "agent/HANDOFF.md", "content": "# Handoff\n\n## Current Status\nIntake normalization pending.\n\n## Completed Phases\nNone.\n\n## Known Issues\nNone.\n\n## Next Agent Notes\nHand six validated intake files to videoops.creative-director.\n"},
+    {"path": "agent/DECISIONS.md", "content": "# Decisions\n\n## Confirmed Decisions\nPackWrite stops before creative planning.\n\n## Open Decisions\nNone.\n\n## Decision Log\nThe Creative Director owns narrative and shot planning.\n"},
+    {"path": "agent/REVIEW_CHECKLIST.md", "content": "# Review Checklist\n\n## Intent\n- [ ] Claims preserved\n- [ ] Constraints preserved\n\n## Artifacts\n- [ ] Six artifacts exist\n- [ ] Platform JSON validates\n\n## Boundary\n- [ ] No media or planning work performed\n"},
+    {"path": "agent/DEEPSEEK_START.md", "content": "# Implementation Start\n\nWork autonomously through the bounded intake phase, then stop at the Creative Director handoff.\n"},
+    {"path": "agent/CODEX_REVIEW_PROMPT.md", "content": "# Review Prompt\n\nScore intake fidelity and produce a repair checklist for any boundary or artifact defect.\n"},
+    {"path": "agent/phases/00-project-brief.md", "content": "# Phase 00 — Intake\n\n## Goal\nNormalize intent into six intake artifacts.\n\n## Scope\nProject brief, messaging, audience, constraints, references, and platform JSON.\n\n## Out of scope\nCreative planning, asset work, and rendering.\n\n## Read before starting\nRead MEGA_PROMPT.md and supplied source intent.\n\n## Implementation notes\nPreserve claims and constraints verbatim where material.\n\n## Acceptance criteria\n- [ ] All six files exist.\n- [ ] No unsupported claim is added.\n\n## Suggested checks\nValidate JSON and required Markdown content.\n\n## Handoff requirements\nName videoops.creative-director as next owner.\n"}
+  ]
+}

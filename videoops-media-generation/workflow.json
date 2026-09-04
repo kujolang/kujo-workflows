@@ -1,0 +1,15 @@
+{
+  "schema": "videoops.workflow/v1",
+  "id": "videoops-media-generation",
+  "version": "1.0.0",
+  "purpose": "Generate only explicit GENERATE requirements and register inspected outputs.",
+  "default_permission": "ACT",
+  "fixture_mode": true,
+  "live_mode": false,
+  "agent": "videoops.media-generator",
+  "model_profile": "economical-general",
+  "max_economical_attempts": 2,
+  "skills": ["videoops-generated-still-production", "videoops-generated-motion-production", "videoops-brand-style-translation", "videoops-shot-context-generation", "videoops-generation-variant-selection", "videoops-generated-asset-manifesting"],
+  "outputs": ["assets/generated/", "assets/asset-manifest.json"],
+  "next_workflow": "videoops-hyperframes-edit"
+}

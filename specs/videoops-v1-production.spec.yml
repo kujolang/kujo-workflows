@@ -1,0 +1,59 @@
+name: "VideoOps v1 agent and stage contracts"
+goal: "Deliver five Kujo-native VideoOps agent packages, reusable skills, deterministic stage workflows, and an offline review/revision proof in the existing Kujo repositories."
+version: "1.0.0"
+priority: "high"
+status: "in-progress"
+background: "The original standalone kujo-videoops implementation was placed in the wrong repository and language. VideoOps must follow the established WebOps distribution pattern while keeping its executable workflow logic in Kujo."
+scope: "Add five provider-neutral role packages and shared policy under kujo-agents/videoops; reusable role and production-method skills under kujo-skills/skills/videoops-*; and five stage kits, shared Kujo runtime, fixtures, Eval, PackWrite, Howl, and evidence contracts under kujo-workflows."
+non_goals:
+  - "A production master orchestrator"
+  - "Live provider calls, paid generation, cloud rendering, publishing, or external account setup"
+  - "Modification or cleanup of the abandoned kujo-videoops repository"
+acceptance_criteria:
+  - "All five agent packages validate against current kujo.agent.manifest/v1 conventions"
+  - "Every requested VideoOps skill exists, has valid Agent Skills frontmatter, and resolves from an agent contract"
+  - "Workflow and validation source added for VideoOps is Kujo, with shell launchers limited to invoking Kujo"
+  - "PackWrite intake is consumed as a boundary and is not reimplemented"
+  - "Logical model profiles are provider-neutral, economical-first, stage-local, retry-bounded, and observable"
+  - "Creative planning, asset resolution, generation selection, editor preflight, critic PASS/FAIL, and three-cycle escalation are tested"
+  - "A local fixture produces a real HyperFrames draft, deterministic technical evidence, a FAIL review, an applied fix, a PASS review, and a final artifact"
+  - "Eval, Howl, and RunLedger integrations use their current artifact contracts without requiring credentials"
+  - "All changed repositories pass their release gates, are committed in small meaningful commits, pushed, and clean"
+eval_requirements:
+  - description: "Run the repository-owned VideoOps release gate."
+    check_type: "command_succeeds"
+    params:
+      command: "bash tests/videoops-release-gate.sh"
+  - description: "Require the implementation report."
+    check_type: "file_exists"
+    params:
+      path: "docs/videoops/implementation-report.md"
+  - description: "Require the deterministic integration proof."
+    check_type: "file_exists"
+    params:
+      path: "tests/fixtures/videoops/expected/integration-proof.json"
+risks:
+  - risk: "HyperFrames rendering depends on local Chrome, FFmpeg, Node, and the installed CLI."
+    mitigation: "Run doctor and version preflight; fail with an explicit capability receipt when unavailable."
+    severity: "high"
+  - risk: "No live image/video generation can be proven without provider credentials."
+    mitigation: "Use a deterministic local fixture generator and label it as fixture-only, never as live-provider proof."
+    severity: "medium"
+  - risk: "Agent manifests describe permissions but do not enforce them alone."
+    mitigation: "Declare runtime-adapter enforcement and verify path/action scopes in the Kujo workflow runtime."
+    severity: "high"
+dependencies:
+  - "Kujo runtime"
+  - "kujo-agents"
+  - "kujo-skills"
+  - "HyperFrames CLI"
+  - "FFmpeg and ffprobe"
+review_expectations:
+  - "Review role boundaries, schema compatibility, provider independence, deterministic proof, and external-effect claims"
+human_approval_points:
+  - "Any live provider, paid generation, external publication, or account-backed operation"
+tags:
+  - "videoops"
+  - "agents"
+  - "kujo"
+  - "offline-proof"

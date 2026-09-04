@@ -1,0 +1,2 @@
+from lib.videoops.runtime import run_stage
+run_stage("creative-director")

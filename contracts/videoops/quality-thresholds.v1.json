@@ -1,0 +1,8 @@
+{
+  "schema": "videoops.quality-thresholds/v1",
+  "version": "1.0.0",
+  "creative_plan": {"pass": 85, "revise_min": 75, "dimensions": ["narrative_clarity", "hook_strength", "visual_variety", "executability", "brand_alignment", "originality", "platform_fit", "timing_completeness", "asset_plan_quality"]},
+  "render_review": {"pass": 85, "blocking_severities": ["BLOCKER", "HIGH"], "dimensions": ["narrative_clarity", "hook_strength", "pacing", "visual_hierarchy", "motion_quality", "brand_fit", "audio_quality", "transcript_fidelity", "technical_quality", "cta_effectiveness"]},
+  "confidence_escalation_below": 0.75,
+  "configurable": true
+}

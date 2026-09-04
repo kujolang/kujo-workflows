@@ -1,0 +1,2 @@
+state := "PLANNING_READY"
+print(state)
