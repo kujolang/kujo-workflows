@@ -1,7 +1,7 @@
 # Cross-tool contracts
 
 These JSON contracts are the workflow-facing boundary for Tribunal, Relay,
-Workcell, and the Publishing House workflow layer. They are intentionally
+Workcell, Publishing House, and VideoOps workflow layers. They are intentionally
 additive: consumers must ignore unknown
 properties, while producers must preserve the required timestamps,
 workflow/run/step references, correlation and causation identifiers,
@@ -27,6 +27,10 @@ requests, normalized daily packets, record references, capability and agent
 receipts, approval pauses, resume requests, blockers, summaries, and completion
 receipts. These contracts reference but do not redefine tool-owned editorial,
 evidence, artifact, media, review, approval, publication, or learning records.
+
+`videoops/` defines the provider-neutral model-routing policy and quality
+thresholds used by the five-stage video production line. Live provider names,
+credentials, and prices are runtime configuration rather than contract data.
 
 Validate the schemas and examples with:
 

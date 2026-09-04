@@ -17,13 +17,13 @@
     "runner_contract_version": "0.1.0"
   },
   "kujo_agents": {
-    "version": "1.2.0",
-    "commit": "ad2370310b41995c8c355b66ab931f9f0e3f9314",
+    "version": "1.3.0",
+    "commit": "b90089ac55f643c19d421f1457a01431882eee46",
     "publishing_house_contract_version": "1.0.0"
   },
   "kujo_skills": {
-    "version": "0.4.1",
-    "commit": "db4a7f3c290b45a87339c4ab805ec34e7ca85c8c",
+    "version": "0.5.0",
+    "commit": "41ea735c957d73e5a2bf11b9febb7fccd4de92f6",
     "publishing_house_skill": "kujo-publishing-house-workflows"
   },
   "tools": {

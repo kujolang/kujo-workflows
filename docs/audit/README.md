@@ -7,7 +7,7 @@ The machine-readable source of truth is [`workflow-catalog.json`](workflow-catal
 
 ## Scope and disposition
 
-- 38 active workflow kits are inventoried from the catalog and repository README, including the Owned Agent Project proof, ten WebOps kits, the reusable Codebase Cleanup workflow, and eleven Publishing House kits.
+- 43 active workflow kits are inventoried from the catalog and repository README, including the Owned Agent Project proof, ten WebOps kits, the reusable Codebase Cleanup workflow, eleven Publishing House kits, and five VideoOps stage kits.
 - The catalog resolves every Publishing House kit to the dedicated `kujo-publishing-house-workflows` skill alongside Dispatch and Agents SDK guidance.
 - Weekly refresh checked repositories changed in the last 7-10 days, prioritizing `kujo`, `kujo-skills`, `kujo-agents`, Dispatch, Agents SDK, AI SDK/provider packages, AI Chat, Watchdog, Relay, SSG/WebMCP, and the workflow kits that integrate with them.
 - Publishing House records were updated for the current committed `kujo`, Dispatch, Agents SDK, `kujo-agents`, and `kujo-skills` checkouts; the workflow lock now matches the sibling commits used by fixture proof. Dirty sibling working-tree files in `kujo`, `agents-sdk`, `kennel`, and `spec` were excluded from catalog claims.

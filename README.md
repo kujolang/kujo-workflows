@@ -1,13 +1,13 @@
 # Kujo Workflows
 
-[![Version](https://img.shields.io/badge/version-0.4.0-black)](https://github.com/kujolang/kujo-workflows)
+[![Version](https://img.shields.io/badge/version-0.5.0-black)](https://github.com/kujolang/kujo-workflows)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
 [![built with Kujo](https://img.shields.io/badge/built%20with-Kujo-white.svg)](https://github.com/kujolang/kujo)
 [![CI](https://github.com/kujolang/kujo-workflows/actions/workflows/validate.yml/badge.svg)](https://github.com/kujolang/kujo-workflows/actions/workflows/validate.yml)
 
 Repository-backed, local-first workflow kits for the [Kujo programming language](https://kujolang.ai) and its agency and AI tooling ecosystem. Each kit demonstrates one concrete outcome and leaves behind inspectable evidence instead of relying on an opaque hosted runner.
 
-Current release scope: **locally verified support/distribution technical preview** (`0.4.0`). Hosted runners, live-provider coverage, clean-machine installation on a separate host, and production or enterprise readiness are not claimed.
+Current release scope: **locally verified support/distribution technical preview** (`0.5.0`). Hosted runners, live-provider coverage, clean-machine installation on a separate host, and production or enterprise readiness are not claimed.
 
 ## Visual WebOps Reports
 
@@ -39,6 +39,21 @@ publishing-house-operator/bin/publishing-house --json plan import \
   publishing-house-operator/fixtures/september-2026.json
 publishing-house-operator/bin/publishing-house --json tick --fixture
 ```
+
+## VideoOps Production Line
+
+The five VideoOps kits form a file-handoff production line: creative planning,
+rights-aware asset resolution, explicit media generation, HyperFrames editing,
+and independent critique. The complete offline gate renders and inspects a real
+1080p30 MP4 with audio, proves fail-closed asset behavior and the bounded
+revision loop, and uses no credentials, network calls, or paid services.
+
+```bash
+bash tests/videoops-release-gate.sh
+```
+
+See the [implementation report](docs/videoops/implementation-report.md) for the
+verified boundary and the live-provider work that remains external.
 
 ## Why Use These Workflows?
 
@@ -135,6 +150,11 @@ All commands below run from the repository root.
 | [`publishing-house-approval-publication/`](publishing-house-approval-publication/) | Limited | Publishing operators and approvers | Dispatch pauses for checksum-bound VersionSeal approval before a bounded PressWire fixture effect. | `(cd publishing-house-approval-publication && bash scripts/test.sh)` |
 | [`publishing-house-post-publication/`](publishing-house-post-publication/) | Limited | Audience and strategy teams | A verified receipt and compatible measurements become bounded learning and a StoryDesk follow-up. | `(cd publishing-house-post-publication && bash bin/run --request fixtures/request.fixture.json --json)` |
 | [`publishing-house-operator/`](publishing-house-operator/) | Limited | Publishing operators | Publication-profile-driven intake, plans, event candidates, daily bounded progression, checkpoint/resume, approval pauses, and exception-only notifications. | `publishing-house-operator/bin/publishing-house --json doctor` |
+| [`videoops-creative-planning/`](videoops-creative-planning/) | Limited | Video producers | Validated PackWrite intake becomes a timed creative brief, transcript, shot list, style plan, asset requirements, and explicit handoff. | `videoops-creative-planning/bin/run --fixture --workspace /absolute/project/path --run-id example` |
+| [`videoops-asset-resolution/`](videoops-asset-resolution/) | Limited | Video producers | Every asset requirement terminates as found, captured, generated, not required, or blocked with rights and provenance evidence. | `videoops-asset-resolution/bin/run --fixture --workspace /absolute/project/path --run-id example` |
+| [`videoops-media-generation/`](videoops-media-generation/) | Limited | Video producers | Only requirements explicitly marked `GENERATE` are processed and registered; other assets remain untouched. | `videoops-media-generation/bin/run --fixture --workspace /absolute/project/path --run-id example` |
+| [`videoops-hyperframes-edit/`](videoops-hyperframes-edit/) | Limited | Video editors | Approved plans and assets become a checked HyperFrames composition, real render, audio-muxed output, technical evidence, and bounded revisions. | `videoops-hyperframes-edit/bin/run --fixture --workspace /absolute/project/path --run-id example` |
+| [`videoops-quality-review/`](videoops-quality-review/) | Limited | Video reviewers | An independent critic issues PASS or an actionable timestamped fix list and stops after the revision limit. | `videoops-quality-review/bin/run --fixture --workspace /absolute/project/path --run-id example` |
 
 ### Install Publishing House locally
 
@@ -198,23 +218,25 @@ See the current [launch checklist](docs/launch-checklist.md) and [release-readin
 - [`contracts/`](contracts/) contains versioned Tribunal, Relay, and Workcell evidence contracts.
 - [`docs/audit/`](docs/audit/) contains the machine-readable workflow catalog and compatibility evidence.
 - [`docs/publishing-house/`](docs/publishing-house/) documents the eleven-kit editorial lifecycle, ownership boundaries, fixture proof, and compatibility matrix.
+- [`docs/videoops/`](docs/videoops/) documents the VideoOps implementation and verified offline/live boundary.
 - [`publishing-house-operator/`](publishing-house-operator/) contains the operator, publication and voice profiles, SourcePack/plan schemas, scheduler templates, Eval suite, fixtures, and tests.
 - [`examples/`](examples/) identifies low-risk starting points.
 - [`scripts/`](scripts/) contains repository validators.
 - [`tests/`](tests/) contains portable release and integration checks.
-- [`kujo-workflows.spec.yml`](kujo-workflows.spec.yml) is the canonical `0.4.0` acceptance contract.
+- [`kujo-workflows.spec.yml`](kujo-workflows.spec.yml) is the canonical `0.5.0` acceptance contract.
 
 ## Documentation
 
 - [`contracts/README.md`](contracts/README.md) — versioned evidence contracts and compatibility rules.
 - [`docs/audit/README.md`](docs/audit/README.md) — catalog, compatibility, and weekly drift evidence.
 - [`docs/publishing-house/README.md`](docs/publishing-house/README.md) — Publishing House lifecycle, fixture/live boundaries, approval, inspection, and recovery.
+- [`docs/videoops/implementation-report.md`](docs/videoops/implementation-report.md) — VideoOps architecture, proof coverage, and external limits.
 - [`docs/launch-checklist.md`](docs/launch-checklist.md) — verified launch gates and remaining external proof.
-- [`docs/specs/showcase-release-readiness.md`](docs/specs/showcase-release-readiness.md) — rendered `0.4.0` acceptance contract.
+- [`docs/specs/showcase-release-readiness.md`](docs/specs/showcase-release-readiness.md) — rendered `0.5.0` acceptance contract.
 
 ## Release and Support Status
 
-This repository is the MIT-licensed `0.4.0` technical preview of the Kujo workflow-kit distribution. The checkout covers 38 local workflows, including the Owned Agent Project proof, the eleven-workflow Publishing House lifecycle, and the Publishing House Operator control layer, plus shared contracts, documentation, versioned evidence contracts, and repository-owned validation gates. It does not publish a package, container image, hosted runner, or workflow service.
+This repository is the MIT-licensed `0.5.0` technical preview of the Kujo workflow-kit distribution. The checkout covers 43 local workflows, including the Owned Agent Project proof, the eleven-workflow Publishing House lifecycle, the Publishing House Operator control layer, and the five-stage VideoOps production line, plus shared contracts, documentation, versioned evidence contracts, and repository-owned validation gates. It does not publish a package, container image, hosted runner, or workflow service.
 
 For contribution, support, conduct, and vulnerability-reporting guidance, see [CONTRIBUTING.md](CONTRIBUTING.md), [SUPPORT.md](SUPPORT.md), [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), and [SECURITY.md](SECURITY.md).
 

@@ -6,6 +6,24 @@ The format follows Keep a Changelog and Semantic Versioning.
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-09-04
+
+### Added
+
+- Five Kujo-native VideoOps workflow kits covering creative planning, asset
+  resolution, explicit media generation, current HyperFrames editing, and
+  independent quality review.
+- A credential-free end-to-end fixture with PackWrite, Spec, Eval, Howl,
+  RunLedger, real 1080p30 HyperFrames rendering, deterministic audio muxing,
+  ffprobe checks, fail-closed asset gates, and a bounded FAIL/fix/PASS loop.
+- Provider-neutral economical model routing, quality thresholds, workflow
+  contracts, fixtures, and a cross-repository VideoOps validator.
+
+### Changed
+
+- Expanded the workflow catalog from 38 to 43 entries without changing the
+  existing WebOps, Publishing House, or general workflow contracts.
+
 ## [0.4.0] - 2026-09-02
 
 ### Added

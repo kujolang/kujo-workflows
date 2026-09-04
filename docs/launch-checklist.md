@@ -1,6 +1,6 @@
 # Launch Checklist
 
-Current launch scope: `locally verified support/distribution technical preview` (`0.4.0`). Repository-owned validation, WebOps fixture workflows, the locked Publishing House all-eleven installation proof, and the Publishing House Operator control layer pass on the development host. Hosted runner behavior, live external-provider workflows, and clean-machine installation on a separate host are not complete.
+Current launch scope: `locally verified support/distribution technical preview` (`0.5.0`). Repository-owned validation, WebOps fixture workflows, the locked Publishing House all-eleven installation proof, the Publishing House Operator control layer, and the credential-free VideoOps integration proof pass on the development host. Hosted runner behavior, live external-provider workflows, and clean-machine installation on a separate host are not complete.
 
 The synchronized three-tool contract is `docs/webops-toolchain-contract.json`.
 Its release evidence is
@@ -45,6 +45,7 @@ These commands require the local Kujo runtime, sibling tool repositories, and an
 - [x] Workcell proof: `workcell run --file docs/workcell-launch-gate.json --repo . --no-pull`.
 - [x] Detached clean local worktree validation on the development host.
 - [x] Locked Publishing House installation and all-eleven first run from a tracked archive on the development host: `bash tests/publishing-house-install.sh`.
+- [x] Five-stage VideoOps proof with PackWrite, Spec, Eval, Howl, RunLedger, real HyperFrames rendering, audio mux/inspection, asset fail-closed behavior, and bounded revision: `bash tests/videoops-release-gate.sh`.
 - [ ] Clean-checkout installation and workflow validation on a separate machine.
 - [ ] Live-provider and fully authenticated browser validation.
 - [ ] Hosted runner validation.
@@ -70,4 +71,4 @@ Generated `.runs/` and `.workcell/` directories are ignored local evidence. A la
 
 ## Forbidden Launch Actions
 
-Hosted runner deployment, live-provider workflows, marketplace publication, live credentials, branch-protection changes, and force-pushes remain out of scope. Public releases and final tags require explicit maintainer authorization; v0.4.0 was authorized on 2026-09-02.
+Hosted runner deployment, live-provider workflows, marketplace publication, live credentials, branch-protection changes, and force-pushes remain out of scope. Public releases and final tags require explicit maintainer authorization; this change does not create a `v0.5.0` tag.
