@@ -11,4 +11,4 @@ if [[ ! -x "$kujo" ]]; then
 fi
 
 cd "$repo_root/codebase-cleanup"
-"$kujo" run tests/cleanup_tests.kujo
+KUJO_BIN="$kujo" KUJO_REPOS="$repos" "$kujo" run tests/cleanup_tests.kujo
