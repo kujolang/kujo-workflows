@@ -21,7 +21,7 @@
       "repository": "https://github.com/kujolang/kujo-agents.git"
     },
     "kujo-skills": {
-      "commit": "1e0a2eadee0c11ac04b5bc871714bedcb75a2a6e",
+      "commit": "0d41ab407d6e8d071b755940c21570c8d0a11de1",
       "repository": "https://github.com/kujolang/kujo-skills.git"
     },
     "storydesk": {

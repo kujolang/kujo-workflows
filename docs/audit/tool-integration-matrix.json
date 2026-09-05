@@ -1,11 +1,11 @@
 {
   "schema": "kujo.workflow-tool-integration/v1",
-  "audit_id": "kujo-workflows-audit-2026-08-29",
+  "audit_id": "kujo-workflows-audit-2026-09-05",
   "tools": [
     {
       "tool": "tribunal",
       "canonical_repo": "../tribunal",
-      "actual_version": "current main at a7499fb",
+      "actual_version": "current main at b9c3129",
       "current_usage": [
         "tribunal-decision-gate"
       ],
@@ -29,7 +29,7 @@
     {
       "tool": "relay",
       "canonical_repo": "../relay",
-      "actual_version": "current main at 0480733",
+      "actual_version": "current main at 01c44da",
       "current_usage": [
         "relay-lifecycle-handoff"
       ],
@@ -54,7 +54,7 @@
     {
       "tool": "ai-sdk",
       "canonical_repo": "../ai-sdk",
-      "actual_version": "current main at be9617a",
+      "actual_version": "current main at 71bad14",
       "current_usage": [
         "ai-sdk-muzzle-benchmark",
         "ai-sdk-watchdog-showcase"
@@ -80,7 +80,7 @@
     {
       "tool": "ai-chat",
       "canonical_repo": "../ai-chat",
-      "actual_version": "current main at ed3ff2c",
+      "actual_version": "current main at f1d0494",
       "current_usage": [
         "ai-sdk-watchdog-showcase"
       ],
@@ -105,7 +105,7 @@
     {
       "tool": "watchdog",
       "canonical_repo": "../watchdog",
-      "actual_version": "current main at 1af292b",
+      "actual_version": "current main at 3140bde",
       "current_usage": [
         "ai-sdk-watchdog-showcase"
       ],
@@ -130,7 +130,7 @@
     {
       "tool": "workcell",
       "canonical_repo": "../workcell",
-      "actual_version": "current main at 7bcdb7f",
+      "actual_version": "current main at 074d726",
       "current_usage": [
         "workcell-execution-gate"
       ],
@@ -155,7 +155,7 @@
     {
       "tool": "dispatch",
       "canonical_repo": "../dispatch",
-      "actual_version": "current main at 662417c",
+      "actual_version": "current main at 83ffa0e",
       "current_usage": [
         "enterprise-dispatch-approval-router",
         "publishing-house-*"
@@ -180,7 +180,7 @@
     {
       "tool": "casefile",
       "canonical_repo": "../casefile",
-      "actual_version": "current main",
+      "actual_version": "current main at f26df30",
       "current_usage": [
         "agency-verified-fix-loop",
         "casefile-incident-evidence-packet",
@@ -207,13 +207,19 @@
     {
       "tool": "runledger",
       "canonical_repo": "../runledger",
-      "actual_version": "current main at 12bbf2b",
+      "actual_version": "current main at 92cb063",
       "current_usage": [
         "agency-runner",
         "agency-verified-fix-loop",
         "feature-card-workflow",
         "ai-sdk-muzzle-benchmark",
-        "codebase-cleanup"
+        "codebase-cleanup",
+        "videoops-production",
+        "videoops-creative-planning",
+        "videoops-asset-resolution",
+        "videoops-media-generation",
+        "videoops-hyperframes-edit",
+        "videoops-quality-review"
       ],
       "proposed_usage": [
         "retain as execution history owner"
@@ -224,7 +230,7 @@
       "complexity": "low",
       "risk": "External receipt persistence can be unavailable; workflows must report partial status.",
       "implementation": "implemented",
-      "reason": "Codebase Cleanup exposes RunLedger as a host-owned adapter instead of creating an unrelated task automatically.",
+      "reason": "Codebase Cleanup exposes RunLedger as a host-owned adapter instead of creating an unrelated task automatically. VideoOps release proof records lifecycle receipts with zero-token fixture accounting.",
       "tests": [
         "RunLedger CLI smoke",
         "partial finish failure",
@@ -235,7 +241,7 @@
     {
       "tool": "scout",
       "canonical_repo": "../scout",
-      "actual_version": "current main",
+      "actual_version": "current main at 6824903",
       "current_usage": [
         "agency-runner",
         "agency-verified-fix-loop",
@@ -261,7 +267,7 @@
     {
       "tool": "fence",
       "canonical_repo": "../fence",
-      "actual_version": "current main",
+      "actual_version": "current main at fc7a000",
       "current_usage": [
         "codebase-cleanup"
       ],
@@ -284,7 +290,7 @@
     {
       "tool": "concord",
       "canonical_repo": "../concord",
-      "actual_version": "current main",
+      "actual_version": "current main at 4ca5112",
       "current_usage": [
         "codebase-cleanup"
       ],
@@ -307,7 +313,7 @@
     {
       "tool": "kennel",
       "canonical_repo": "../kennel",
-      "actual_version": "current main at 012c0a2",
+      "actual_version": "current main at b5e0cf2",
       "current_usage": [
         "codebase-cleanup",
         "owned-agent-project"
@@ -333,7 +339,7 @@
     {
       "tool": "changebucket",
       "canonical_repo": "../changebucket",
-      "actual_version": "current main",
+      "actual_version": "current main at f030bcc",
       "current_usage": [
         "agency-verified-fix-loop",
         "feature-card-workflow",
@@ -358,7 +364,7 @@
     {
       "tool": "patchbrief",
       "canonical_repo": "../patchbrief",
-      "actual_version": "current main",
+      "actual_version": "current main at 321d961",
       "current_usage": [
         "agency-verified-fix-loop",
         "feature-card-workflow",
@@ -383,7 +389,7 @@
     {
       "tool": "shipcheck",
       "canonical_repo": "../shipcheck",
-      "actual_version": "current main",
+      "actual_version": "current main at 4c958ab",
       "current_usage": [
         "agency-verified-fix-loop",
         "feature-card-workflow",
@@ -408,11 +414,16 @@
     {
       "tool": "eval",
       "canonical_repo": "../eval",
-      "actual_version": "current main",
+      "actual_version": "current main at 7ad5cae",
       "current_usage": [
         "agency-verified-fix-loop",
         "feature-card-workflow",
-        "owned-agent-project"
+        "owned-agent-project",
+        "videoops-creative-planning",
+        "videoops-asset-resolution",
+        "videoops-media-generation",
+        "videoops-hyperframes-edit",
+        "videoops-quality-review"
       ],
       "proposed_usage": [
         "retain as deterministic acceptance owner"
@@ -423,13 +434,123 @@
       "complexity": "low",
       "risk": "Missing eval artifact must not be interpreted as a pass.",
       "implementation": "implemented",
-      "reason": "Existing workflows invoke Eval when a suite exists; owned Agent Project delegates deterministic generated-agent evaluation through `kujo agent eval`.",
+      "reason": "Existing workflows invoke Eval when a suite exists; owned Agent Project delegates deterministic generated-agent evaluation through `kujo agent eval`; VideoOps uses Eval stage gates inside the offline production proof.",
       "tests": [
         "Eval fixture",
         "missing-result negative case",
-        "owned Agent Project evaluation JSON"
+        "owned Agent Project evaluation JSON",
+        "videoops stage gates"
       ],
       "rollback": "Use explicit command verification only."
+    },
+    {
+      "tool": "kujo",
+      "canonical_repo": "../kujo",
+      "actual_version": "current main at 985454b",
+      "current_usage": [
+        "owned-agent-project",
+        "publishing-house-*",
+        "videoops-production",
+        "videoops-creative-planning",
+        "videoops-asset-resolution",
+        "videoops-media-generation",
+        "videoops-hyperframes-edit",
+        "videoops-quality-review"
+      ],
+      "proposed_usage": [
+        "retain as workflow definition, fixture, and schema-validation runtime"
+      ],
+      "gap": "None identified for cataloged local fixture contracts.",
+      "classification": "required-integration",
+      "priority": "P1",
+      "complexity": "low",
+      "risk": "Runtime upgrades require re-running fixture gates before refreshing locked Publishing House claims.",
+      "implementation": "implemented",
+      "reason": "Current workflows use Kujo as the local interpreter/checker. The 2026-09-04 runtime hardening and PostgreSQL TLS work do not add new workflow catalog claims.",
+      "tests": [
+        "kujo check",
+        "workflow fixture gates",
+        "catalog validation"
+      ],
+      "rollback": "Use the last fixture-validated Kujo lock for release claims."
+    },
+    {
+      "tool": "packwrite",
+      "canonical_repo": "../packwrite",
+      "actual_version": "current main at 3f0cbf4",
+      "current_usage": [
+        "agency-runner",
+        "agency-verified-fix-loop",
+        "feature-card-workflow",
+        "videoops-creative-planning"
+      ],
+      "proposed_usage": [
+        "retain as structured intake owner for VideoOps and agent work packets"
+      ],
+      "gap": "None identified for fixture intake validation.",
+      "classification": "required-integration",
+      "priority": "P1",
+      "complexity": "low",
+      "risk": "Live model execution and generated production copy remain provider- and review-gated.",
+      "implementation": "implemented",
+      "reason": "VideoOps validates PackWrite intake in the offline release gate and links it as input evidence; no live provider claim is made.",
+      "tests": [
+        "packwrite validate",
+        "videoops release gate"
+      ],
+      "rollback": "Require a prebuilt intake packet and mark live generation unavailable."
+    },
+    {
+      "tool": "howl",
+      "canonical_repo": "../howl",
+      "actual_version": "current main at 5470f92",
+      "current_usage": [
+        "howl-content-factory",
+        "videoops-creative-planning",
+        "videoops-hyperframes-edit",
+        "videoops-quality-review"
+      ],
+      "proposed_usage": [
+        "retain as deterministic proof-card renderer"
+      ],
+      "gap": "None identified for fixture proof cards.",
+      "classification": "supporting-integration",
+      "priority": "P2",
+      "complexity": "low",
+      "risk": "Rendered proof cards are evidence artifacts, not publication or distribution.",
+      "implementation": "implemented",
+      "reason": "VideoOps release proof validates and renders Howl fixture artifacts without posting or scheduling external media.",
+      "tests": [
+        "howl validate",
+        "howl render",
+        "videoops release gate"
+      ],
+      "rollback": "Keep JSON receipts and skip visual proof-card rendering."
+    },
+    {
+      "tool": "kujo-hyperframes",
+      "canonical_repo": "../kujo-hyperframes",
+      "actual_version": "current main at 5d72c07",
+      "current_usage": [
+        "videoops-hyperframes-edit"
+      ],
+      "proposed_usage": [
+        "retain as VideoOps render backend for local HyperFrames compositions"
+      ],
+      "gap": "Cloud render and account-backed media effects are outside the fixture contract.",
+      "classification": "required-integration",
+      "priority": "P1",
+      "complexity": "medium",
+      "risk": "Render correctness depends on local CLI, ffmpeg/ffprobe availability, media rights, and independent review.",
+      "implementation": "implemented",
+      "reason": "The VideoOps HyperFrames stage runs local check/render, ffprobe inspection, revision application, and finalization only after critic PASS.",
+      "tests": [
+        "hyperframes check",
+        "local MP4 render",
+        "ffprobe audio/video inspection",
+        "videoops release gate"
+      ],
+      "rollback": "Stop at composition and receipt evidence without final render claims."
     }
   ],
   "canonical_alias_findings": [

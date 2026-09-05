@@ -1,9 +1,9 @@
 {
   "schema": "kujo.workflow-skill-compatibility/v1",
-  "audit_id": "kujo-workflows-audit-2026-08-29",
+  "audit_id": "kujo-workflows-audit-2026-09-05",
   "skills_repository": {
     "path": "../kujo-skills",
-    "commit": "db4a7f3",
+    "commit": "0d41ab4",
     "branch": "main"
   },
   "relationships": [
@@ -272,10 +272,95 @@
         "contracts/workcell/work-package.v1.schema.json",
         "contracts/workcell/completion-receipt.v1.schema.json"
       ]
+    },
+    {
+      "workflow": "videoops-production",
+      "invocation": "videoops-production/bin/run",
+      "status_by_skill": {
+        "kujo-videoops-workflows": "compatible"
+      },
+      "required_action": "Keep arbitrary production workspaces separated from fixture proof; external media, provider, capture, render, and publication effects require operator approval.",
+      "implementation": "implemented",
+      "evidence": [
+        "videoops-production/README.md",
+        "videoops-production/bin/run",
+        "videoops-production/workflow.json",
+        "tests/videoops-production.sh"
+      ]
+    },
+    {
+      "workflow": "videoops-creative-planning",
+      "invocation": "videoops-creative-planning/bin/run",
+      "status_by_skill": {
+        "videoops-shot-planning": "compatible"
+      },
+      "required_action": "Preserve PackWrite intake validation and explicit planning-only handoff; do not source media or render from this stage.",
+      "implementation": "implemented",
+      "evidence": [
+        "videoops-creative-planning/README.md",
+        "videoops-creative-planning/workflow.json",
+        "tests/videoops-release-gate.sh"
+      ]
+    },
+    {
+      "workflow": "videoops-asset-resolution",
+      "invocation": "videoops-asset-resolution/bin/run",
+      "status_by_skill": {
+        "videoops-asset-manifest-maintenance": "compatible"
+      },
+      "required_action": "Keep asset statuses exhaustive and rights-aware; public availability is not reuse permission.",
+      "implementation": "implemented",
+      "evidence": [
+        "videoops-asset-resolution/README.md",
+        "videoops-asset-resolution/workflow.json",
+        "tests/videoops-release-gate.sh"
+      ]
+    },
+    {
+      "workflow": "videoops-media-generation",
+      "invocation": "videoops-media-generation/bin/run",
+      "status_by_skill": {
+        "videoops-generated-asset-manifesting": "compatible"
+      },
+      "required_action": "Process only manifest entries explicitly marked GENERATE and keep live provider output quality outside fixture claims.",
+      "implementation": "implemented",
+      "evidence": [
+        "videoops-media-generation/README.md",
+        "videoops-media-generation/workflow.json",
+        "tests/videoops-release-gate.sh"
+      ]
+    },
+    {
+      "workflow": "videoops-hyperframes-edit",
+      "invocation": "videoops-hyperframes-edit/bin/run",
+      "status_by_skill": {
+        "videoops-render-validation": "compatible"
+      },
+      "required_action": "Require resolved assets, HyperFrames check/render evidence, ffprobe inspection, and independent critic PASS before finalization.",
+      "implementation": "implemented",
+      "evidence": [
+        "videoops-hyperframes-edit/README.md",
+        "videoops-hyperframes-edit/workflow.json",
+        "tests/videoops-release-gate.sh"
+      ]
+    },
+    {
+      "workflow": "videoops-quality-review",
+      "invocation": "videoops-quality-review/bin/run",
+      "status_by_skill": {
+        "videoops-approval-decision": "compatible"
+      },
+      "required_action": "Keep review independent and stop after the bounded revision limit instead of looping indefinitely.",
+      "implementation": "implemented",
+      "evidence": [
+        "videoops-quality-review/README.md",
+        "videoops-quality-review/workflow.json",
+        "tests/videoops-release-gate.sh"
+      ]
     }
   ],
   "summary": {
-    "compatible": 45,
+    "compatible": 51,
     "compatible_but_under_tested": 9,
     "update_required": 0,
     "migration_required": 0,
