@@ -2424,6 +2424,49 @@
     },
     {
       "approval_boundaries": [
+        "Paid generation, authenticated capture, publication, and other external effects require separate operator approval."
+      ],
+      "documentation": [
+        "videoops-production/README.md",
+        "videoops-production/workflow.json"
+      ],
+      "entry": "videoops-production/bin/run",
+      "evidence": "Original request checksum, producer request, initialized project state, and portable harness invocation.",
+      "id": "videoops-production",
+      "inputs": [
+        "arbitrary production request file",
+        "absolute target workspace",
+        "VideoOps agent package"
+      ],
+      "next_workflow": "videoops-creative-planning",
+      "outputs": [
+        "preserved intake request",
+        "producer request receipt",
+        "project state",
+        "RUN_VIDEOOPS.md"
+      ],
+      "path": "videoops-production",
+      "production_readiness": "production-capable-with-limitations",
+      "purpose": "Initialize a real arbitrary production and emit a harness-neutral invocation for the VideoOps Producer.",
+      "skills": [
+        {
+          "compatibility": "compatible",
+          "name": "kujo-videoops-workflows",
+          "path": "skills/kujo-videoops-workflows/SKILL.md"
+        }
+      ],
+      "state_and_recovery": "The initializer preserves source intake and refuses accidental replacement; the selected harness owns agent execution and resumes from file handoffs.",
+      "status": "production-capable-with-limitations",
+      "tests": [
+        "kujo check videoops-production/workflow.kujo",
+        "bash tests/videoops-production.sh"
+      ],
+      "tools": [
+        "kujo"
+      ]
+    },
+    {
+      "approval_boundaries": [
         "Live providers, paid generation, accounts, cloud rendering, and publication require separate operator approval."
       ],
       "documentation": [

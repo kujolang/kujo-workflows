@@ -1,0 +1,66 @@
+func flag(argv, name, fallback) {
+    mut i := 0
+    while i < len(argv) {
+        if argv[i] == name && i + 1 < len(argv) { return to_string(argv[i + 1]) }
+        i = i + 1
+    }
+    return fallback
+}
+
+func has_flag(argv, name) {
+    for value in argv { if value == name { return true } }
+    return false
+}
+
+func ensure_dir(path) {
+    if path_is_dir(path) { return }
+    result := spawn_process(["mkdir", "-p", path], {"timeout_ms":5000,"max_output_bytes":65536})
+    if result.exitcode != 0 { eprint("cannot create directory: " + path); exit(1) }
+}
+
+func main() {
+    argv := args()
+    workspace_arg := flag(argv, "--workspace", "")
+    request_arg := flag(argv, "--request", "")
+    if workspace_arg == "" || request_arg == "" {
+        eprint("usage: bin/run --workspace /absolute/path --request /absolute/request.md [--run-id id] [--agents-root /absolute/kujo-agents] [--overwrite]")
+        exit(2)
+    }
+
+    workspace := workspace_arg
+    if !starts_with(workspace, "/") { workspace = path_join(path_absolute("."), workspace) }
+    request := path_absolute(request_arg)
+    repo_root := dirname(path_absolute("."))
+    agents_root := path_absolute(flag(argv, "--agents-root", path_join(dirname(repo_root), "kujo-agents")))
+    producer := path_join(agents_root, "videoops/producer/AGENT.md")
+    if workspace == "/" || workspace == "/Users" || workspace == "/tmp" { eprint("refusing broad workspace: " + workspace); exit(2) }
+    if !path_is_file(request) || path_is_symlink(request) || file_size(request) > 1048576 { eprint("request must be a regular file no larger than 1 MiB"); exit(2) }
+    if !path_is_file(producer) { eprint("VideoOps Producer contract not found: " + producer); exit(2) }
+
+    ensure_dir(workspace)
+    workspace = path_absolute(workspace)
+    for folder in ["intake","planning","assets","assets/generated","assets/captured","production","review","review/evidence","output"] {
+        ensure_dir(path_join(workspace, folder))
+    }
+
+    original := path_join(workspace, "intake/original-request.md")
+    if path_is_file(original) && !has_flag(argv, "--overwrite") { eprint("intake already exists; use --overwrite only to intentionally replace it"); exit(2) }
+    request_text := read_file(request)
+    write_file_atomic(original, request_text, true)
+
+    run_id := flag(argv, "--run-id", "videoops-production")
+    invocation := "Use the VideoOps Producer at `" + producer + "`.\n\nRead and follow the complete `" + path_join(agents_root, "videoops") + "` package and the `kujo-videoops-workflows` skill if installed. Execute the production request at `" + original + "` end to end through all five specialist roles. Work only in `" + workspace + "`. Treat fixture commands as acceptance tests, not production content. Do not stop at a plan or draft unless a real blocker requires operator action. Finalize only after independent Critic PASS and deterministic render verification.\n"
+    start_path := path_join(workspace, "RUN_VIDEOOPS.md")
+    write_file_atomic(start_path, invocation, true)
+    write_file_atomic(path_join(workspace, "intake/producer-request.json"), to_json_pretty({
+        "schema":"videoops.production-request/v1","run_id":run_id,"workspace":workspace,
+        "source_request":request,"normalized_request":original,"source_sha256":sha256_file(request),
+        "producer_contract":producer,"invocation":start_path,"fixture":false
+    }) + "\n", true)
+    write_file_atomic(path_join(workspace, "review/project-state.json"), to_json_pretty({
+        "state":"INTAKE_READY","run_id":run_id,"updated_at":null,"revision_count":0,"notes":"Ready for harness invocation through VideoOps Producer"
+    }) + "\n", true)
+    print(to_json_pretty({"ok":true,"fixture":false,"run_id":run_id,"workspace":workspace,"invocation":start_path,"producer":producer,"request_sha256":sha256_file(request)}))
+}
+
+main()

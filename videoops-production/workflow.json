@@ -1,0 +1,16 @@
+{
+  "schema": "videoops.workflow/v1",
+  "id": "videoops-production",
+  "version": "1.0.0",
+  "purpose": "Initialize an arbitrary production request and emit a portable harness invocation for the VideoOps Producer.",
+  "default_permission": "ACT",
+  "fixture_mode": false,
+  "live_mode": true,
+  "agent": "videoops.producer",
+  "model_profile": "standard-reasoning",
+  "max_economical_attempts": 2,
+  "max_revision_cycles": 3,
+  "skills": ["kujo-videoops-workflows"],
+  "outputs": ["intake/original-request.md", "intake/producer-request.json", "review/project-state.json", "RUN_VIDEOOPS.md"],
+  "next_workflow": "videoops-creative-planning"
+}

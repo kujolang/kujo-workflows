@@ -6,6 +6,12 @@ The format follows Keep a Changelog and Semantic Versioning.
 
 ## [Unreleased]
 
+### Added
+
+- Add the Kujo-native `videoops-production` initializer for preserving an
+  arbitrary mega prompt and emitting a harness-neutral VideoOps Producer
+  invocation without injecting fixture content.
+
 ## [0.5.0] - 2026-09-04
 
 ### Added

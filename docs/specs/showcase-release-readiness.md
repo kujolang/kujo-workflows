@@ -12,7 +12,7 @@
 
 ## Goal
 
-Ship a portable, truthful 0.5.0 workflow-kit distribution with 43 catalog workflows, the verified Publishing House lifecycle and operator, and a credential-free VideoOps production proof.
+Ship a portable, truthful 0.5.0 workflow-kit distribution with 44 catalog workflows, the verified Publishing House lifecycle and operator, a harness-neutral VideoOps initializer, and a credential-free VideoOps production proof.
 
 ## Background
 
@@ -70,21 +70,22 @@ Maintain repository-level release metadata and public policy files; present the 
 1. ShipCheck gate passes at the repository root with no error-level findings.
 2. The repository contains an MIT LICENSE, VERSION, and CHANGELOG.md appropriate for a 0.5.0 technical preview.
 3. README, VERSION, package metadata, changelog, and the canonical Spec agree on version 0.5.0.
-4. The catalog contains 43 active workflows, including all eleven independently runnable Publishing House workflow kits, the Publishing House Operator, and five VideoOps stage kits.
+4. The catalog contains 44 active workflows, including all eleven independently runnable Publishing House workflow kits, the Publishing House Operator, the VideoOps production initializer, and five VideoOps stage kits.
 5. The locked Publishing House installer, Kujo-native doctor, and all-eleven offline fixture complete from the final install path with resolvable record references and contract-loaded agent receipts.
 6. Ten WebOps workflow kits run in deterministic fixture mode with resumable evidence and explicit approval boundaries.
 7. The VideoOps release gate validates five Kujo-native stages, 35 skills, seven schemas, PackWrite intake, Spec and Eval gates, Howl proof cards, RunLedger evidence, a real HyperFrames 1080p30 render with audio, and a bounded critic revision loop without credentials or paid calls.
-8. WebOps site-profile and history schemas preserve credential references, stable finding states, and separate recommendation/action/outcome records.
-9. Public contribution, support, security, and conduct policies are present and linked from the README.
-10. Every checked-in relative Markdown link resolves to an existing file or local anchor target.
-11. Active documentation contains no maintainer-specific /Users path and all copyable commands state or encode their working directory.
-12. The root README distinguishes experimental, production-capable-with-limitations, and production-ready workflows and provides one portable first-run path.
-13. GitHub Actions runs self-contained contract, unit, documentation, metadata, and static validation on pushes and pull requests.
-14. Portable release-readiness and tracked-file clean-checkout gates run locally and in GitHub Actions.
-15. Agency Verified Fix Loop completes with STRICT=1 and produces passing ChangeBucket and ShipCheck gates.
-16. Catalog, contract, unit, Workcell, Tribunal, Relay, and representative workflow validations pass in the current checkout.
-17. The required validation set passes from a detached clean local worktree without relying on untracked files.
-18. The tracked worktree is clean, committed in meaningful commits, and pushed without rewriting history.
+8. The Kujo-native VideoOps production initializer preserves an arbitrary request, refuses unsafe or accidental replacement, and emits a non-fixture VideoOps Producer invocation.
+9. WebOps site-profile and history schemas preserve credential references, stable finding states, and separate recommendation/action/outcome records.
+10. Public contribution, support, security, and conduct policies are present and linked from the README.
+11. Every checked-in relative Markdown link resolves to an existing file or local anchor target.
+12. Active documentation contains no maintainer-specific /Users path and all copyable commands state or encode their working directory.
+13. The root README distinguishes experimental, production-capable-with-limitations, and production-ready workflows and provides one portable first-run path.
+14. GitHub Actions runs self-contained contract, unit, documentation, metadata, and static validation on pushes and pull requests.
+15. Portable release-readiness and tracked-file clean-checkout gates run locally and in GitHub Actions.
+16. Agency Verified Fix Loop completes with STRICT=1 and produces passing ChangeBucket and ShipCheck gates.
+17. Catalog, contract, unit, Workcell, Tribunal, Relay, and representative workflow validations pass in the current checkout.
+18. The required validation set passes from a detached clean local worktree without relying on untracked files.
+19. The tracked worktree is clean, committed in meaningful commits, and pushed without rewriting history.
 
 ## Eval Requirements
 

@@ -42,13 +42,16 @@ publishing-house-operator/bin/publishing-house --json tick --fixture
 
 ## VideoOps Production Line
 
-The five VideoOps kits form a file-handoff production line: creative planning,
-rights-aware asset resolution, explicit media generation, HyperFrames editing,
-and independent critique. The complete offline gate renders and inspects a real
-1080p30 MP4 with audio, proves fail-closed asset behavior and the bounded
-revision loop, and uses no credentials, network calls, or paid services.
+The `videoops-production` initializer packages an arbitrary request for the
+VideoOps Producer and emits a prompt that can run in any file-capable agent
+harness. Five specialist kits define the file-handoff production line:
+creative planning, rights-aware asset resolution, explicit media generation,
+HyperFrames editing, and independent critique. Their complete offline gate is
+acceptance proof; it is not the content used by a real production.
 
 ```bash
+videoops-production/bin/run --workspace /absolute/video-workspace \
+  --request /absolute/MEGA_PROMPT.md --run-id release-001
 bash tests/videoops-release-gate.sh
 ```
 
@@ -150,6 +153,7 @@ All commands below run from the repository root.
 | [`publishing-house-approval-publication/`](publishing-house-approval-publication/) | Limited | Publishing operators and approvers | Dispatch pauses for checksum-bound VersionSeal approval before a bounded PressWire fixture effect. | `(cd publishing-house-approval-publication && bash scripts/test.sh)` |
 | [`publishing-house-post-publication/`](publishing-house-post-publication/) | Limited | Audience and strategy teams | A verified receipt and compatible measurements become bounded learning and a StoryDesk follow-up. | `(cd publishing-house-post-publication && bash bin/run --request fixtures/request.fixture.json --json)` |
 | [`publishing-house-operator/`](publishing-house-operator/) | Limited | Publishing operators | Publication-profile-driven intake, plans, event candidates, daily bounded progression, checkpoint/resume, approval pauses, and exception-only notifications. | `publishing-house-operator/bin/publishing-house --json doctor` |
+| [`videoops-production/`](videoops-production/) | Limited | Video producers | Any request becomes a preserved intake, project state, and portable harness invocation for the VideoOps Producer. | `videoops-production/bin/run --workspace /absolute/project/path --request /absolute/MEGA_PROMPT.md --run-id example` |
 | [`videoops-creative-planning/`](videoops-creative-planning/) | Limited | Video producers | Validated PackWrite intake becomes a timed creative brief, transcript, shot list, style plan, asset requirements, and explicit handoff. | `videoops-creative-planning/bin/run --fixture --workspace /absolute/project/path --run-id example` |
 | [`videoops-asset-resolution/`](videoops-asset-resolution/) | Limited | Video producers | Every asset requirement terminates as found, captured, generated, not required, or blocked with rights and provenance evidence. | `videoops-asset-resolution/bin/run --fixture --workspace /absolute/project/path --run-id example` |
 | [`videoops-media-generation/`](videoops-media-generation/) | Limited | Video producers | Only requirements explicitly marked `GENERATE` are processed and registered; other assets remain untouched. | `videoops-media-generation/bin/run --fixture --workspace /absolute/project/path --run-id example` |
@@ -236,7 +240,7 @@ See the current [launch checklist](docs/launch-checklist.md) and [release-readin
 
 ## Release and Support Status
 
-This repository is the MIT-licensed `0.5.0` technical preview of the Kujo workflow-kit distribution. The checkout covers 43 local workflows, including the Owned Agent Project proof, the eleven-workflow Publishing House lifecycle, the Publishing House Operator control layer, and the five-stage VideoOps production line, plus shared contracts, documentation, versioned evidence contracts, and repository-owned validation gates. It does not publish a package, container image, hosted runner, or workflow service.
+This repository is the MIT-licensed `0.5.0` technical preview of the Kujo workflow-kit distribution. The checkout covers 44 local workflows, including the Owned Agent Project proof, the eleven-workflow Publishing House lifecycle, the Publishing House Operator control layer, the VideoOps production initializer, and the five-stage VideoOps production line, plus shared contracts, documentation, versioned evidence contracts, and repository-owned validation gates. It does not publish a package, container image, hosted runner, or workflow service.
 
 For contribution, support, conduct, and vulnerability-reporting guidance, see [CONTRIBUTING.md](CONTRIBUTING.md), [SUPPORT.md](SUPPORT.md), [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), and [SECURITY.md](SECURITY.md).
 

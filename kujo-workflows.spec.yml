@@ -3,7 +3,7 @@ id: "2f091169-b4cf-4d24-9783-617129d055f8"
 version: "0.5.0"
 status: "ready"
 priority: "high"
-goal: "Ship a portable, truthful 0.5.0 workflow-kit distribution with 43 catalog workflows, the verified Publishing House lifecycle and operator, and a credential-free VideoOps production proof."
+goal: "Ship a portable, truthful 0.5.0 workflow-kit distribution with 44 catalog workflows, the verified Publishing House lifecycle and operator, a harness-neutral VideoOps initializer, and a credential-free VideoOps production proof."
 background: >
   A 2026-08-08 release-readiness review found that the local workflow demos are
   useful and largely healthy, but the public repository surface has missing
@@ -50,10 +50,11 @@ acceptance_criteria:
   - "ShipCheck gate passes at the repository root with no error-level findings."
   - "The repository contains an MIT LICENSE, VERSION, and CHANGELOG.md appropriate for a 0.5.0 technical preview."
   - "README, VERSION, package metadata, changelog, and the canonical Spec agree on version 0.5.0."
-  - "The catalog contains 43 active workflows, including all eleven independently runnable Publishing House workflow kits, the Publishing House Operator, and five VideoOps stage kits."
+  - "The catalog contains 44 active workflows, including all eleven independently runnable Publishing House workflow kits, the Publishing House Operator, the VideoOps production initializer, and five VideoOps stage kits."
   - "The locked Publishing House installer, Kujo-native doctor, and all-eleven offline fixture complete from the final install path with resolvable record references and contract-loaded agent receipts."
   - "Ten WebOps workflow kits run in deterministic fixture mode with resumable evidence and explicit approval boundaries."
   - "The VideoOps release gate validates five Kujo-native stages, 35 skills, seven schemas, PackWrite intake, Spec and Eval gates, Howl proof cards, RunLedger evidence, a real HyperFrames 1080p30 render with audio, and a bounded critic revision loop without credentials or paid calls."
+  - "The Kujo-native VideoOps production initializer preserves an arbitrary request, refuses unsafe or accidental replacement, and emits a non-fixture VideoOps Producer invocation."
   - "WebOps site-profile and history schemas preserve credential references, stable finding states, and separate recommendation/action/outcome records."
   - "Public contribution, support, security, and conduct policies are present and linked from the README."
   - "Every checked-in relative Markdown link resolves to an existing file or local anchor target."
