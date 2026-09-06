@@ -2478,7 +2478,7 @@
       "id": "videoops-creative-planning",
       "inputs": [
         "validated VideoOps workspace",
-        "fixture mode",
+        "explicit fixture mode",
         "explicit run id"
       ],
       "next_workflow": "videoops-asset-resolution",
@@ -2520,7 +2520,7 @@
       "id": "videoops-asset-resolution",
       "inputs": [
         "validated VideoOps workspace",
-        "fixture mode",
+        "explicit fixture mode",
         "explicit run id"
       ],
       "next_workflow": "videoops-media-generation",
@@ -2563,14 +2563,14 @@
       "id": "videoops-media-generation",
       "inputs": [
         "validated VideoOps workspace",
-        "fixture mode",
+        "explicit fixture mode or supported media bridge",
         "explicit run id"
       ],
       "next_workflow": "videoops-hyperframes-edit",
       "outputs": [
-        "generated fixture asset",
+        "generated media or local import",
         "updated manifest",
-        "selection receipt",
+        "versioned media result",
         "handoff"
       ],
       "path": "videoops-media-generation",
@@ -2579,8 +2579,8 @@
       "skills": [
         {
           "compatibility": "compatible",
-          "name": "videoops-generated-asset-manifesting",
-          "path": "skills/videoops-generated-asset-manifesting/SKILL.md"
+          "name": "videoops-media-provider-execution",
+          "path": "skills/videoops-media-provider-execution/SKILL.md"
         }
       ],
       "state_and_recovery": "Stage receipts and explicit artifact handoffs support bounded restart; the fixture driver is not a production master orchestrator.",
@@ -2606,7 +2606,7 @@
       "id": "videoops-hyperframes-edit",
       "inputs": [
         "validated VideoOps workspace",
-        "fixture mode",
+        "explicit fixture mode",
         "explicit run id"
       ],
       "next_workflow": "videoops-quality-review",
@@ -2650,7 +2650,7 @@
       "id": "videoops-quality-review",
       "inputs": [
         "validated VideoOps workspace",
-        "fixture mode",
+        "explicit fixture mode",
         "explicit run id"
       ],
       "next_workflow": null,
@@ -2681,7 +2681,7 @@
       ]
     }
   ],
-  "audit_id": "kujo-workflows-audit-2026-09-05",
+  "audit_id": "kujo-workflows-audit-2026-09-04",
   "canonical_tool_aliases": {
     "CaseFile": "casefile",
     "WorkCell": "workcell",

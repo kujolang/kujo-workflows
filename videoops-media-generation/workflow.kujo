@@ -1,2 +1,34 @@
 from lib.videoops.runtime import run_stage
-run_stage("media-generator")
+
+func option(argv, key, fallback) {
+    mut i := 0
+    while i < len(argv) {
+        if argv[i] == key && i + 1 < len(argv) { return argv[i+1] }
+        i = i + 1
+    }
+    return fallback
+}
+func present(argv, key) {
+    for arg in argv { if arg == key { return true } }
+    return false
+}
+func main() {
+    argv := args()
+    if present(argv, "--fixture") && present(argv, "--media") { eprint("choose --fixture or --media, never both"); exit(2) }
+    if !present(argv, "--media") { run_stage("media-generator"); return }
+    workspace := option(argv, "--workspace", "")
+    request := option(argv, "--request", "")
+    operation := option(argv, "--operation", "generate")
+    runtime := option(argv, "--runtime-root", "")
+    if workspace == "" || request == "" || runtime == "" || !starts_with(workspace, "/") || !starts_with(request, "/") || !starts_with(runtime, "/") {
+        eprint("--media requires absolute --workspace, --request and --runtime-root"); exit(2)
+    }
+    if operation != "generate" && operation != "import" { eprint("media stage supports generate or import only"); exit(2) }
+    if !path_is_file(path_join(runtime, "videoops/cli.py")) { eprint("shared kujo-videoops runtime is unavailable"); exit(2) }
+    // No shell interpolation, fixture reset, creative orchestration or duplicate mixer.
+    // The runtime validates paths, GENERATE status, authority and budget at dispatch.
+    process := spawn_process(["python3","-m","videoops.cli","media",operation,"--workspace",workspace,"--request",request], {"cwd":runtime,"timeout_ms":300000,"max_output_bytes":4194304})
+    print(process.stdout)
+    if process.exitcode != 0 { eprint(process.stderr); exit(process.exitcode) }
+}
+main()
