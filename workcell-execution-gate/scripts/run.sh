@@ -15,6 +15,14 @@ trap 'rm -rf "$TMP" "$RUN_OUTPUT"' EXIT
 test -x "$KUJO_BIN"
 test -x "$WORKCELL/bin/workcell"
 mkdir -p "$OUT"
+# Observe the operator-selected context without changing Docker global configuration.
+# Workcell doctor/run remain the policy authority; no profile is disabled here.
+doctor_status=0
+env TMPDIR="$TMP_ROOT" KUJO="$KUJO_BIN" "$WORKCELL/bin/workcell" doctor --backend docker --json > "$OUT/doctor.json" || doctor_status=$?
+printf '%s\n' "$doctor_status" > "$OUT/doctor-exit-code.txt"
+docker info --format '{{json .SecurityOptions}}' > "$OUT/docker-security-options.json"
+python3 "$ROOT/workcell-execution-gate/scripts/configure_profile.py" "$WORKCELL/examples/hello/workcell.json" "$OUT/docker-security-options.json" "$OUT/workcell-definition.json"
+DEFINITION="$OUT/workcell-definition.json"
 git -C "$TMP" init -q
 git -C "$TMP" config user.email workcell-workflow@example.invalid
 git -C "$TMP" config user.name WorkcellWorkflow
@@ -22,13 +30,13 @@ printf 'fixture\n' > "$TMP/input.txt"
 git -C "$TMP" add input.txt
 git -C "$TMP" commit -qm baseline
 
-env TMPDIR="$TMP_ROOT" KUJO="$KUJO_BIN" "$WORKCELL/bin/workcell" validate --file "$WORKCELL/examples/hello/workcell.json" --json > "$OUT/validate.json"
-env TMPDIR="$TMP_ROOT" KUJO="$KUJO_BIN" "$WORKCELL/bin/workcell" inspect --file "$WORKCELL/examples/hello/workcell.json" --repo "$TMP" --json > "$OUT/inspect.json"
+env TMPDIR="$TMP_ROOT" KUJO="$KUJO_BIN" "$WORKCELL/bin/workcell" validate --file "$DEFINITION" --json > "$OUT/validate.json"
+env TMPDIR="$TMP_ROOT" KUJO="$KUJO_BIN" "$WORKCELL/bin/workcell" inspect --file "$DEFINITION" --repo "$TMP" --json > "$OUT/inspect.json"
 jq -e '.ok == true and .definition.backend == "docker"' "$OUT/validate.json" >/dev/null
 jq -e '.ok == true and .effective_security_policy.network_mode == "none" and .resource_limits.timeout_ms > 0' "$OUT/inspect.json" >/dev/null
 
 run_status=0
-env TMPDIR="$TMP_ROOT" KUJO="$KUJO_BIN" "$WORKCELL/bin/workcell" run --file "$WORKCELL/examples/hello/workcell.json" --repo "$TMP" --output "$RUN_OUTPUT" --no-pull --json > "$OUT/run-result.json" || run_status=$?
+env TMPDIR="$TMP_ROOT" KUJO="$KUJO_BIN" "$WORKCELL/bin/workcell" run --file "$DEFINITION" --repo "$TMP" --output "$RUN_OUTPUT" --no-pull --json > "$OUT/run-result.json" || run_status=$?
 test "$run_status" -eq 0 -o "$run_status" -eq 4 -o "$run_status" -eq 7 -o "$run_status" -eq 8
 
 python3 - "$OUT/inspect.json" "$OUT/run-result.json" "$OUT/work-package.json" "$OUT/completion-receipt.json" "$(tr -d '[:space:]' < "$WORKCELL/VERSION")" <<'PY'
