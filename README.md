@@ -261,7 +261,7 @@ Kujo Workflows is available under the [MIT License](LICENSE). Changes are record
 
 The media-generation workflow now supports an explicit `--media` production route
 for schema-valid generation requests and provider-independent local import. It
-executes kujo-videoops rather than copying provider scripts. Operator scopes,
+executes kujo-agents/videoops/tools/bin/videoops rather than copying provider scripts. Operator scopes,
 request fingerprints, budgets, rights evidence and normalized receipts remain
 runtime-owned; editing and mixing remain HyperFrames-owned. See
 [media generation](videoops-media-generation/README.md). Provider support does not

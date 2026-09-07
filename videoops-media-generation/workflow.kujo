@@ -19,12 +19,13 @@ func main() {
     workspace := option(argv, "--workspace", "")
     request := option(argv, "--request", "")
     operation := option(argv, "--operation", "generate")
-    runtime := option(argv, "--runtime-root", "")
+    agents := option(argv, "--agents-root", path_join(dirname(dirname(path_absolute("."))), "kujo-agents"))
+    runtime := option(argv, "--runtime-root", path_join(agents, "videoops/tools"))
     if workspace == "" || request == "" || runtime == "" || !starts_with(workspace, "/") || !starts_with(request, "/") || !starts_with(runtime, "/") {
-        eprint("--media requires absolute --workspace, --request and --runtime-root"); exit(2)
+        eprint("--media requires absolute workspace, request and resolved tools root paths"); exit(2)
     }
     if operation != "generate" && operation != "import" { eprint("media stage supports generate or import only"); exit(2) }
-    if !path_is_file(path_join(runtime, "videoops/cli.py")) { eprint("shared kujo-videoops runtime is unavailable"); exit(2) }
+    if !path_is_file(path_join(runtime, "videoops/cli.py")) { eprint("shared kujo-agents/videoops/tools runtime is unavailable"); exit(2) }
     // No shell interpolation, fixture reset, creative orchestration or duplicate mixer.
     // The runtime validates paths, GENERATE status, authority and budget at dispatch.
     process := spawn_process(["python3","-m","videoops.cli","media",operation,"--workspace",workspace,"--request",request], {"cwd":runtime,"timeout_ms":300000,"max_output_bytes":4194304})

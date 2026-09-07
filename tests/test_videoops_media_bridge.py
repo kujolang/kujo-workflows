@@ -1,6 +1,7 @@
 """Exercise the Kujo production bridge with a non-network runtime stub."""
 import json
 import os
+import shutil
 from pathlib import Path
 import subprocess
 import tempfile
@@ -9,6 +10,39 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 
 class MediaBridgeTests(unittest.TestCase):
+    def test_default_discovers_agents_tools_without_standalone_repo(self):
+        kujo = os.environ.get("KUJO_BIN")
+        if not kujo:
+            self.skipTest("set KUJO_BIN to exercise native bridge")
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            workflows = root / "kujo-workflows"
+            shutil.copytree(ROOT / "videoops-media-generation", workflows / "videoops-media-generation")
+            shutil.copytree(ROOT / "lib", workflows / "lib")
+            agents = root / "kujo-agents"
+            runtime = agents / "videoops/tools"
+            (runtime / "videoops").mkdir(parents=True)
+            (runtime / "videoops/__init__.py").write_text("")
+            (runtime / "videoops/cli.py").write_text(
+                "import json,os\nprint(json.dumps({'runtime':os.getcwd()}))\n")
+            request = root / "request.json"
+            request.write_text('{}')
+            command = [str(workflows / "videoops-media-generation/bin/run"), "--media",
+                       "--operation", "import", "--workspace", str(root / "production"),
+                       "--request", str(request)]
+            env = dict(os.environ, KUJO_BIN=kujo)
+            result = subprocess.run(command, env=env, text=True, capture_output=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(Path(json.loads(result.stdout)['runtime']).resolve(), runtime.resolve())
+            self.assertFalse((root / "kujo-videoops").exists())
+            moved = root / "custom-agents"
+            agents.rename(moved)
+            result = subprocess.run(command, env=env, text=True, capture_output=True)
+            self.assertEqual(result.returncode, 2, result.stderr)
+            result = subprocess.run(command + ["--agents-root", str(moved)], env=env, text=True, capture_output=True)
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(Path(json.loads(result.stdout)['runtime']).resolve(), (moved / "videoops/tools").resolve())
+
     def test_dispatch_and_fixture_separation(self):
         kujo = os.environ.get("KUJO_BIN")
         if not kujo:

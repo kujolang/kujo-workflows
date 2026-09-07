@@ -13,12 +13,17 @@ The fixture proves routing, scope, file, and manifest contracts. It does not cla
 ```bash
 bin/run --media --operation import --workspace /absolute/project \
   --request /absolute/project/requests/local-media.json \
-  --runtime-root /absolute/kujo-videoops
+  --runtime-root /absolute/kujo-agents/videoops/tools
 ```
+
+By default the bridge discovers the sibling `kujo-agents/videoops/tools` package.
+Use `--agents-root /absolute/kujo-agents` for another agent checkout, or
+`--runtime-root /absolute/kujo-agents/videoops/tools` for an explicit tools root.
+The retired standalone repository is not required.
 
 Use `--operation generate` for explicitly authorized GENERATE requirements.
 The strict request, persistent authority, contained paths, metadata validation,
-result, manifest and handoff are owned by the shared kujo-videoops runtime. This
+result, manifest and handoff are owned by the shared kujo-agents/videoops/tools runtime. This
 wrapper invokes that CLI directly; it does not implement a provider or mixer.
 `--fixture` and `--media` are mutually exclusive. Local import performs no network
 access. Generation needs separately scoped provider authorization; mere credential
