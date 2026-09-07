@@ -6,11 +6,21 @@ The format follows Keep a Changelog and Semantic Versioning.
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-09-06
+
 ### Added
+
+- Explicit production media-generation/import bridge to the shared VideoOps runtime, versioned receipts and scoped provider authorization.
+- Shared normalized media receipt integration and exact-candidate incomplete-review handoffs.
+- Observed Docker security evidence and rootful/rootless workspace identity selection for the bounded Workcell gate.
 
 - Add the Kujo-native `videoops-production` initializer for preserving an
   arbitrary mega prompt and emitting a harness-neutral VideoOps Producer
   invocation without injecting fixture content.
+
+### Changed
+
+- Keep fixture execution explicit; production media never substitutes fixture content or synthetic critique.
 
 ## [0.5.0] - 2026-09-04
 
