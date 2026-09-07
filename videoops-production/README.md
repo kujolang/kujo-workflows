@@ -12,3 +12,11 @@ videoops-production/bin/run \
 Paste the generated `RUN_VIDEOOPS.md` into a file-capable Codex, Claude Code, Hermes, Paperclip, or other compatible agent runtime. The harness must be able to read `kujo-agents/videoops/`, write the target workspace, and access the media tools needed by the request. It may use native subagents or assume the five specialist identities sequentially.
 
 The command refuses broad workspaces, symlinked or oversized requests, and accidental intake replacement. Use `--overwrite` only when intentionally restarting the intake. Paid generation, authenticated capture, publication, and other external effects remain approval-gated.
+
+The generated harness handoff routes authorized audio acquisition through
+`videoops-media-generation --media` and the shared kujo-videoops runtime. Planning,
+scouting, editing and perceptual critique remain harness-owned. Runtime review
+commands bind decisions to candidate SHA-256 and preserve REVIEW_INCOMPLETE for
+human/capable review without an empty edit loop. The initializer does not invent
+approval or automatically access accounts. See the media-generation README for
+its explicit production bridge and fixture separation.

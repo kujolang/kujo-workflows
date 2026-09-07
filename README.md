@@ -1,13 +1,13 @@
 # Kujo Workflows
 
-[![Version](https://img.shields.io/badge/version-0.5.0-black)](https://github.com/kujolang/kujo-workflows)
+[![Version](https://img.shields.io/badge/version-0.6.0-black)](https://github.com/kujolang/kujo-workflows)
 [![License](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
 [![built with Kujo](https://img.shields.io/badge/built%20with-Kujo-white.svg)](https://github.com/kujolang/kujo)
 [![CI](https://github.com/kujolang/kujo-workflows/actions/workflows/validate.yml/badge.svg)](https://github.com/kujolang/kujo-workflows/actions/workflows/validate.yml)
 
 Repository-backed, local-first workflow kits for the [Kujo programming language](https://kujolang.ai) and its agency and AI tooling ecosystem. Each kit demonstrates one concrete outcome and leaves behind inspectable evidence instead of relying on an opaque hosted runner.
 
-Current release scope: **locally verified support/distribution technical preview** (`0.5.0`). Hosted runners, live-provider coverage, clean-machine installation on a separate host, and production or enterprise readiness are not claimed.
+Current release scope: **locally verified support/distribution technical preview** (`0.6.0`). Hosted runners, broad live-provider coverage, clean-machine installation on a separate host, and production or enterprise readiness are not claimed.
 
 ## Visual WebOps Reports
 
@@ -227,7 +227,7 @@ See the current [launch checklist](docs/launch-checklist.md) and [release-readin
 - [`examples/`](examples/) identifies low-risk starting points.
 - [`scripts/`](scripts/) contains repository validators.
 - [`tests/`](tests/) contains portable release and integration checks.
-- [`kujo-workflows.spec.yml`](kujo-workflows.spec.yml) is the canonical `0.5.0` acceptance contract.
+- [`kujo-workflows.spec.yml`](kujo-workflows.spec.yml) is the canonical `0.6.0` acceptance contract.
 
 ## Documentation
 
@@ -236,11 +236,11 @@ See the current [launch checklist](docs/launch-checklist.md) and [release-readin
 - [`docs/publishing-house/README.md`](docs/publishing-house/README.md) — Publishing House lifecycle, fixture/live boundaries, approval, inspection, and recovery.
 - [`docs/videoops/implementation-report.md`](docs/videoops/implementation-report.md) — VideoOps architecture, proof coverage, and external limits.
 - [`docs/launch-checklist.md`](docs/launch-checklist.md) — verified launch gates and remaining external proof.
-- [`docs/specs/showcase-release-readiness.md`](docs/specs/showcase-release-readiness.md) — rendered `0.5.0` acceptance contract.
+- [`docs/specs/showcase-release-readiness.md`](docs/specs/showcase-release-readiness.md) — rendered `0.6.0` acceptance contract.
 
 ## Release and Support Status
 
-This repository is the MIT-licensed `0.5.0` technical preview of the Kujo workflow-kit distribution. The checkout covers 44 local workflows, including the Owned Agent Project proof, the eleven-workflow Publishing House lifecycle, the Publishing House Operator control layer, the VideoOps production initializer, and the five-stage VideoOps production line, plus shared contracts, documentation, versioned evidence contracts, and repository-owned validation gates. It does not publish a package, container image, hosted runner, or workflow service.
+This repository is the MIT-licensed `0.6.0` technical preview of the Kujo workflow-kit distribution. The checkout covers 44 local workflows, including the Owned Agent Project proof, the eleven-workflow Publishing House lifecycle, the Publishing House Operator control layer, the VideoOps production initializer, and the five-stage VideoOps production line, plus shared contracts, documentation, versioned evidence contracts, and repository-owned validation gates. It does not publish a package, container image, hosted runner, or workflow service.
 
 For contribution, support, conduct, and vulnerability-reporting guidance, see [CONTRIBUTING.md](CONTRIBUTING.md), [SUPPORT.md](SUPPORT.md), [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md), and [SECURITY.md](SECURITY.md).
 
@@ -256,3 +256,17 @@ For contribution, support, conduct, and vulnerability-reporting guidance, see [C
 ## License
 
 Kujo Workflows is available under the [MIT License](LICENSE). Changes are recorded in [CHANGELOG.md](CHANGELOG.md).
+
+## VideoOps shared media runtime
+
+The media-generation workflow now supports an explicit `--media` production route
+for schema-valid generation requests and provider-independent local import. It
+executes kujo-videoops rather than copying provider scripts. Operator scopes,
+request fingerprints, budgets, rights evidence and normalized receipts remain
+runtime-owned; editing and mixing remain HyperFrames-owned. See
+[media generation](videoops-media-generation/README.md). Provider support does not
+imply entitlement or live verification; inspect the exact runtime receipts.
+
+[The Workcell gate](workcell-execution-gate/README.md) records the selected daemon's
+security signals and uses the supported rootful or rootless workspace identity.
+It does not change daemon configuration or waive Workcell security requirements.

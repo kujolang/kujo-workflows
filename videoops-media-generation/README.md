@@ -7,3 +7,26 @@ bin/run --fixture --workspace /absolute/project/path --run-id example
 ```
 
 The fixture proves routing, scope, file, and manifest contracts. It does not claim live image/video-provider quality.
+
+## Shared production media execution
+
+```bash
+bin/run --media --operation import --workspace /absolute/project \
+  --request /absolute/project/requests/local-media.json \
+  --runtime-root /absolute/kujo-videoops
+```
+
+Use `--operation generate` for explicitly authorized GENERATE requirements.
+The strict request, persistent authority, contained paths, metadata validation,
+result, manifest and handoff are owned by the shared kujo-videoops runtime. This
+wrapper invokes that CLI directly; it does not implement a provider or mixer.
+`--fixture` and `--media` are mutually exclusive. Local import performs no network
+access. Generation needs separately scoped provider authorization; mere credential
+presence is insufficient. No operation grants publication authority.
+
+Speech/SFX/music capabilities, account entitlement and verification status are
+independent. The runtime implements ElevenLabs adapters and local import; inspect
+its doctor/providers output and documentation for current tested capabilities.
+The remaining creative stages stay harness-owned. A media result is acquisition
+evidence, not rights approval or an autonomous film. HyperFrames consumes approved
+local assets; actual independent audiovisual approval remains required.
