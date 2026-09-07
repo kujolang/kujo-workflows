@@ -14,7 +14,7 @@ Paste the generated `RUN_VIDEOOPS.md` into a file-capable Codex, Claude Code, He
 The command refuses broad workspaces, symlinked or oversized requests, and accidental intake replacement. Use `--overwrite` only when intentionally restarting the intake. Paid generation, authenticated capture, publication, and other external effects remain approval-gated.
 
 The generated harness handoff routes authorized audio acquisition through
-`videoops-media-generation --media` and the shared kujo-videoops runtime. Planning,
+`videoops-media-generation --media` and the shared kujo-agents/videoops/tools runtime. Planning,
 scouting, editing and perceptual critique remain harness-owned. Runtime review
 commands bind decisions to candidate SHA-256 and preserve REVIEW_INCOMPLETE for
 human/capable review without an empty edit loop. The initializer does not invent

@@ -6,6 +6,12 @@ The format follows Keep a Changelog and Semantic Versioning.
 
 ## [Unreleased]
 
+### Fixed
+
+- Route production media execution to canonical `kujo-agents/videoops/tools`,
+  with sibling discovery and explicit agent/tools root overrides. Remove the
+  retired standalone runtime dependency from production instructions.
+
 ## [0.6.0] - 2026-09-06
 
 ### Added
