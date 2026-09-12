@@ -1,9 +1,9 @@
 {
   "schema": "kujo.workflow-skill-compatibility/v1",
-  "audit_id": "kujo-workflows-audit-2026-09-05",
+  "audit_id": "kujo-workflows-audit-2026-09-12",
   "skills_repository": {
     "path": "../kujo-skills",
-    "commit": "0d41ab4",
+    "commit": "e7362c4",
     "branch": "main"
   },
   "relationships": [
@@ -279,7 +279,7 @@
       "status_by_skill": {
         "kujo-videoops-workflows": "compatible"
       },
-      "required_action": "Keep arbitrary production workspaces separated from fixture proof; external media, provider, capture, render, and publication effects require operator approval.",
+      "required_action": "Keep arbitrary production workspaces separated from fixture proof; media-generation production routes must use the canonical kujo-agents/videoops/tools runtime, and external media, provider, capture, render, and publication effects require operator approval.",
       "implementation": "implemented",
       "evidence": [
         "videoops-production/README.md",
@@ -320,9 +320,10 @@
       "workflow": "videoops-media-generation",
       "invocation": "videoops-media-generation/bin/run",
       "status_by_skill": {
+        "videoops-media-provider-execution": "compatible",
         "videoops-generated-asset-manifesting": "compatible"
       },
-      "required_action": "Process only manifest entries explicitly marked GENERATE and keep live provider output quality outside fixture claims.",
+      "required_action": "Process only manifest entries explicitly marked GENERATE or authorized local import through kujo-agents/videoops/tools; keep live provider output quality outside fixture claims.",
       "implementation": "implemented",
       "evidence": [
         "videoops-media-generation/README.md",

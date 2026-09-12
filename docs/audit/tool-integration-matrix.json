@@ -1,11 +1,11 @@
 {
   "schema": "kujo.workflow-tool-integration/v1",
-  "audit_id": "kujo-workflows-audit-2026-09-05",
+  "audit_id": "kujo-workflows-audit-2026-09-12",
   "tools": [
     {
       "tool": "tribunal",
       "canonical_repo": "../tribunal",
-      "actual_version": "current main at b9c3129",
+      "actual_version": "current main at 936c5e9",
       "current_usage": [
         "tribunal-decision-gate"
       ],
@@ -80,7 +80,7 @@
     {
       "tool": "ai-chat",
       "canonical_repo": "../ai-chat",
-      "actual_version": "current main at f1d0494",
+      "actual_version": "current main at 18e8667",
       "current_usage": [
         "ai-sdk-watchdog-showcase"
       ],
@@ -105,7 +105,7 @@
     {
       "tool": "watchdog",
       "canonical_repo": "../watchdog",
-      "actual_version": "current main at 3140bde",
+      "actual_version": "current main at 314698b",
       "current_usage": [
         "ai-sdk-watchdog-showcase"
       ],
@@ -130,7 +130,7 @@
     {
       "tool": "workcell",
       "canonical_repo": "../workcell",
-      "actual_version": "current main at 074d726",
+      "actual_version": "current main at 3999f11",
       "current_usage": [
         "workcell-execution-gate"
       ],
@@ -155,7 +155,7 @@
     {
       "tool": "dispatch",
       "canonical_repo": "../dispatch",
-      "actual_version": "current main at 83ffa0e",
+      "actual_version": "current main at dcffd8f",
       "current_usage": [
         "enterprise-dispatch-approval-router",
         "publishing-house-*"
@@ -169,7 +169,7 @@
       "complexity": "low",
       "risk": "External ChatOps delivery and callback authorization remain deployment-specific.",
       "implementation": "implemented",
-      "reason": "Existing workflows already exercise the current Dispatch contract, and Publishing House fixture proof covers deterministic offline run state and approval pause/resume. Dispatch 1.2.0 router/runtime hardening and pinned AI SDK release gates preserve the catalog boundary.",
+      "reason": "Dispatch remains the Publishing House and approval-router orchestration dependency; Sep 8 observer identity/retry evidence does not promote Relay composition or change workflow completion contracts.",
       "tests": [
         "workflow fixture run",
         "Dispatch resume proof",
@@ -241,7 +241,7 @@
     {
       "tool": "scout",
       "canonical_repo": "../scout",
-      "actual_version": "current main at 6824903",
+      "actual_version": "current main at 70454d4",
       "current_usage": [
         "agency-runner",
         "agency-verified-fix-loop",
@@ -267,7 +267,7 @@
     {
       "tool": "fence",
       "canonical_repo": "../fence",
-      "actual_version": "current main at fc7a000",
+      "actual_version": "current main at fda049e",
       "current_usage": [
         "codebase-cleanup"
       ],
@@ -313,7 +313,7 @@
     {
       "tool": "kennel",
       "canonical_repo": "../kennel",
-      "actual_version": "current main at b5e0cf2",
+      "actual_version": "current main at 546dd42",
       "current_usage": [
         "codebase-cleanup",
         "owned-agent-project"
@@ -339,7 +339,7 @@
     {
       "tool": "changebucket",
       "canonical_repo": "../changebucket",
-      "actual_version": "current main at f030bcc",
+      "actual_version": "current main at 16491d2",
       "current_usage": [
         "agency-verified-fix-loop",
         "feature-card-workflow",
@@ -389,7 +389,7 @@
     {
       "tool": "shipcheck",
       "canonical_repo": "../shipcheck",
-      "actual_version": "current main at 4c958ab",
+      "actual_version": "current main at 111bfc8",
       "current_usage": [
         "agency-verified-fix-loop",
         "feature-card-workflow",
@@ -446,7 +446,7 @@
     {
       "tool": "kujo",
       "canonical_repo": "../kujo",
-      "actual_version": "current main at 985454b",
+      "actual_version": "current main at 1b694de",
       "current_usage": [
         "owned-agent-project",
         "publishing-house-*",
@@ -503,7 +503,7 @@
     {
       "tool": "howl",
       "canonical_repo": "../howl",
-      "actual_version": "current main at 5470f92",
+      "actual_version": "current main at 2a48908",
       "current_usage": [
         "howl-content-factory",
         "videoops-creative-planning",
@@ -519,7 +519,7 @@
       "complexity": "low",
       "risk": "Rendered proof cards are evidence artifacts, not publication or distribution.",
       "implementation": "implemented",
-      "reason": "VideoOps release proof validates and renders Howl fixture artifacts without posting or scheduling external media.",
+      "reason": "The VideoOps fixture still uses Howl proof cards; the Sep 7 downstream diff evidence format change does not alter workflow inputs, outputs, or acceptance criteria.",
       "tests": [
         "howl validate",
         "howl render",
@@ -530,7 +530,7 @@
     {
       "tool": "kujo-hyperframes",
       "canonical_repo": "../kujo-hyperframes",
-      "actual_version": "current main at 5d72c07",
+      "actual_version": "current main at 1981df2",
       "current_usage": [
         "videoops-hyperframes-edit"
       ],
@@ -543,7 +543,7 @@
       "complexity": "medium",
       "risk": "Render correctness depends on local CLI, ffmpeg/ffprobe availability, media rights, and independent review.",
       "implementation": "implemented",
-      "reason": "The VideoOps HyperFrames stage runs local check/render, ffprobe inspection, revision application, and finalization only after critic PASS.",
+      "reason": "VideoOps HyperFrames editing still consumes the CLI/render contract; reusable release-video/style skills moved out to kujo-skills at eb7128b, so this workflow keeps only the render-backend relationship.",
       "tests": [
         "hyperframes check",
         "local MP4 render",
