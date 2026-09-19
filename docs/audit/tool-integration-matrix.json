@@ -1,6 +1,6 @@
 {
   "schema": "kujo.workflow-tool-integration/v1",
-  "audit_id": "kujo-workflows-audit-2026-09-12",
+  "audit_id": "kujo-workflows-audit-2026-09-19",
   "tools": [
     {
       "tool": "tribunal",
@@ -105,7 +105,7 @@
     {
       "tool": "watchdog",
       "canonical_repo": "../watchdog",
-      "actual_version": "current main at 314698b",
+      "actual_version": "current main at df36d57",
       "current_usage": [
         "ai-sdk-watchdog-showcase"
       ],
@@ -118,7 +118,7 @@
       "complexity": "medium",
       "risk": "Production posture requires separate API/proxy tokens, redaction, rate-limit configuration, environment-specific upstream credentials, and dated pricing evidence.",
       "implementation": "preserved",
-      "reason": "The showcase still routes AI traffic through Watchdog and exports telemetry. Hermes routing and pricing catalog refreshes are compatible sibling evidence and do not require a workflow contract migration.",
+      "reason": "The showcase still routes AI traffic through Watchdog and exports telemetry. The September 13 pricing catalog refresh is dated cost evidence and does not require a workflow contract migration.",
       "tests": [
         "fixture showcase",
         "proxy integration stub suite",
@@ -130,7 +130,7 @@
     {
       "tool": "workcell",
       "canonical_repo": "../workcell",
-      "actual_version": "current main at 3999f11",
+      "actual_version": "current main at e2915a3",
       "current_usage": [
         "workcell-execution-gate"
       ],
@@ -143,7 +143,7 @@
       "complexity": "high",
       "risk": "Docker daemon/host kernel remain trusted; Workcell 1.0 is not a microVM or hosted multi-tenant isolation boundary and does not provide scheduling, organization-specific egress enforcement, or compliance certification.",
       "implementation": "implemented",
-      "reason": "The dedicated gate validates and inspects the Workcell definition, executes or records host-runtime blockage with versioned receipts, and preserves Workcell's documented host and daemon trust boundary. No newer Workcell commit was present this week.",
+      "reason": "The dedicated gate validates and inspects the Workcell definition, executes or records host-runtime blockage with versioned receipts, and preserves Workcell's documented host and daemon trust boundary. The explicit Docker endpoint hardening commit keeps the same local Docker/Podman boundary.",
       "tests": [
         "workcell validate/inspect",
         "Docker execution",
@@ -446,7 +446,7 @@
     {
       "tool": "kujo",
       "canonical_repo": "../kujo",
-      "actual_version": "current main at 1b694de",
+      "actual_version": "current branch at 7968d4f",
       "current_usage": [
         "owned-agent-project",
         "publishing-house-*",
@@ -466,7 +466,7 @@
       "complexity": "low",
       "risk": "Runtime upgrades require re-running fixture gates before refreshing locked Publishing House claims.",
       "implementation": "implemented",
-      "reason": "Current workflows use Kujo as the local interpreter/checker. The 2026-09-04 runtime hardening and PostgreSQL TLS work do not add new workflow catalog claims.",
+      "reason": "Current workflows use Kujo as the local interpreter/checker. The September runtime, PDF, PostgreSQL, datetime, and URI component decoding work does not add new workflow catalog claims.",
       "tests": [
         "kujo check",
         "workflow fixture gates",
