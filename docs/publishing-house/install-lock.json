@@ -17,7 +17,7 @@
       "repository": "https://github.com/kujolang/agents-sdk.git"
     },
     "kujo-agents": {
-      "commit": "ba327cf4acca1dbfd5610ec0c618e27a65e52773",
+      "commit": "e74545cfb3677257f9f3d88ed5840a36555ed566",
       "repository": "https://github.com/kujolang/kujo-agents.git"
     },
     "kujo-skills": {
@@ -45,7 +45,7 @@
       "repository": "https://github.com/kujolang/versionseal.git"
     },
     "presswire": {
-      "commit": "3b80332879799d6662b00fcaa35bd628360efffc",
+      "commit": "14fb28b1ae5b3475370cea0585c584fd022bcf60",
       "repository": "https://github.com/kujolang/presswire.git"
     },
     "readersignal": {

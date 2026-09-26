@@ -1,7 +1,7 @@
 {
   "schema_name": "publishing-house.compatibility-matrix",
   "schema_version": "1.0.0",
-  "tested_at": "2026-09-26T10:06:17Z",
+  "tested_at": "2026-09-26T11:20:33Z",
   "kujo": {
     "version": "1.5.0",
     "commit": "83fbdd4f39db68c5bc2196318e993e0ff202d514"
@@ -18,7 +18,7 @@
   },
   "kujo_agents": {
     "version": "1.4.0",
-    "commit": "ba327cf4acca1dbfd5610ec0c618e27a65e52773",
+    "commit": "e74545cfb3677257f9f3d88ed5840a36555ed566",
     "publishing_house_contract_version": "1.0.0"
   },
   "kujo_skills": {
@@ -55,7 +55,7 @@
     "presswire": {
       "version": "0.2.0",
       "contract_version": "1.0.0",
-      "commit": "3b80332879799d6662b00fcaa35bd628360efffc"
+      "commit": "14fb28b1ae5b3475370cea0585c584fd022bcf60"
     },
     "readersignal": {
       "version": "0.3.0",
@@ -68,16 +68,5 @@
       "commit": "63d892d1261303fee4d37ff5528cd61ebb1c3648"
     }
   },
-  "known_incompatibilities": [
-    {
-      "producer": "versionseal",
-      "producer_version": "0.3.0",
-      "consumer": "presswire",
-      "consumer_version": "0.2.0",
-      "boundary": "publishing-house-approval-publication fixture resume",
-      "evidence": "python3 -m unittest discover -s tests -p test_*.py failed in test_all_eleven_offline_fixture; PressWire publish returned authorization_failed: approval contract mismatch",
-      "status": "blocked",
-      "next_action": "Update PressWire to accept VersionSeal 0.3.0 approval records or keep the Publishing House lock on a VersionSeal writer version PressWire supports."
-    }
-  ]
+  "known_incompatibilities": []
 }

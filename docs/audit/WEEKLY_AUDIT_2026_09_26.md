@@ -78,10 +78,11 @@ static syntax, Tribunal, Relay, and whitespace validation passed.
 
 The full unit suite first failed because the Publishing House support-lock
 baseline still pointed at older tool commits. After advancing to clean current
-support evidence and adapting fixture paths for AssetWorks `0.3.0`, it remains
+support evidence and adapting fixture paths for AssetWorks `0.3.0`, the original audit remained
 blocked at the all-eleven Publishing House fixture because PressWire `0.2.0`
 rejects VersionSeal `0.3.0` approval records with `approval contract mismatch`.
-The rest of the suite completed; 1 failure and 2 skips remain.
+The rest of that audit suite completed with 1 failure and 2 skips. The same-day
+compatibility follow-up below supersedes this Publishing House blocker.
 
 `bash workcell-execution-gate/scripts/run.sh` returned before package execution
 because the configured user Docker socket was unavailable. Container success
@@ -90,7 +91,7 @@ was not claimed.
 ## Partial Verification Boundaries
 
 - Live-provider, paid-provider, external asset, authenticated browser, hosted-runner, cloud-render, and external publication behavior was not run.
-- Publishing House all-eleven fixture execution is blocked at the VersionSeal `0.3.0` to PressWire `0.2.0` approval-record boundary; live publication support was not inferred.
+- Publishing House all-eleven fixture execution now passes after the same-day compatibility follow-up below; live publication support was not inferred.
 - Workcell container execution was host-blocked before Docker API connection; package execution and container receipts were not claimed for this run.
 - Dirty local sibling checkout files were not treated as authoritative catalog evidence.
 - Clean-checkout validation on a physically separate machine remains unresolved.
@@ -104,3 +105,55 @@ was not claimed.
 - AI SDK, Watchdog, Dispatch, Relay, Agents SDK, RunLedger, Eval, and Scout telemetry or portable-result changes that may justify a future composed workflow.
 - VideoOps live adapter work across `kujo-agents`, `kujo-skills`, PackWrite, Eval, Howl, RunLedger, HyperFrames, Lens, and AssetWorks.
 - Clean-machine, live-provider, authenticated browser, hosted-runner, and publication evidence for currently deferred relationships.
+
+## Same-day VersionSeal / PressWire Compatibility Follow-up
+
+PressWire commit `14fb28b1ae5b3475370cea0585c584fd022bcf60` accepts
+VersionSeal `0.3.0` approval records under unchanged schema/contract `1.0.0`.
+Its producer allowlist retains `0.1.0` and `0.2.0`; identity, checksum,
+destination, action, actor, timestamp, and optional exact output-path checks
+remain enforced. Native PressWire record versions remain separate from the
+advertised VersionSeal approval versions. The PressWire validation gate passed,
+including 68 compatibility assertions across all three approval versions.
+
+The support lock and compatibility matrix now pin that PressWire commit and
+`kujo-agents` commit `e74545cfb3677257f9f3d88ed5840a36555ed566`. The latter
+changes only two chain-of-command audit documents, with no Publishing House
+agent changes. The older pin failed the clean-checkout preflight.
+
+After approval compatibility was restored, the final fixture check exposed a
+stale generated-ID assumption. PressWire honors the explicit
+`publication-fixture-v2` ID supplied by the workflow. The workflow now uses
+that ID for its StoryDesk publication reference and local-effect receipt, and
+the fixture verifies that both references match the actual PressWire record.
+
+The standalone command passed with output in an ignored repo-local directory:
+
+```text
+bash scripts/run-publishing-house-fixture.sh --out .runs/versionseal-030-compat-20260926-final
+```
+
+It verified all 11 workflows, 46 record references, 38 agent receipts, and 34
+tool contract preflights. Revision, approval pause/resume, and idempotency
+checks passed, and approved/published checksums matched. The proof reports zero
+network calls and `live_publication: false`. This supersedes the known
+VersionSeal/PressWire incompatibility; the compatibility matrix's active
+incompatibility list is empty. Generated proof remains local evidence, not a
+tracked clean-install artifact.
+
+Tribunal and Relay gates passed again. Workcell remains blocked by the existing
+unavailable Docker socket before container execution; no container success or
+live publication support is claimed.
+
+Final follow-up validation passed:
+
+```text
+python3 -m unittest discover -s tests -p 'test_*.py'  # 28 tests, 2 skips, 0 failures
+python3 scripts/validate_catalog.py --json          # 44 workflows
+python3 scripts/validate_contracts.py               # 19 schemas, 16 examples, 314 negatives
+python3 scripts/validate_docs.py
+python3 scripts/validate_static.py
+git diff --check
+```
+
+The unit suite independently reran the all-eleven fixture successfully.

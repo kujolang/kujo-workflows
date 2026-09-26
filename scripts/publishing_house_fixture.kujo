@@ -51,7 +51,11 @@ func main(){
     checksums:=read_object(path_join(approval_dir,"artifact-checksums.json"))
     values:=get(checksums,"checksums",[])
     if len(values)!=2||values[0]["checksum"]!=values[1]["checksum"]{eprint("approval and publication checksums do not match");exit(1)}
-    publication_id:="publication-"+substring(sha256("approve-fixture-v2\npublish\nfixture-local\n"+values[0]["checksum"]),0,20)
+    publication_id:="publication-fixture-v2"
+    effect:=read_object(path_join(approval_dir,"external-effect.json"))
+    publication:=read_object(path_join(tool_state,"presswire/records/"+publication_id+".json"))
+    published_event:=read_object(path_join(tool_state,"storydesk/records/event-fixture-published.json"))
+    if get(effect,"presswire_record_id","")!=publication_id||get(publication,"id","")!=publication_id||get(publication,"command","")!="publish"||get(get(published_event,"payload",{}),"publication_receipt_id","")!=publication_id{eprint("publication receipt identity mismatch");exit(1)}
     required_records:=["campaign-fixture-governance","review-fixture-developmental-v1","artifact-fixture-primary-v2","artifact-fixture-adaptation-plan","artifact-fixture-format-package","approve-fixture-v2",publication_id,"followup-fixture-publication","idea-fixture-followup"]
     for id in required_records {
         found:=false

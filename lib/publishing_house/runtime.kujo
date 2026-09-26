@@ -482,7 +482,7 @@ func approval_resume(ctx) {
     if !fixture_result["ok"] || get(fixture_result["value"], "fixture", false) != true || get(fixture_result["value"], "decision", "") != "approved" { return blocker(ctx, "rejected", "approval_invalid", "fixture resume requires an explicitly labeled approved fixture decision", "versionseal", "provide a valid fixture approval record", false) }
     package := path_join(ctx["root"], "fixtures/publishing-house/primary-v2.fixture.md")
     checksum := sha256_file(package)
-    publication_record_id := "publication-" + substring(sha256("approve-fixture-v2\npublish\nfixture-local\n" + checksum), 0, 20)
+    publication_record_id := "publication-fixture-v2"
     pause_result := read_json_object(path_join(ctx["run_dir"], "approval-pause.json"))
     if !pause_result["ok"] || checksum != get(pause_result["value"], "checksum", "") { return blocker(ctx, "blocked", "checksum_drift", "package bytes changed after the approval pause", "versionseal", "create a new package and approval request", false) }
     provenance := [{"kind":"fixture-human-decision","source":approval_path}]
@@ -494,7 +494,7 @@ func approval_resume(ctx) {
     published := path_join(ctx["run_dir"], "published/package-v2.md")
     ops := [
         {"tool":"presswire","command":"preflight","id":"publication-fixture-preflight","actor":"publishing-operations-director","artifact":package,"payload":{"schema_version":"1.0.0","approval_id":"approve-fixture-v2","approval_record_path":approval_record_path,"manifest_checksum":checksum,"destination":"fixture-local","authorized_action":"publish","adapter":"local-filesystem","idempotency_key":"publishing-house-fixture-v2","fixture":true,"provenance":provenance}},
-        {"tool":"presswire","command":"publish","id":"publication-fixture-v2","actor":"publishing-operations-director","artifact":package,"output":published,"act":true,"payload":{"schema_version":"1.0.0","approval_id":"approve-fixture-v2","approval_record_path":approval_record_path,"manifest_checksum":checksum,"destination":"fixture-local","authorized_action":"publish","adapter":"local-filesystem","idempotency_key":"publishing-house-fixture-v2","fixture":true,"provenance":provenance}},
+        {"tool":"presswire","command":"publish","id":publication_record_id,"actor":"publishing-operations-director","artifact":package,"output":published,"act":true,"payload":{"schema_version":"1.0.0","approval_id":"approve-fixture-v2","approval_record_path":approval_record_path,"manifest_checksum":checksum,"destination":"fixture-local","authorized_action":"publish","adapter":"local-filesystem","idempotency_key":"publishing-house-fixture-v2","fixture":true,"provenance":provenance}},
         {"tool":"storydesk","command":"status","id":"event-fixture-approved","actor":"managing-editor","payload":{"schema_version":"1.0.0","record_id":"brief-fixture-primary","from_status":"ready_for_review","to_status":"approved","approval_id":"approve-fixture-v2","provenance":provenance}},
         {"tool":"storydesk","command":"status","id":"event-fixture-scheduled","actor":"managing-editor","payload":{"schema_version":"1.0.0","record_id":"brief-fixture-primary","from_status":"approved","to_status":"scheduled","destination":"fixture-local","provenance":provenance}},
         {"tool":"storydesk","command":"status","id":"event-fixture-published","actor":"managing-editor","payload":{"schema_version":"1.0.0","record_id":"brief-fixture-primary","from_status":"scheduled","to_status":"published","publication_receipt_id":publication_record_id,"provenance":provenance}}
@@ -502,7 +502,7 @@ func approval_resume(ctx) {
     result := run_ops(ctx, ops)
     if !result["ok"] { return result }
     checksum = sha256_file(package)
-    write_json(path_join(ctx["run_dir"], "external-effect.json"), {"occurred":true,"kind":"bounded-local-fixture-publication","presswire_record_id":"publication-fixture-v2"})
+    write_json(path_join(ctx["run_dir"], "external-effect.json"), {"occurred":true,"kind":"bounded-local-fixture-publication","presswire_record_id":publication_record_id})
     write_json(path_join(ctx["run_dir"], "artifact-checksums.json"), {"checksums":[{"artifact":"approved-package","path":package,"checksum":checksum},{"artifact":"published-package","path":published,"checksum":sha256_file(published)}]})
     return {"ok": true}
 }
