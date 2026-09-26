@@ -11,7 +11,7 @@ func main(){
     output:=output_arg
     if !starts_with(output_arg,"/"){output=path_join(root,output_arg)}
     ensure(output)
-    tool_state:=path_join(output,"tool-state")
+    tool_state:=path_join(root,".runs/publishing-house-tool-state/e2e/"+sha256(output))
     ensure(tool_state)
     workflows:=["publishing-house-governance","publishing-house-daily-desk","publishing-house-commissioning","publishing-house-evidence-dossier","publishing-house-primary-piece","publishing-house-asset-production","publishing-house-editorial-review","publishing-house-adaptation","publishing-house-format-production","publishing-house-approval-publication","publishing-house-post-publication"]
     runs:=[]

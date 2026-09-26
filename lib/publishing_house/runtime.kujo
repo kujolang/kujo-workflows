@@ -180,7 +180,7 @@ func append_record_reference(ctx, ref) {
 
 func tool_call(ctx, op, index) {
     tool := op["tool"]
-    payload_path := path_join(ctx["run_dir"], "inputs/" + op["id"] + ".json")
+    payload_path := path_join(ctx["tool_state_root"], "inputs/" + op["id"] + ".json")
     write_json(payload_path, op["payload"])
     argv := [path_join(ctx["repos"], tool + "/bin/" + tool)]
     for token in split(op["command"], " ") { argv = push(argv, token) }
@@ -577,7 +577,7 @@ export func run_workflow(workflow_id) {
     ensure_dir(run_dir)
     repos := env_or("KUJO_REPOS", parent_dir(root))
     kujo := env_or("KUJO_BIN", path_join(repos, "kujo/target/release/kujo"))
-    tool_state_root := flag_value(argv, "--tool-state-root", path_join(run_dir, "tool-state"))
+    tool_state_root := flag_value(argv, "--tool-state-root", path_join(root, ".runs/publishing-house-tool-state/" + workflow_id + "/" + sha256(run_dir)))
     ctx := {
         "root":root,"workflow_dir":workflow_dir,"workflow_id":workflow_id,"config":config,"request":request,"run_dir":run_dir,
         "repos":repos,"kujo":kujo,"compatibility":compatibility_result["value"],"tool_state_root":tool_state_root,"json":has_flag(argv,"--json"),"fixture_approval":flag_value(argv,"--fixture-approval",""),

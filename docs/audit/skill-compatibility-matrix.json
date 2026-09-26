@@ -1,9 +1,9 @@
 {
   "schema": "kujo.workflow-skill-compatibility/v1",
-  "audit_id": "kujo-workflows-audit-2026-09-19",
+  "audit_id": "kujo-workflows-audit-2026-09-26",
   "skills_repository": {
     "path": "../kujo-skills",
-    "commit": "3666d9e",
+    "commit": "ab77f5c",
     "branch": "main"
   },
   "relationships": [
@@ -358,10 +358,28 @@
         "videoops-quality-review/workflow.json",
         "tests/videoops-release-gate.sh"
       ]
+    },
+    {
+      "workflow": "publishing-house-workflows",
+      "invocation": "publishing-house-*/bin/run --request fixtures/request.fixture.json --json",
+      "status_by_skill": {
+        "kujo-publishing-house-workflows": "compatible",
+        "kujo-dispatch-workflows": "compatible",
+        "kujo-agents-sdk-workflows": "compatible",
+        "kujo-assetworks-workflows": "compatible",
+        "kujo-readersignal-workflows": "compatible"
+      },
+      "required_action": "Keep Publishing House workflows on locked offline fixture contracts; AssetWorks and ReaderSignal skills describe tool-owned records but do not expand live publication or measurement support.",
+      "implementation": "cataloged",
+      "evidence": [
+        "docs/publishing-house/compatibility-matrix.json",
+        "publishing-house-asset-production/workflow.json",
+        "publishing-house-post-publication/workflow.json"
+      ]
     }
   ],
   "summary": {
-    "compatible": 51,
+    "compatible": 55,
     "compatible_but_under_tested": 9,
     "update_required": 0,
     "migration_required": 0,

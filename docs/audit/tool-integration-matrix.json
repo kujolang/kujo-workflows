@@ -1,11 +1,11 @@
 {
   "schema": "kujo.workflow-tool-integration/v1",
-  "audit_id": "kujo-workflows-audit-2026-09-19",
+  "audit_id": "kujo-workflows-audit-2026-09-26",
   "tools": [
     {
       "tool": "tribunal",
       "canonical_repo": "../tribunal",
-      "actual_version": "current main at 936c5e9",
+      "actual_version": "current branch at f7ac1dc",
       "current_usage": [
         "tribunal-decision-gate"
       ],
@@ -18,7 +18,7 @@
       "complexity": "medium",
       "risk": "Mock receipt is unsigned and advisory; production binding requires Tribunal signature/trust-policy verification and an explicit human approval policy.",
       "implementation": "implemented",
-      "reason": "The dedicated gate runs a mock panel, verifies the persisted artifact set, and emits the versioned decision receipt without claiming quorum or binding approval beyond the fixture. The 2026-08-12 Tribunal regression work did not expand the workflow's advisory boundary.",
+      "reason": "The dedicated gate runs a mock panel, verifies the persisted artifact set, and emits the versioned decision receipt without claiming quorum or binding approval beyond the fixture. Current hardening and Kujo 1.5 verification evidence preserves that advisory boundary.",
       "tests": [
         "tribunal mock review",
         "tribunal verify",
@@ -29,7 +29,7 @@
     {
       "tool": "relay",
       "canonical_repo": "../relay",
-      "actual_version": "current main at 01c44da",
+      "actual_version": "current branch at 6ce9d23",
       "current_usage": [
         "relay-lifecycle-handoff"
       ],
@@ -42,7 +42,7 @@
       "complexity": "high",
       "risk": "Relay is a hardened local alpha; this integration proves local persistence, provider-tool execution through bounded policy workers, and operator resume, not remote exactly-once delivery or authenticated service durability. The 2026-08-12 Relay backlog refresh did not expand workflow-catalog guarantees.",
       "implementation": "implemented",
-      "reason": "The dedicated workflow runs a worktree mission through pause/resume, validates the integrity-checked export, and emits versioned message and delivery receipts. Relay v1.1.0 hardening/refactor commits preserve local persistence and delivery semantics without expanding this workflow boundary.",
+      "reason": "The dedicated workflow runs a worktree mission through pause/resume, validates the integrity-checked export, and emits versioned message and delivery receipts. Current repository-simplification and Workcell-candidate evidence preserves local persistence and delivery semantics without expanding this workflow boundary.",
       "tests": [
         "relay-lifecycle-handoff workflow",
         "mission pause/resume",
@@ -80,7 +80,7 @@
     {
       "tool": "ai-chat",
       "canonical_repo": "../ai-chat",
-      "actual_version": "current main at 18e8667",
+      "actual_version": "current main at 2209a41",
       "current_usage": [
         "ai-sdk-watchdog-showcase"
       ],
@@ -93,7 +93,7 @@
       "complexity": "medium",
       "risk": "Browser, web-search, and managed-provider execution require explicit local configuration, credentials, Chromium availability, and artifact review; benchmark quality claims must remain model- and run-qualified.",
       "implementation": "preserved",
-      "reason": "The current showcase only depends on AI Chat as a Watchdog-routed app surface. Managed Hermes profile, tool-selection, and startup-binding fixes improve the sibling app but do not create a new supported workflow entry.",
+      "reason": "The current showcase only depends on AI Chat as a Watchdog-routed app surface. Current tab-opening, checkpoint, tool-discovery, and failure reconciliation work improves the sibling app but does not create a new supported workflow entry.",
       "tests": [
         "npm test in sibling repo",
         "smoke",
@@ -105,7 +105,7 @@
     {
       "tool": "watchdog",
       "canonical_repo": "../watchdog",
-      "actual_version": "current main at df36d57",
+      "actual_version": "current main at 4e07223",
       "current_usage": [
         "ai-sdk-watchdog-showcase"
       ],
@@ -118,7 +118,7 @@
       "complexity": "medium",
       "risk": "Production posture requires separate API/proxy tokens, redaction, rate-limit configuration, environment-specific upstream credentials, and dated pricing evidence.",
       "implementation": "preserved",
-      "reason": "The showcase still routes AI traffic through Watchdog and exports telemetry. The September 13 pricing catalog refresh is dated cost evidence and does not require a workflow contract migration.",
+      "reason": "The showcase still routes AI traffic through Watchdog and exports telemetry. The current redaction-fixture and performance/auth regression changes preserve the telemetry and privacy boundary without changing the existing fixture-showcase contract.",
       "tests": [
         "fixture showcase",
         "proxy integration stub suite",
@@ -130,7 +130,7 @@
     {
       "tool": "workcell",
       "canonical_repo": "../workcell",
-      "actual_version": "current main at e2915a3",
+      "actual_version": "current main at 3f019ab",
       "current_usage": [
         "workcell-execution-gate"
       ],
@@ -143,7 +143,7 @@
       "complexity": "high",
       "risk": "Docker daemon/host kernel remain trusted; Workcell 1.0 is not a microVM or hosted multi-tenant isolation boundary and does not provide scheduling, organization-specific egress enforcement, or compliance certification.",
       "implementation": "implemented",
-      "reason": "The dedicated gate validates and inspects the Workcell definition, executes or records host-runtime blockage with versioned receipts, and preserves Workcell's documented host and daemon trust boundary. The explicit Docker endpoint hardening commit keeps the same local Docker/Podman boundary.",
+      "reason": "The dedicated gate validates and inspects the Workcell definition, executes or records host-runtime blockage with versioned receipts, and preserves Workcell's documented host and daemon trust boundary. Current portable execution-evidence and failure-preservation work tightens receipts without promoting hosted or microVM isolation claims.",
       "tests": [
         "workcell validate/inspect",
         "Docker execution",
@@ -155,7 +155,7 @@
     {
       "tool": "dispatch",
       "canonical_repo": "../dispatch",
-      "actual_version": "current main at dcffd8f",
+      "actual_version": "current main at a01a365",
       "current_usage": [
         "enterprise-dispatch-approval-router",
         "publishing-house-*"
@@ -169,7 +169,7 @@
       "complexity": "low",
       "risk": "External ChatOps delivery and callback authorization remain deployment-specific.",
       "implementation": "implemented",
-      "reason": "Dispatch remains the Publishing House and approval-router orchestration dependency; Sep 8 observer identity/retry evidence does not promote Relay composition or change workflow completion contracts.",
+      "reason": "Dispatch remains the Publishing House and approval-router orchestration dependency; current durable control, scoped DAG barrier, and provider-control evidence preserves workflow state and approval routing without promoting Relay composition or changing completion contracts.",
       "tests": [
         "workflow fixture run",
         "Dispatch resume proof",
@@ -207,7 +207,7 @@
     {
       "tool": "runledger",
       "canonical_repo": "../runledger",
-      "actual_version": "current main at 92cb063",
+      "actual_version": "current main at e0187ea",
       "current_usage": [
         "agency-runner",
         "agency-verified-fix-loop",
@@ -230,7 +230,7 @@
       "complexity": "low",
       "risk": "External receipt persistence can be unavailable; workflows must report partial status.",
       "implementation": "implemented",
-      "reason": "Codebase Cleanup exposes RunLedger as a host-owned adapter instead of creating an unrelated task automatically. VideoOps release proof records lifecycle receipts with zero-token fixture accounting.",
+      "reason": "Codebase Cleanup exposes RunLedger as a host-owned adapter instead of creating an unrelated task automatically. VideoOps release proof records lifecycle receipts with zero-token fixture accounting; current large-ledger and atomic-report hardening does not change workflow acceptance.",
       "tests": [
         "RunLedger CLI smoke",
         "partial finish failure",
@@ -241,7 +241,7 @@
     {
       "tool": "scout",
       "canonical_repo": "../scout",
-      "actual_version": "current main at 70454d4",
+      "actual_version": "current main at f3a874f",
       "current_usage": [
         "agency-runner",
         "agency-verified-fix-loop",
@@ -257,7 +257,7 @@
       "complexity": "low",
       "risk": "Static inventory can miss dynamic entry points.",
       "implementation": "implemented",
-      "reason": "The cleanup workflow can run Scout read-only and retains independent deletion evidence guards.",
+      "reason": "The cleanup workflow can run Scout read-only and retains independent deletion evidence guards. Scout 1.1.0 release evidence improves source-bound scanning but does not make inventory alone a deletion proof.",
       "tests": [
         "cleanup integration disposition",
         "analysis-only dogfood"
@@ -267,7 +267,7 @@
     {
       "tool": "fence",
       "canonical_repo": "../fence",
-      "actual_version": "current main at fda049e",
+      "actual_version": "current branch at 07006f3",
       "current_usage": [
         "codebase-cleanup"
       ],
@@ -313,7 +313,7 @@
     {
       "tool": "kennel",
       "canonical_repo": "../kennel",
-      "actual_version": "current main at 546dd42",
+      "actual_version": "current branch at 26e8a06",
       "current_usage": [
         "codebase-cleanup",
         "owned-agent-project"
@@ -339,7 +339,7 @@
     {
       "tool": "changebucket",
       "canonical_repo": "../changebucket",
-      "actual_version": "current main at 16491d2",
+      "actual_version": "current main at 030eea6",
       "current_usage": [
         "agency-verified-fix-loop",
         "feature-card-workflow",
@@ -414,7 +414,7 @@
     {
       "tool": "eval",
       "canonical_repo": "../eval",
-      "actual_version": "current main at 7ad5cae",
+      "actual_version": "current main at 6a5ab09",
       "current_usage": [
         "agency-verified-fix-loop",
         "feature-card-workflow",
@@ -434,7 +434,7 @@
       "complexity": "low",
       "risk": "Missing eval artifact must not be interpreted as a pass.",
       "implementation": "implemented",
-      "reason": "Existing workflows invoke Eval when a suite exists; owned Agent Project delegates deterministic generated-agent evaluation through `kujo agent eval`; VideoOps uses Eval stage gates inside the offline production proof.",
+      "reason": "Existing workflows invoke Eval when a suite exists; owned Agent Project delegates deterministic generated-agent evaluation through `kujo agent eval`; VideoOps uses Eval stage gates inside the offline production proof. Portable result emission remains compatible with those contracts.",
       "tests": [
         "Eval fixture",
         "missing-result negative case",
@@ -446,7 +446,7 @@
     {
       "tool": "kujo",
       "canonical_repo": "../kujo",
-      "actual_version": "current branch at 7968d4f",
+      "actual_version": "current branch at 3efa60c",
       "current_usage": [
         "owned-agent-project",
         "publishing-house-*",
@@ -466,7 +466,7 @@
       "complexity": "low",
       "risk": "Runtime upgrades require re-running fixture gates before refreshing locked Publishing House claims.",
       "implementation": "implemented",
-      "reason": "Current workflows use Kujo as the local interpreter/checker. The September runtime, PDF, PostgreSQL, datetime, and URI component decoding work does not add new workflow catalog claims.",
+      "reason": "Current workflows use Kujo as the local interpreter/checker. The Kujo 1.5 runtime and subsequent concurrency/PDF/provider-fixture work supports current sibling tool gates but does not add new workflow catalog claims.",
       "tests": [
         "kujo check",
         "workflow fixture gates",
@@ -503,7 +503,7 @@
     {
       "tool": "howl",
       "canonical_repo": "../howl",
-      "actual_version": "current main at 2a48908",
+      "actual_version": "current main at 800c90f",
       "current_usage": [
         "howl-content-factory",
         "videoops-creative-planning",
@@ -519,7 +519,7 @@
       "complexity": "low",
       "risk": "Rendered proof cards are evidence artifacts, not publication or distribution.",
       "implementation": "implemented",
-      "reason": "The VideoOps fixture still uses Howl proof cards; the Sep 7 downstream diff evidence format change does not alter workflow inputs, outputs, or acceptance criteria.",
+      "reason": "The VideoOps fixture still uses Howl proof cards; current caption line-break and dangling-output hardening does not alter workflow inputs, outputs, or acceptance criteria.",
       "tests": [
         "howl validate",
         "howl render",
@@ -530,7 +530,7 @@
     {
       "tool": "kujo-hyperframes",
       "canonical_repo": "../kujo-hyperframes",
-      "actual_version": "current main at 1981df2",
+      "actual_version": "current branch at 1981df2",
       "current_usage": [
         "videoops-hyperframes-edit"
       ],

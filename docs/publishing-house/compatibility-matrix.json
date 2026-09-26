@@ -1,19 +1,19 @@
 {
   "schema_name": "publishing-house.compatibility-matrix",
   "schema_version": "1.0.0",
-  "tested_at": "2026-09-19T14:33:31Z",
+  "tested_at": "2026-09-26T10:06:17Z",
   "kujo": {
-    "version": "1.0.2",
-    "commit": "7e2b185c338f1dcb500a1eda47759b0db0b7b298"
+    "version": "1.5.0",
+    "commit": "83fbdd4f39db68c5bc2196318e993e0ff202d514"
   },
   "dispatch": {
-    "version": "1.2.0",
-    "commit": "662417c264bd55f8d802eef3fc21f9f372590753",
+    "version": "1.3.0-candidate",
+    "commit": "a01a36524b9e0dbaaf2bc30ef818ab4884e6c797",
     "artifact_contract_version": "dispatch-artifact/v1"
   },
   "agents_sdk": {
     "version": "1.0.0",
-    "commit": "d3904d348754b492bda298b6c30f49c1eb24b7ea",
+    "commit": "bb2202d8b54f44717b1b1f0157a6774f2027cea1",
     "runner_contract_version": "0.1.0"
   },
   "kujo_agents": {
@@ -23,49 +23,61 @@
   },
   "kujo_skills": {
     "version": "0.7.0",
-    "commit": "3666d9e4a59c4f283c761b3c572f7fee1249aefa",
+    "commit": "ab77f5c29623472990ead948b80cc8d0f4467788",
     "publishing_house_skill": "kujo-publishing-house-workflows"
   },
   "tools": {
     "storydesk": {
       "version": "0.3.0",
       "contract_version": "1.0.0",
-      "commit": "e3707994b564c5b746493393c697424cc8503209"
+      "commit": "18adafacaf1b109485d7b4dd9951eac3c88cfee8"
     },
     "dossier": {
       "version": "0.2.0",
       "contract_version": "1.0.0",
-      "commit": "1d8ccee740820e25332ae8f25e422ca522a3ac0b"
+      "commit": "c3ab2e27019729eabb6c508636ebf7d82f810bf5"
     },
     "galleypack": {
       "version": "0.2.0",
       "contract_version": "1.0.0",
-      "commit": "5a9ec247f943460aa759f1552ae14e48c7423d3e"
+      "commit": "e4acb84653e0979373f4d5ac83ee9d231f83ed59"
     },
     "bluepencil": {
-      "version": "0.2.0",
+      "version": "0.3.0",
       "contract_version": "1.0.0",
-      "commit": "87a9c38e30cf5a629441291a320bd6de40405ca1"
+      "commit": "9d380468d61f95524c2a0c7fb112b476f1b08a59"
     },
     "versionseal": {
-      "version": "0.2.0",
+      "version": "0.3.0",
       "contract_version": "1.0.0",
-      "commit": "4c84f2607f60011c5800790347d7479ec07554e9"
+      "commit": "cf14a2d23dc46b8773627ae25dbfaee6150465af"
     },
     "presswire": {
       "version": "0.2.0",
       "contract_version": "1.0.0",
-      "commit": "566469012efbf10e86d48f61fdd64cdd050dddd6"
+      "commit": "3b80332879799d6662b00fcaa35bd628360efffc"
     },
     "readersignal": {
-      "version": "0.2.0",
+      "version": "0.3.0",
       "contract_version": "1.0.0",
-      "commit": "389ef125f1a274289b6b3f69810abc8fccf75641"
+      "commit": "512963e5112038f1169cc6a69982dbd3b137040a"
     },
     "assetworks": {
-      "version": "0.2.0",
+      "version": "0.3.0",
       "contract_version": "1.0.0",
-      "commit": "32ce0b2542100092dc22fea6fc1affd97dd861dc"
+      "commit": "63d892d1261303fee4d37ff5528cd61ebb1c3648"
     }
-  }
+  },
+  "known_incompatibilities": [
+    {
+      "producer": "versionseal",
+      "producer_version": "0.3.0",
+      "consumer": "presswire",
+      "consumer_version": "0.2.0",
+      "boundary": "publishing-house-approval-publication fixture resume",
+      "evidence": "python3 -m unittest discover -s tests -p test_*.py failed in test_all_eleven_offline_fixture; PressWire publish returned authorization_failed: approval contract mismatch",
+      "status": "blocked",
+      "next_action": "Update PressWire to accept VersionSeal 0.3.0 approval records or keep the Publishing House lock on a VersionSeal writer version PressWire supports."
+    }
+  ]
 }

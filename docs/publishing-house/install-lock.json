@@ -3,17 +3,17 @@
   "schema_version": "1.0.0",
   "workflow_version": "0.1.0",
   "kujo": {
-    "version": "1.0.2",
-    "commit": "7e2b185c338f1dcb500a1eda47759b0db0b7b298",
+    "version": "1.5.0",
+    "commit": "83fbdd4f39db68c5bc2196318e993e0ff202d514",
     "repository": "https://github.com/kujolang/kujo.git"
   },
   "repositories": {
     "dispatch": {
-      "commit": "662417c264bd55f8d802eef3fc21f9f372590753",
+      "commit": "a01a36524b9e0dbaaf2bc30ef818ab4884e6c797",
       "repository": "https://github.com/kujolang/dispatch.git"
     },
     "agents-sdk": {
-      "commit": "d3904d348754b492bda298b6c30f49c1eb24b7ea",
+      "commit": "bb2202d8b54f44717b1b1f0157a6774f2027cea1",
       "repository": "https://github.com/kujolang/agents-sdk.git"
     },
     "kujo-agents": {
@@ -21,39 +21,39 @@
       "repository": "https://github.com/kujolang/kujo-agents.git"
     },
     "kujo-skills": {
-      "commit": "3666d9e4a59c4f283c761b3c572f7fee1249aefa",
+      "commit": "ab77f5c29623472990ead948b80cc8d0f4467788",
       "repository": "https://github.com/kujolang/kujo-skills.git"
     },
     "storydesk": {
-      "commit": "e3707994b564c5b746493393c697424cc8503209",
+      "commit": "18adafacaf1b109485d7b4dd9951eac3c88cfee8",
       "repository": "https://github.com/kujolang/storydesk.git"
     },
     "dossier": {
-      "commit": "1d8ccee740820e25332ae8f25e422ca522a3ac0b",
+      "commit": "c3ab2e27019729eabb6c508636ebf7d82f810bf5",
       "repository": "https://github.com/kujolang/dossier.git"
     },
     "galleypack": {
-      "commit": "5a9ec247f943460aa759f1552ae14e48c7423d3e",
+      "commit": "e4acb84653e0979373f4d5ac83ee9d231f83ed59",
       "repository": "https://github.com/kujolang/galleypack.git"
     },
     "bluepencil": {
-      "commit": "87a9c38e30cf5a629441291a320bd6de40405ca1",
+      "commit": "9d380468d61f95524c2a0c7fb112b476f1b08a59",
       "repository": "https://github.com/kujolang/bluepencil.git"
     },
     "versionseal": {
-      "commit": "4c84f2607f60011c5800790347d7479ec07554e9",
+      "commit": "cf14a2d23dc46b8773627ae25dbfaee6150465af",
       "repository": "https://github.com/kujolang/versionseal.git"
     },
     "presswire": {
-      "commit": "566469012efbf10e86d48f61fdd64cdd050dddd6",
+      "commit": "3b80332879799d6662b00fcaa35bd628360efffc",
       "repository": "https://github.com/kujolang/presswire.git"
     },
     "readersignal": {
-      "commit": "389ef125f1a274289b6b3f69810abc8fccf75641",
+      "commit": "512963e5112038f1169cc6a69982dbd3b137040a",
       "repository": "https://github.com/kujolang/readersignal.git"
     },
     "assetworks": {
-      "commit": "32ce0b2542100092dc22fea6fc1affd97dd861dc",
+      "commit": "63d892d1261303fee4d37ff5528cd61ebb1c3648",
       "repository": "https://github.com/kujolang/assetworks.git"
     }
   }

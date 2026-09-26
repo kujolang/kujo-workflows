@@ -822,6 +822,11 @@
           "compatibility": "compatible",
           "name": "kujo-agents-sdk-workflows",
           "path": "skills/kujo-agents-sdk-workflows/SKILL.md"
+        },
+        {
+          "compatibility": "compatible",
+          "name": "kujo-assetworks-workflows",
+          "path": "skills/kujo-assetworks-workflows/SKILL.md"
         }
       ],
       "state_and_recovery": "Kujo-owned state.json with bounded retries, idempotent completed replay, and Dispatch canonical artifacts; approval workflow adds exact paused resume.",
@@ -945,6 +950,11 @@
           "compatibility": "compatible",
           "name": "kujo-agents-sdk-workflows",
           "path": "skills/kujo-agents-sdk-workflows/SKILL.md"
+        },
+        {
+          "compatibility": "compatible",
+          "name": "kujo-assetworks-workflows",
+          "path": "skills/kujo-assetworks-workflows/SKILL.md"
         }
       ],
       "state_and_recovery": "Kujo-owned state.json with bounded retries, idempotent completed replay, and Dispatch canonical artifacts; approval workflow adds exact paused resume.",
@@ -1242,6 +1252,11 @@
           "compatibility": "compatible",
           "name": "kujo-agents-sdk-workflows",
           "path": "skills/kujo-agents-sdk-workflows/SKILL.md"
+        },
+        {
+          "compatibility": "compatible",
+          "name": "kujo-assetworks-workflows",
+          "path": "skills/kujo-assetworks-workflows/SKILL.md"
         }
       ],
       "state_and_recovery": "Kujo-owned state.json with bounded retries, idempotent completed replay, and Dispatch canonical artifacts; approval workflow adds exact paused resume.",
@@ -1363,6 +1378,11 @@
           "compatibility": "compatible",
           "name": "kujo-agents-sdk-workflows",
           "path": "skills/kujo-agents-sdk-workflows/SKILL.md"
+        },
+        {
+          "compatibility": "compatible",
+          "name": "kujo-readersignal-workflows",
+          "path": "skills/kujo-readersignal-workflows/SKILL.md"
         }
       ],
       "state_and_recovery": "Kujo-owned state.json with bounded retries, idempotent completed replay, and Dispatch canonical artifacts; approval workflow adds exact paused resume.",
@@ -2681,7 +2701,7 @@
       ]
     }
   ],
-  "audit_id": "kujo-workflows-audit-2026-09-19",
+  "audit_id": "kujo-workflows-audit-2026-09-26",
   "canonical_tool_aliases": {
     "CaseFile": "casefile",
     "WorkCell": "workcell",
