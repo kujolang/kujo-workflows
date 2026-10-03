@@ -21,7 +21,7 @@
       "repository": "https://github.com/kujolang/kujo-agents.git"
     },
     "kujo-skills": {
-      "commit": "ab77f5c29623472990ead948b80cc8d0f4467788",
+      "commit": "da0aa8c80fcf437731d06b433dd1058d648e38f9",
       "repository": "https://github.com/kujolang/kujo-skills.git"
     },
     "storydesk": {
@@ -53,7 +53,7 @@
       "repository": "https://github.com/kujolang/readersignal.git"
     },
     "assetworks": {
-      "commit": "63d892d1261303fee4d37ff5528cd61ebb1c3648",
+      "commit": "4fea0533139b0a72f9bde33dd1710f380f0fa097",
       "repository": "https://github.com/kujolang/assetworks.git"
     }
   }
