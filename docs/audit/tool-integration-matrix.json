@@ -1,11 +1,11 @@
 {
   "schema": "kujo.workflow-tool-integration/v1",
-  "audit_id": "kujo-workflows-audit-2026-10-03",
+  "audit_id": "kujo-workflows-audit-2026-10-10",
   "tools": [
     {
       "tool": "tribunal",
       "canonical_repo": "../tribunal",
-      "actual_version": "current branch at f7ac1dc",
+      "actual_version": "current main at e3ccd21",
       "current_usage": [
         "tribunal-decision-gate"
       ],
@@ -80,7 +80,7 @@
     {
       "tool": "ai-chat",
       "canonical_repo": "../ai-chat",
-      "actual_version": "current main at 2209a41",
+      "actual_version": "current main at d32e649",
       "current_usage": [
         "ai-sdk-watchdog-showcase"
       ],
@@ -93,7 +93,7 @@
       "complexity": "medium",
       "risk": "Browser, web-search, and managed-provider execution require explicit local configuration, credentials, Chromium availability, and artifact review; benchmark quality claims must remain model- and run-qualified.",
       "implementation": "preserved",
-      "reason": "The current showcase only depends on AI Chat as a Watchdog-routed app surface. Current checkpoint, shell-boundary, output-limit recovery, and completion-exhaustion work improves the sibling app but does not create a new supported workflow entry.",
+      "reason": "The current showcase only depends on AI Chat as a Watchdog-routed app surface. Current approval-loop expiry, shell-boundary, output-limit recovery, and completion-exhaustion work improves the sibling app but does not create a new supported workflow entry.",
       "tests": [
         "npm test in sibling repo",
         "smoke",
@@ -105,7 +105,7 @@
     {
       "tool": "watchdog",
       "canonical_repo": "../watchdog",
-      "actual_version": "current main at 4e07223",
+      "actual_version": "current main at 4ceb203",
       "current_usage": [
         "ai-sdk-watchdog-showcase"
       ],
@@ -118,7 +118,7 @@
       "complexity": "medium",
       "risk": "Production posture requires separate API/proxy tokens, redaction, rate-limit configuration, environment-specific upstream credentials, and dated pricing evidence.",
       "implementation": "preserved",
-      "reason": "The showcase still routes AI traffic through Watchdog and exports telemetry. Current RunLedger measurement-release, pricing-catalog, timing, and Kujo-runtime-summary work preserves the telemetry and privacy boundary without changing the existing fixture-showcase contract.",
+      "reason": "The showcase still routes AI traffic through Watchdog and exports telemetry. Current telemetry-ID validation, RunLedger measurement-release, pricing-catalog, timing, and Kujo-runtime-summary work preserves the telemetry and privacy boundary without changing the existing fixture-showcase contract.",
       "tests": [
         "fixture showcase",
         "proxy integration stub suite",
@@ -130,7 +130,7 @@
     {
       "tool": "workcell",
       "canonical_repo": "../workcell",
-      "actual_version": "current main at 3f019ab",
+      "actual_version": "current main at a276a92",
       "current_usage": [
         "workcell-execution-gate"
       ],
@@ -143,7 +143,7 @@
       "complexity": "high",
       "risk": "Docker daemon/host kernel remain trusted; Workcell 1.0 is not a microVM or hosted multi-tenant isolation boundary and does not provide scheduling, organization-specific egress enforcement, or compliance certification.",
       "implementation": "implemented",
-      "reason": "The dedicated gate validates and inspects the Workcell definition, executes or records host-runtime blockage with versioned receipts, and preserves Workcell's documented host and daemon trust boundary. Current Workcell 1.2, retained-workspace ownership observations, final-validation Git-effect gates, and Boat handoff documentation tighten receipts without promoting hosted or microVM isolation claims.",
+      "reason": "The dedicated gate validates and inspects the Workcell definition, executes or records host-runtime blockage with versioned receipts, and preserves Workcell's documented host and daemon trust boundary. Current vulnerable-adapter dependency updates, Workcell 1.2, retained-workspace ownership observations, final-validation Git-effect gates, and Boat handoff documentation tighten receipts without promoting hosted or microVM isolation claims.",
       "tests": [
         "workcell validate/inspect",
         "Docker execution",
@@ -155,7 +155,7 @@
     {
       "tool": "dispatch",
       "canonical_repo": "../dispatch",
-      "actual_version": "current main at a01a365",
+      "actual_version": "current main at ac2609b",
       "current_usage": [
         "enterprise-dispatch-approval-router",
         "publishing-house-*"
@@ -169,7 +169,7 @@
       "complexity": "low",
       "risk": "External ChatOps delivery and callback authorization remain deployment-specific.",
       "implementation": "implemented",
-      "reason": "Dispatch remains the Publishing House and approval-router orchestration dependency; current operator-readiness, bounded batch graph controls, allocated-state accounting, scoped DAG barrier, and provider-control evidence preserves workflow state and approval routing without promoting Relay composition or changing completion contracts.",
+      "reason": "Dispatch remains the Publishing House and approval-router orchestration dependency; current subgraph settlement verification, operator-readiness, bounded batch graph controls, allocated-state accounting, scoped DAG barrier, and provider-control evidence preserves workflow state and approval routing without promoting Relay composition or changing completion contracts.",
       "tests": [
         "workflow fixture run",
         "Dispatch resume proof",
@@ -414,7 +414,7 @@
     {
       "tool": "eval",
       "canonical_repo": "../eval",
-      "actual_version": "current main at 6a5ab09",
+      "actual_version": "current main at 926577b",
       "current_usage": [
         "agency-verified-fix-loop",
         "feature-card-workflow",
@@ -434,7 +434,7 @@
       "complexity": "low",
       "risk": "Missing eval artifact must not be interpreted as a pass.",
       "implementation": "implemented",
-      "reason": "Existing workflows invoke Eval when a suite exists; owned Agent Project delegates deterministic generated-agent evaluation through `kujo agent eval`; VideoOps uses Eval stage gates inside the offline production proof. Portable result emission remains compatible with those contracts.",
+      "reason": "Existing workflows invoke Eval when a suite exists; owned Agent Project delegates deterministic generated-agent evaluation through `kujo agent eval`; VideoOps uses Eval stage gates inside the offline production proof. Current suite-inventory gate fixes and portable result emission remain compatible with those contracts.",
       "tests": [
         "Eval fixture",
         "missing-result negative case",
@@ -446,7 +446,7 @@
     {
       "tool": "kujo",
       "canonical_repo": "../kujo",
-      "actual_version": "current branch at 3efa60c",
+      "actual_version": "current main at 0c6f9f8",
       "current_usage": [
         "owned-agent-project",
         "publishing-house-*",
@@ -466,7 +466,7 @@
       "complexity": "low",
       "risk": "Runtime upgrades require re-running fixture gates before refreshing locked Publishing House claims.",
       "implementation": "implemented",
-      "reason": "Current workflows use Kujo as the local interpreter/checker. The Kujo 1.5 support baseline remains pinned for Publishing House, while current mainline VM-startup, benchmark, and reverted native-AOT work does not add new workflow catalog claims.",
+      "reason": "Current workflows use Kujo as the local interpreter/checker. The Kujo 1.5 support baseline remains pinned for Publishing House, while current mainline database-pool, VM-startup, benchmark, and reverted native-AOT work does not add new workflow catalog claims.",
       "tests": [
         "kujo check",
         "workflow fixture gates",

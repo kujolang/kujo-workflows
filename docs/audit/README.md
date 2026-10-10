@@ -1,7 +1,7 @@
 # Kujo Workflow Ecosystem Audit
 
-Audit ID: `kujo-workflows-audit-2026-10-03`
-Captured: `2026-10-03T06:05:47-04:00` (UTC `2026-10-03T10:05:47Z`)
+Audit ID: `kujo-workflows-audit-2026-10-10`
+Captured: `2026-10-10T06:06:05-04:00` (UTC `2026-10-10T10:06:05Z`)
 
 The machine-readable source of truth is [`workflow-catalog.json`](workflow-catalog.json). The validator resolves skill identities from the checked-out `kujo-skills` repository and tool identities from sibling repositories; it fails closed on missing skills, non-canonical paths, unknown tools, missing workflow entries, or missing documentation.
 
@@ -9,7 +9,8 @@ The machine-readable source of truth is [`workflow-catalog.json`](workflow-catal
 
 - 44 active workflow kits are inventoried from the catalog and repository README, including the Owned Agent Project proof, ten WebOps kits, the reusable Codebase Cleanup workflow, eleven Publishing House kits, the VideoOps production initializer, and five VideoOps stage kits.
 - The catalog resolves every Publishing House kit to the dedicated `kujo-publishing-house-workflows` skill alongside Dispatch and Agents SDK guidance, and now links AssetWorks and ReaderSignal workflow skills where those tool-owned records are directly consumed.
-- Weekly refresh checked repositories changed in the last 7-10 days, prioritizing `kujo`, `kujo-skills`, Dispatch, Workcell, AI Chat, Watchdog, MCP, PatchBrief, ShipCheck, Ability, SSG, Intake, Presentations, Eval, Lens, SiteKit, Scout, Kennel, Publishing House tool repositories, and related workflow kits.
+- Weekly refresh checked repositories changed in the last 7-10 days, prioritizing `kujo`, `kujo-skills`, `kujo-agents`, `kujolang-mcp`, Dispatch, Workcell, AI Chat, Watchdog, Eval, Tribunal, MCP, PatchBrief, ShipCheck, Ability, SSG, Intake, Presentations, Lens, SiteKit, Scout, Kennel, Publishing House tool repositories, and related workflow kits.
+- The 2026-10-10 audit advanced strict Publishing House `kujo-agents` and `kujo-skills` support pins to `be22fda` and `70e68ba` after fixture validation exposed stale checkout baselines. No workflow implementation, fixture, or catalog relationship changed; all existing fixture/live/host boundaries were preserved.
 - The 2026-10-03 audit advanced strict Publishing House `kujo-skills` and AssetWorks support pins to `da0aa8c` and `4fea053` after fixture validation exposed stale checkout baselines. No workflow implementation, fixture, or catalog relationship changed; all existing fixture/live/host boundaries were preserved.
 - Publishing House support-lock records were advanced for clean current support evidence after the unit suite exposed stale support evidence, including Kujo `v1.5.0`, Dispatch `a01a365`, `kujo-skills` `ab77f5c`, StoryDesk `18adafa`, Dossier `c3ab2e2`, GalleyPack `e4acb84`, BluePencil `9d38046`, VersionSeal `cf14a2d`, PressWire `14fb28b`, ReaderSignal `512963e`, and AssetWorks `63d892d`; the same-day compatibility follow-up pins the documentation-only `kujo-agents` audit commit `e74545c` and restores the all-eleven offline fixture with VersionSeal `0.3.0` approvals and consistent explicit PressWire receipt IDs.
 - Owned Agent Project remains aligned with Kujo Agent Project commands, Kennel dependency installation, Agents SDK fixture execution, and Eval delegation.
@@ -27,7 +28,8 @@ The machine-readable source of truth is [`workflow-catalog.json`](workflow-catal
 - [`workflow-catalog.json`](workflow-catalog.json) — machine-readable active workflow inventory and canonical skill/tool references.
 - [`skill-compatibility-matrix.json`](skill-compatibility-matrix.json) — workflow-to-skill status, action, and evidence.
 - [`tool-integration-matrix.json`](tool-integration-matrix.json) — current/proposed tool use, gaps, risks, tests, and rollback.
-- [`WEEKLY_AUDIT_2026_10_03.md`](WEEKLY_AUDIT_2026_10_03.md) — latest weekly drift review, affected repositories, compatibility disposition, validation, and next watch list.
+- [`WEEKLY_AUDIT_2026_10_10.md`](WEEKLY_AUDIT_2026_10_10.md) — latest weekly drift review, affected repositories, compatibility disposition, validation, and next watch list.
+- [`WEEKLY_AUDIT_2026_10_03.md`](WEEKLY_AUDIT_2026_10_03.md) — previous weekly drift review.
 - [`WEEKLY_AUDIT_2026_09_26.md`](WEEKLY_AUDIT_2026_09_26.md) — previous weekly drift review.
 - [`WEEKLY_AUDIT_2026_09_19.md`](WEEKLY_AUDIT_2026_09_19.md) — previous weekly drift review.
 - [`WEEKLY_AUDIT_2026_09_12.md`](WEEKLY_AUDIT_2026_09_12.md) — previous weekly drift review.
