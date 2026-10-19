@@ -49,7 +49,7 @@ func main() {
 
     ledger := path_join(out,"runledger")
     ensure(ledger)
-    ledger_start := run(["env","RUNLEDGER_DIR="+ledger,"KUJO="+path_join(dirname(root),"kujo/target/release/kujo"),path_join(dirname(root),"runledger/bin/runledger"),"start","--provider","fixture","--model","economical-profiles","--task","VideoOps offline fixture","--prompt",path_join(root,"fixtures/videoops/packwrite/MEGA_PROMPT.md"),"--repo",root],root,30000)
+    ledger_start := run(["env","RUNLEDGER_DIR="+ledger,"KUJO="+env_or("KUJO_BIN",env_or("KUJO",path_join(dirname(root),"kujo/target/release/kujo"))),path_join(dirname(root),"runledger/bin/runledger"),"start","--provider","fixture","--model","economical-profiles","--task","VideoOps offline fixture","--prompt",path_join(root,"fixtures/videoops/packwrite/MEGA_PROMPT.md"),"--repo",root],root,30000)
     if ledger_start["exit_code"]!=0 { eprint("RunLedger start failed: "+ledger_start["stderr"]); exit(1) }
     first_line := split(trim(ledger_start["stdout"]),"\n")[0]
     run_id := trim(replace(first_line,"Started run:",""))
@@ -99,13 +99,13 @@ func main() {
         require_schema(path_join(workspace,"review/evidence/handoffs/"+owner+".json"),path_join(agents_root,"schemas/videoops/handoff.schema.json"),"handoff "+owner)
     }
 
-    usage := run(["env","RUNLEDGER_DIR="+ledger,"KUJO="+path_join(dirname(root),"kujo/target/release/kujo"),path_join(dirname(root),"runledger/bin/runledger"),"usage",run_id,"--input","0","--output","0","--cache-read","0","--cache-write","0"],root,30000)
+    usage := run(["env","RUNLEDGER_DIR="+ledger,"KUJO="+env_or("KUJO_BIN",env_or("KUJO",path_join(dirname(root),"kujo/target/release/kujo"))),path_join(dirname(root),"runledger/bin/runledger"),"usage",run_id,"--input","0","--output","0","--cache-read","0","--cache-write","0"],root,30000)
     if usage["exit_code"]!=0 { eprint("RunLedger usage failed: "+usage["stderr"]); exit(1) }
-    cost := run(["env","RUNLEDGER_DIR="+ledger,"KUJO="+path_join(dirname(root),"kujo/target/release/kujo"),path_join(dirname(root),"runledger/bin/runledger"),"cost",run_id,"--total","0","--currency","USD","--input","0","--output","0","--cache","0"],root,30000)
+    cost := run(["env","RUNLEDGER_DIR="+ledger,"KUJO="+env_or("KUJO_BIN",env_or("KUJO",path_join(dirname(root),"kujo/target/release/kujo"))),path_join(dirname(root),"runledger/bin/runledger"),"cost",run_id,"--total","0","--currency","USD","--input","0","--output","0","--cache","0"],root,30000)
     if cost["exit_code"]!=0 { eprint("RunLedger cost failed: "+cost["stderr"]); exit(1) }
-    note := run(["env","RUNLEDGER_DIR="+ledger,"KUJO="+path_join(dirname(root),"kujo/target/release/kujo"),path_join(dirname(root),"runledger/bin/runledger"),"note",run_id,"Five agent stages; eight successful stage receipts; two expected fail-closed checks; zero model tokens and zero paid cost."],root,30000)
+    note := run(["env","RUNLEDGER_DIR="+ledger,"KUJO="+env_or("KUJO_BIN",env_or("KUJO",path_join(dirname(root),"kujo/target/release/kujo"))),path_join(dirname(root),"runledger/bin/runledger"),"note",run_id,"Five agent stages; eight successful stage receipts; two expected fail-closed checks; zero model tokens and zero paid cost."],root,30000)
     if note["exit_code"]!=0 { eprint("RunLedger note failed: "+note["stderr"]); exit(1) }
-    finish := run(["env","RUNLEDGER_DIR="+ledger,"KUJO="+path_join(dirname(root),"kujo/target/release/kujo"),path_join(dirname(root),"runledger/bin/runledger"),"finish",run_id,"--status","pass","--verdict","Five bounded stages, fail-closed asset gate, real HyperFrames render, FAIL-to-fix-to-PASS revision, and finalization passed offline."],root,30000)
+    finish := run(["env","RUNLEDGER_DIR="+ledger,"KUJO="+env_or("KUJO_BIN",env_or("KUJO",path_join(dirname(root),"kujo/target/release/kujo"))),path_join(dirname(root),"runledger/bin/runledger"),"finish",run_id,"--status","pass","--verdict","Five bounded stages, fail-closed asset gate, real HyperFrames render, FAIL-to-fix-to-PASS revision, and finalization passed offline."],root,30000)
     if finish["exit_code"]!=0 { eprint("RunLedger finish failed: "+finish["stderr"]); exit(1) }
 
     manifest:=parse_json(read_file(path_join(workspace,"assets/asset-manifest.json")))

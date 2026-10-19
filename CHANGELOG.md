@@ -10,7 +10,7 @@ The format follows Keep a Changelog and Semantic Versioning.
 
 ### Fixed
 
-- Honor the explicit `KUJO_BIN` selection in Agency Runner and pin the Publishing
+- Honor the explicit `KUJO_BIN` selection in Agency Runner and VideoOps fixture receipts; pin the Publishing
   House installation to the released Kujo Agents 1.5.0 contract checkout.
 
 - Route production media execution to canonical `kujo-agents/videoops/tools`,
