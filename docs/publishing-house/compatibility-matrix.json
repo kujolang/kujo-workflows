@@ -1,7 +1,7 @@
 {
   "schema_name": "publishing-house.compatibility-matrix",
   "schema_version": "1.0.0",
-  "tested_at": "2026-10-10T10:30:00Z",
+  "tested_at": "2026-10-19T18:50:00Z",
   "kujo": {
     "version": "1.5.0",
     "commit": "83fbdd4f39db68c5bc2196318e993e0ff202d514"
@@ -17,8 +17,8 @@
     "runner_contract_version": "0.1.0"
   },
   "kujo_agents": {
-    "version": "1.4.0",
-    "commit": "be22fda90b877de5bb5e9137fee612f2491fb9b2",
+    "version": "1.5.0",
+    "commit": "62fbc7306fbba9cad265d30a0724b096ba30a60f",
     "publishing_house_contract_version": "1.0.0"
   },
   "kujo_skills": {

@@ -17,7 +17,7 @@
       "repository": "https://github.com/kujolang/agents-sdk.git"
     },
     "kujo-agents": {
-      "commit": "be22fda90b877de5bb5e9137fee612f2491fb9b2",
+      "commit": "62fbc7306fbba9cad265d30a0724b096ba30a60f",
       "repository": "https://github.com/kujolang/kujo-agents.git"
     },
     "kujo-skills": {
