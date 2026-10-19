@@ -3,8 +3,8 @@
   "schema_version": "1.0.0",
   "workflow_version": "0.1.0",
   "kujo": {
-    "version": "1.5.0",
-    "commit": "83fbdd4f39db68c5bc2196318e993e0ff202d514",
+    "version": "1.8.2",
+    "commit": "549bdb4d5aa8edc60a83c81bf3be4b1c688ad3e1",
     "repository": "https://github.com/kujolang/kujo.git"
   },
   "repositories": {

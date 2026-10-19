@@ -10,6 +10,9 @@ The format follows Keep a Changelog and Semantic Versioning.
 
 ### Fixed
 
+- Refresh the locked Kujo runtime to 1.8.2 for ReaderSignal directory-durability
+  APIs; retain fail-closed storage checks.
+
 - Honor the explicit `KUJO_BIN` selection in Agency Runner and VideoOps fixture receipts; pin the Publishing
   House installation to the released Kujo Agents 1.5.0 contract checkout.
 
