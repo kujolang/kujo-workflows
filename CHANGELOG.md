@@ -6,11 +6,26 @@ The format follows Keep a Changelog and Semantic Versioning.
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-10-19
+
 ### Fixed
+
+- Refresh the locked Kujo runtime to 1.8.2 for ReaderSignal directory-durability
+  APIs; retain fail-closed storage checks.
+
+- Honor the explicit `KUJO_BIN` selection in Agency Runner and VideoOps fixture receipts; pin the Publishing
+  House installation to the released Kujo Agents 1.5.0 contract checkout.
 
 - Route production media execution to canonical `kujo-agents/videoops/tools`,
   with sibling discovery and explicit agent/tools root overrides. Remove the
   retired standalone runtime dependency from production instructions.
+
+- Restore the locked Publishing House publication fixture, installer pins, and
+  compatible runtime evidence references.
+
+### Changed
+
+- Refresh weekly workflow capability audits through October.
 
 ## [0.6.0] - 2026-09-06
 

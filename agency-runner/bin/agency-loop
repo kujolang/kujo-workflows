@@ -31,7 +31,7 @@ KUJO_REPOS = next(
     (candidate for candidate in _repo_candidates if (candidate / "kujo").exists()),
     ROOT.parent.parent,
 )
-DEFAULT_KUJO_BIN = KUJO_REPOS / "kujo" / "target" / "release" / "kujo"
+DEFAULT_KUJO_BIN = Path(os.environ.get("KUJO_BIN", str(KUJO_REPOS / "kujo" / "target" / "release" / "kujo"))).expanduser().resolve()
 PHASES = [
     "intake",
     "site_profile",
