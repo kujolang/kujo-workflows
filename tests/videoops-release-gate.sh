@@ -11,6 +11,9 @@ test -x "$repos_root/howl/bin/howl"
 
 cd "$repo_root"
 
+test_root="$(mktemp -d /tmp/kujo-workflows-videoops.XXXXXX)"
+trap 'rm -rf -- "$test_root"' EXIT
+
 for source in \
   lib/videoops/runtime.kujo \
   scripts/videoops_fixture.kujo \
@@ -25,15 +28,15 @@ done
 
 KUJO_BIN="$kujo_bin" "$repos_root/spec/scripts/spec" validate specs/videoops-v1-production.spec.yml --strict
 "$kujo_bin" run "$repos_root/eval/main.kujo" lint evals/videoops-stage-gates.json
-eval_out="$(mktemp -d /tmp/videoops-eval.XXXXXX)"
+eval_out="$(mktemp -d "$test_root/eval.XXXXXX")"
 "$kujo_bin" run "$repos_root/eval/main.kujo" run evals/videoops-stage-gates.json --output-dir "$eval_out" --json
 
 (cd fixtures/videoops/packwrite && KUJO="$kujo_bin" "$repos_root/packwrite/bin/packwrite" validate)
 KUJO="$kujo_bin" "$repos_root/howl/bin/howl" validate --manifest fixtures/videoops/howl/howl.json
-howl_out="$(mktemp -d /tmp/videoops-howl.XXXXXX)"
+howl_out="$(mktemp -d "$test_root/howl.XXXXXX")"
 KUJO="$kujo_bin" "$repos_root/howl/bin/howl" render --manifest fixtures/videoops/howl/howl.json --out "$howl_out"
 
-fixture_parent="$(mktemp -d /tmp/videoops-fixture.XXXXXX)"
+fixture_parent="$(mktemp -d "$test_root/fixture.XXXXXX")"
 "$kujo_bin" run scripts/videoops_fixture.kujo --out "$fixture_parent/run"
 "$kujo_bin" run scripts/validate_videoops.kujo --proof "$fixture_parent/run/integration-proof.json"
 
