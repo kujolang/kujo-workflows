@@ -6,6 +6,13 @@ The format follows Keep a Changelog and Semantic Versioning.
 
 ## [Unreleased]
 
+## [0.6.2] - 2026-10-22
+
+- Require patched Node.js versions for workflow tooling.
+- Qualify the Publishing House Skills dependency against the current 0.7.1
+  maintenance source; preserve strict revision validation.
+- Preserve the existing technical-preview, provider, host and approval boundaries.
+
 ## [0.6.1] - 2026-10-19
 
 ### Fixed
