@@ -37,12 +37,12 @@ These commands require the local Kujo runtime, sibling tool repositories, and an
 - [x] Cross-repository relationship contracts: `bash tests/skill_relationship_contracts.sh`.
 - [x] Full catalog identity and repository resolution: `python3 scripts/validate_catalog.py --json`.
 - [x] Agency Verified Fix Loop strict gate: `agency-runner/bin/agency-loop demo-verified-loop --strict`.
-- [x] Representative Workcell workflow: `bash workcell-execution-gate/scripts/run.sh`.
+- [ ] Representative Workcell workflow: current host blocked; see [0.6.2 evidence](release-evidence-0.6.2.md).
 - [x] Representative Tribunal workflow: `bash tribunal-decision-gate/scripts/run.sh`.
 - [x] Representative Relay workflow: `bash relay-lifecycle-handoff/scripts/run.sh`.
 - [x] Six catalog workflow fixture demos documented in the root README.
 - [x] Loop Engineering, AI SDK + Watchdog, and AI SDK + Muzzle fixture demos.
-- [x] Workcell proof: `workcell run --file docs/workcell-launch-gate.json --repo . --no-pull`.
+- [ ] Workcell isolation proof: current host blocked; the documented blocker-receipt exception applies.
 - [x] Detached clean local worktree validation on the development host.
 - [x] Locked Publishing House installation and all-eleven first run from a tracked archive on the development host: `bash tests/publishing-house-install.sh`.
 - [x] Five-stage VideoOps proof with PackWrite, Spec, Eval, Howl, RunLedger, real HyperFrames rendering, audio mux/inspection, asset fail-closed behavior, and bounded revision: `bash tests/videoops-release-gate.sh`.
