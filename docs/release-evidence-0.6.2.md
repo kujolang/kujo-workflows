@@ -21,6 +21,12 @@ execution or live providers.
   deliberately unused live PackWrite route, and zero failed stages. The fixture
   includes real browser checks before and after its deterministic fix.
 
+Additional current fixture checks pass: Dispatch approval routing, MCP guarded
+scaffold generation, CaseFile evidence capture, Howl artifacts, Loop Engineering,
+AI SDK with Watchdog, and AI SDK with Muzzle. The AI SDK checks explicitly remove
+provider keys and use offline fixtures; Muzzle reports nine passing stages and
+zero failures. Their temporary run roots are removed after preserving summaries.
+
 ## Current Workcell host blocker
 
 `bash workcell-execution-gate/scripts/run.sh` exits 3 because the rootful Docker
