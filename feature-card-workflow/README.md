@@ -322,7 +322,7 @@ Work in small commits or a clean working set. Record meaningful notes in:
 If a command failure is important for review or diagnosis, capture it:
 
 ```bash
-"$KUJO_BIN" run --interpreter "$KUJO_REPOS/casefile/casefile.kujo" -- capture \
+"$KUJO_BIN" run "$KUJO_REPOS/casefile/casefile.kujo" -- capture \
   --name card-123-failing-test \
   --output-dir .kujo/feature-cards/CARD-123/casefile \
   -- npm test -- --runInBand

@@ -38,7 +38,7 @@ export KUJO_BIN="$KUJO_REPOS/kujo/target/release/kujo"
 cd "$KUJO_REPOS/rag"
 KUJO_RAG_INDEX_PATH=/tmp/client-index/rag_index.json \
 KUJO_RAG_NAMESPACE=client_alpha \
-"$KUJO_BIN" run main.kujo --interpreter ingest \
+"$KUJO_BIN" run main.kujo -- ingest \
   --path /path/to/docs \
   --recursive true
 ```
@@ -48,7 +48,7 @@ Query it:
 ```bash
 KUJO_RAG_INDEX_PATH=/tmp/client-index/rag_index.json \
 KUJO_RAG_NAMESPACE=client_alpha \
-"$KUJO_BIN" run main.kujo --interpreter query \
+"$KUJO_BIN" run main.kujo -- query \
   --question "What approval controls apply?"
 ```
 

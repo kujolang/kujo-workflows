@@ -35,8 +35,8 @@ From a target repo:
 ```bash
 export KUJO_REPOS=/path/to/kujo-repos
 export KUJO_BIN="$KUJO_REPOS/kujo/target/release/kujo"
-"$KUJO_BIN" run --interpreter "$KUJO_REPOS/casefile/casefile.kujo" -- init
-"$KUJO_BIN" run --interpreter "$KUJO_REPOS/casefile/casefile.kujo" -- capture --name failing-tests -- npm test
+"$KUJO_BIN" run "$KUJO_REPOS/casefile/casefile.kujo" -- init
+"$KUJO_BIN" run "$KUJO_REPOS/casefile/casefile.kujo" -- capture --name failing-tests -- npm test
 ```
 
 Use `--mirror-exit-code` in CI when the capture should preserve the command's failure status.

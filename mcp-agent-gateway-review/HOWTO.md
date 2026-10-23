@@ -41,13 +41,13 @@ Run the underlying command against any local repo:
 export KUJO_REPOS=/path/to/kujo-repos
 export KUJO_BIN="$KUJO_REPOS/kujo/target/release/kujo"
 cd "$KUJO_REPOS/mcp"
-"$KUJO_BIN" run mcp.kujo --interpreter make /path/to/repo --no-ai --validate
+"$KUJO_BIN" run mcp.kujo -- make /path/to/repo --no-ai --validate
 ```
 
 For a custom output location:
 
 ```bash
-"$KUJO_BIN" run mcp.kujo --interpreter make /path/to/repo \
+"$KUJO_BIN" run mcp.kujo -- make /path/to/repo \
   --out /tmp/generated-server \
   --artifacts /tmp/mcp-artifacts \
   --no-ai \
