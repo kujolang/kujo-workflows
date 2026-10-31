@@ -1,9 +1,9 @@
 {
   "schema": "kujo.workflow-skill-compatibility/v1",
-  "audit_id": "kujo-workflows-audit-2026-10-10",
+  "audit_id": "kujo-workflows-audit-2026-10-31",
   "skills_repository": {
     "path": "../kujo-skills",
-    "commit": "70e68ba",
+    "commit": "c1267f8",
     "branch": "main"
   },
   "relationships": [

@@ -1,6 +1,6 @@
 {
   "schema": "kujo.workflow-tool-integration/v1",
-  "audit_id": "kujo-workflows-audit-2026-10-10",
+  "audit_id": "kujo-workflows-audit-2026-10-31",
   "tools": [
     {
       "tool": "tribunal",
@@ -105,7 +105,7 @@
     {
       "tool": "watchdog",
       "canonical_repo": "../watchdog",
-      "actual_version": "current main at 4ceb203",
+      "actual_version": "current main at b0a682a",
       "current_usage": [
         "ai-sdk-watchdog-showcase"
       ],
@@ -155,7 +155,7 @@
     {
       "tool": "dispatch",
       "canonical_repo": "../dispatch",
-      "actual_version": "current main at ac2609b",
+      "actual_version": "current main at 18b5c73",
       "current_usage": [
         "enterprise-dispatch-approval-router",
         "publishing-house-*"
@@ -446,7 +446,7 @@
     {
       "tool": "kujo",
       "canonical_repo": "../kujo",
-      "actual_version": "current main at 0c6f9f8",
+      "actual_version": "current main at e5394ca",
       "current_usage": [
         "owned-agent-project",
         "publishing-house-*",
@@ -466,7 +466,7 @@
       "complexity": "low",
       "risk": "Runtime upgrades require re-running fixture gates before refreshing locked Publishing House claims.",
       "implementation": "implemented",
-      "reason": "Current workflows use Kujo as the local interpreter/checker. The Kujo 1.5 support baseline remains pinned for Publishing House, while current mainline database-pool, VM-startup, benchmark, and reverted native-AOT work does not add new workflow catalog claims.",
+      "reason": "Current workflows use Kujo as the local interpreter/checker. The clean Publishing House support baseline now uses Kujo 1.9.0; current mainline capture and performance work does not add new workflow catalog claims.",
       "tests": [
         "kujo check",
         "workflow fixture gates",
