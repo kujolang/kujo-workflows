@@ -1,6 +1,6 @@
 {
   "schema": "kujo.workflow-tool-integration/v1",
-  "audit_id": "kujo-workflows-audit-2026-10-31",
+  "audit_id": "kujo-workflows-audit-2026-11-07",
   "tools": [
     {
       "tool": "tribunal",
@@ -80,7 +80,7 @@
     {
       "tool": "ai-chat",
       "canonical_repo": "../ai-chat",
-      "actual_version": "current main at d32e649",
+      "actual_version": "current main at b59b6e6",
       "current_usage": [
         "ai-sdk-watchdog-showcase"
       ],
@@ -105,7 +105,7 @@
     {
       "tool": "watchdog",
       "canonical_repo": "../watchdog",
-      "actual_version": "current main at b0a682a",
+      "actual_version": "current main at 7a0bd9a",
       "current_usage": [
         "ai-sdk-watchdog-showcase"
       ],
@@ -446,7 +446,7 @@
     {
       "tool": "kujo",
       "canonical_repo": "../kujo",
-      "actual_version": "current main at e5394ca",
+      "actual_version": "current main at 7a13207",
       "current_usage": [
         "owned-agent-project",
         "publishing-house-*",
