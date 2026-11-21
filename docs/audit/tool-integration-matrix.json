@@ -1,6 +1,6 @@
 {
   "schema": "kujo.workflow-tool-integration/v1",
-  "audit_id": "kujo-workflows-audit-2026-11-07",
+  "audit_id": "kujo-workflows-audit-2026-11-21",
   "tools": [
     {
       "tool": "tribunal",
@@ -54,7 +54,7 @@
     {
       "tool": "ai-sdk",
       "canonical_repo": "../ai-sdk",
-      "actual_version": "current main at 71bad14",
+      "actual_version": "current main at 4316452",
       "current_usage": [
         "ai-sdk-muzzle-benchmark",
         "ai-sdk-watchdog-showcase"
@@ -446,7 +446,7 @@
     {
       "tool": "kujo",
       "canonical_repo": "../kujo",
-      "actual_version": "current main at 7a13207",
+      "actual_version": "current main at f4a9f7f",
       "current_usage": [
         "owned-agent-project",
         "publishing-house-*",
@@ -503,7 +503,7 @@
     {
       "tool": "howl",
       "canonical_repo": "../howl",
-      "actual_version": "current main at 800c90f",
+      "actual_version": "current main at caf57b3",
       "current_usage": [
         "howl-content-factory",
         "videoops-creative-planning",
