@@ -1,13 +1,13 @@
 # Kujo Workflow Ecosystem Audit
 
-Audit ID: `kujo-workflows-audit-2026-11-07`
-Captured: `2026-11-07T06:06:44-05:00` (UTC `2026-11-07T11:06:44Z`)
+Audit ID: `kujo-workflows-audit-2026-11-21`
+Captured: `2026-11-21T11:00:00-05:00` (UTC `2026-11-21T16:00:00Z`)
 
 The machine-readable source of truth is [`workflow-catalog.json`](workflow-catalog.json). The validator resolves skill identities from the checked-out `kujo-skills` repository and tool identities from sibling repositories; it fails closed on missing skills, non-canonical paths, unknown tools, missing workflow entries, or missing documentation.
 
 ## Scope and disposition
 
-- The 2026-11-07 audit refreshed stale support evidence exposed by the current `kujo`, `kujo-agents`, and `kujo-skills` checkouts. The AI Chat and Watchdog matrix heads were also advanced from repository-backed commits; no workflow implementation or compatibility boundary changed.
+- The 2026-11-21 audit refreshed stale support evidence exposed by current Kujo, Kujo Agents, Kujo Skills, AI SDK, and Howl checkouts. AI SDK provider-registry, RAG adapter, and SiteKit 1.2 changes were reviewed without promoting new workflow relationships.
 - Current `kujo-skills` release-readiness passed. AI Chat and Watchdog verification were run, but each retained sibling-local failures; those failures do not invalidate the fixture workflow contract and remain watch items. Kujo workspace tests were blocked by host disk exhaustion before compilation completed.
 - The 2026-10-31 audit advanced the catalog and matrix evidence after sibling drift exposed stale Publishing House support pins. Kujo `1.9.0`, Dispatch, Agents SDK, Kujo Skills, and the affected tool repositories were re-pinned to clean current checkouts; no workflow implementation or compatibility boundary changed.
 - Kujo Skills added repo-backed maintenance-agent and authenticated Hermes guidance. The existing AI SDK/Watchdog showcase remains the supported workflow relationship; Hermes is documented as an operational route, not a new catalog workflow.
@@ -32,6 +32,7 @@ The machine-readable source of truth is [`workflow-catalog.json`](workflow-catal
 ## Files
 
 - [`workflow-catalog.json`](workflow-catalog.json) — machine-readable active workflow inventory and canonical skill/tool references.
+- [`WEEKLY_AUDIT_2026_11_21.md`](WEEKLY_AUDIT_2026_11_21.md) — latest weekly drift review.
 - [`WEEKLY_AUDIT_2026_11_07.md`](WEEKLY_AUDIT_2026_11_07.md) — latest weekly drift review.
 - [`skill-compatibility-matrix.json`](skill-compatibility-matrix.json) — workflow-to-skill status, action, and evidence.
 - [`tool-integration-matrix.json`](tool-integration-matrix.json) — current/proposed tool use, gaps, risks, tests, and rollback.
