@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -13,7 +14,7 @@ import yaml
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SKIP_PARTS = {".git", ".loop-engineering", ".runs", ".work", ".workcell", ".tmp", "__pycache__"}
+SKIP_PARTS = {".git", ".loop-engineering", ".runs", ".work", ".workcell", ".tmp", ".webops", ".local", "__pycache__", "node_modules"}
 REQUIRED_FILES = (
     "README.md",
     "LICENSE",
@@ -41,11 +42,11 @@ HEADING = re.compile(r"^\s{0,3}#{1,6}\s+(.+?)\s*#*\s*$", re.MULTILINE)
 
 
 def markdown_files() -> list[Path]:
-    return sorted(
-        path
-        for path in ROOT.rglob("*.md")
-        if not any(part in SKIP_PARTS for part in path.relative_to(ROOT).parts)
-    )
+    paths = []
+    for directory, subdirs, files in os.walk(ROOT):
+        subdirs[:] = [name for name in subdirs if name not in SKIP_PARTS]
+        paths.extend(Path(directory) / name for name in files if name.endswith(".md"))
+    return sorted(paths)
 
 
 def slugify(value: str) -> str:

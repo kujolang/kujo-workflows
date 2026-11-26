@@ -14,7 +14,7 @@ import yaml
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SKIP_PARTS = {".git", ".runs", ".work", ".workcell", ".tmp", "__pycache__"}
+SKIP_PARTS = {".git", ".runs", ".work", ".workcell", ".tmp", ".webops", ".local", "__pycache__", "node_modules"}
 
 
 @cache
@@ -60,7 +60,7 @@ def main() -> int:
         run(["bash", "-n", str(path)], failures)
 
     node = shutil.which("node")
-    javascript = files_with_suffix(".js")
+    javascript = files_with_suffix(".js", ".mjs", ".cjs")
     if javascript and not node:
         failures.append("node is required to syntax-check JavaScript files")
     elif node:
