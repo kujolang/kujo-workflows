@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PREFIX=""
 SOURCE_REPOS="$(cd "$ROOT/.." && pwd)"
-KUJO_SOURCE="${KUJO_BIN:-$SOURCE_REPOS/kujo/target/release/kujo}"
+KUJO_SOURCE="${KUJO_BIN:-}"
 RUN_DEMO=0
 
 usage() {
@@ -26,10 +26,11 @@ if [[ -z "$PREFIX" || "$PREFIX" != /* || "$PREFIX" == "/" ]]; then
   echo "--prefix must be a non-root absolute path" >&2
   exit 2
 fi
-if [[ -e "$PREFIX" ]]; then
+if [[ -e "$PREFIX" || -L "$PREFIX" ]]; then
   echo "installation target already exists: $PREFIX" >&2
   exit 2
 fi
+KUJO_SOURCE="${KUJO_SOURCE:-$SOURCE_REPOS/kujo/target/release/kujo}"
 if [[ ! -x "$KUJO_SOURCE" ]]; then
   echo "Kujo binary is not executable: $KUJO_SOURCE" >&2
   exit 2
@@ -48,14 +49,18 @@ else
   exit 2
 fi
 
+install_lines="$("$KUJO_SOURCE" run "$ROOT/scripts/publishing_house_doctor.kujo" -- --install-lines)"
 while IFS=$'\t' read -r name commit url; do
-  if [[ -d "$SOURCE_REPOS/$name/.git" ]]; then
-    git clone --quiet --no-checkout --local --no-hardlinks "$SOURCE_REPOS/$name" "$STAGE/repos/$name"
-  else
-    git clone --quiet --no-checkout "$url" "$STAGE/repos/$name"
+  source="$url"
+  if [[ -e "$SOURCE_REPOS/$name/.git" ]]; then
+    source="$SOURCE_REPOS/$name"
   fi
-  git -C "$STAGE/repos/$name" checkout --quiet --detach "$commit"
-done < <("$KUJO_SOURCE" run "$ROOT/scripts/publishing_house_doctor.kujo" -- --install-lines)
+  destination="$STAGE/repos/$name"
+  git init --quiet "$destination"
+  git -C "$destination" fetch --quiet --no-tags --depth=1 "$source" "$commit"
+  git -C "$destination" checkout --quiet --detach FETCH_HEAD
+  test "$(git -C "$destination" rev-parse HEAD)" = "$commit"
+done <<< "$install_lines"
 
 cp "$KUJO_SOURCE" "$STAGE/bin/kujo"
 chmod 0755 "$STAGE/bin/kujo"

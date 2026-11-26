@@ -6,9 +6,9 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-REPOS = ROOT.parents[1]
+REPOS = Path(os.environ.get("KUJO_REPOS", ROOT.parents[1]))
 CLI = ROOT / "bin/publishing-house"
-HAS_RUNTIME = (REPOS / "kujo/target/release/kujo").is_file()
+HAS_RUNTIME = Path(os.environ.get("KUJO_BIN", REPOS / "kujo/target/release/kujo")).is_file()
 
 
 class OperatorTests(unittest.TestCase):
@@ -108,13 +108,14 @@ print(json.dumps({'ok': True, 'data': receipt}))
             root = Path(tmp)
             state = root / "house"
             adapter = root / "adapter.py"
-            adapter.write_text("#!/usr/bin/env python3\nimport json\nprint(json.dumps({'ok': False, 'error_code': 'provider_unavailable', 'error': 'offline'}))\n", encoding="utf-8")
+            adapter.write_text("#!/usr/bin/env python3\nimport json\nprint(json.dumps({'ok': False, 'error_code': 'provider_unavailable', 'error': 'provider-private-diagnostic'}))\n", encoding="utf-8")
             adapter.chmod(0o700)
             env = dict(os.environ, PUBLISHING_HOUSE_PHASE_ADAPTER=str(adapter))
             self.exec_cli(state, "init", env=env)
             self.exec_cli(state, "plan", "import", str(ROOT / "fixtures/september-2026.json"), env=env)
             first = self.exec_cli(state, "tick", "--limit", "1", env=env)["data"]
             self.assertEqual(first["selected"][0]["status"], "retry_pending")
+            self.assertNotIn("provider-private-diagnostic", json.dumps(first))
             second = self.exec_cli(state, "tick", "--limit", "1", env=env)["data"]
             self.assertEqual(second["selected"][0]["status"], "blocked")
             resumed = self.exec_cli(state, "resume", "agents-are-projects", env=env)["data"]

@@ -12,6 +12,7 @@ import datetime as dt
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -75,7 +76,13 @@ def atomic_json(path: Path, value: Any, replace: bool = True) -> None:
             handle.write("\n")
             handle.flush()
             os.fsync(handle.fileno())
-        os.replace(temporary, path)
+        if replace:
+            os.replace(temporary, path)
+        else:
+            try:
+                os.link(temporary, path)
+            except FileExistsError:
+                raise OperatorError("duplicate_record", f"record already exists: {path.name}") from None
     finally:
         with contextlib.suppress(FileNotFoundError):
             os.unlink(temporary)
@@ -94,7 +101,8 @@ class House:
         self.state = state.resolve()
         self.repos = repos.resolve()
         self.storydesk = self.repos / "storydesk/bin/storydesk"
-        self.kujo = self.repos / "kujo/target/release/kujo"
+        runtime = os.environ.get("KUJO_BIN")
+        self.kujo = Path(runtime).expanduser().resolve() if runtime else self.repos / "kujo/target/release/kujo"
 
     def require_initialized(self) -> None:
         if not (self.state / "house.json").is_file():
@@ -489,10 +497,11 @@ class House:
         if not isinstance(response, dict):
             raise OperatorError("invalid_live_worker_receipt", "phase adapter response must be an object")
         if result.returncode or not response.get("ok"):
-            # Adapter stderr can contain provider diagnostics or credentials and
-            # is deliberately excluded from durable operator state.
-            message = str(response.get("error") or "phase adapter failed")[:1000]
-            raise OperatorError(str(response.get("error_code") or "live_worker_failure"), message)
+            # Adapter diagnostics can contain provider data or credentials.
+            code = response.get("error_code")
+            if not isinstance(code, str) or not re.fullmatch(r"[a-z][a-z0-9_.-]{0,63}", code):
+                code = "live_worker_failure"
+            raise OperatorError(code, "Configured phase adapter reported a failure")
         receipt = response.get("data")
         if not isinstance(receipt, dict):
             raise OperatorError("invalid_live_worker_receipt", "phase adapter data must be an object")
