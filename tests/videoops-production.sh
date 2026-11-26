@@ -2,7 +2,7 @@
 set -euo pipefail
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-tmp="$(mktemp -d)"
+tmp="$(mktemp -d "${TMPDIR:-/tmp}/kujo-workflows-XXXXXX")"
 trap 'rm -rf "$tmp"' EXIT
 request="$tmp/request.md"
 workspace="$tmp/workspace"

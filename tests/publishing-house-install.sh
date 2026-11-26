@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 KUJO_REPOS="${KUJO_REPOS:-$(cd "$ROOT/.." && pwd)}"
 KUJO_BIN="${KUJO_BIN:-$KUJO_REPOS/kujo/target/release/kujo}"
-TEST_ROOT="$(mktemp -d)"
+TEST_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/kujo-workflows-XXXXXX")"
 trap 'rm -rf -- "$TEST_ROOT"' EXIT
 
 "$ROOT/scripts/install-publishing-house.sh" \

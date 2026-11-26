@@ -48,7 +48,7 @@ if ! git rev-parse --verify "$head_sha^{commit}" >/dev/null 2>&1; then
   exit 1
 fi
 
-matcher_dir="$(mktemp -d)"
+matcher_dir="$(mktemp -d "${TMPDIR:-/tmp}/kujo-workflows-XXXXXX")"
 trap 'rm -rf "$matcher_dir"' EXIT
 cp "$artifact_ignore_file" "$matcher_dir/.gitignore"
 git -C "$matcher_dir" init -q

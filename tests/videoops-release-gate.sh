@@ -2,7 +2,7 @@
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-repos_root="$(dirname "$repo_root")"
+repos_root="${KUJO_REPOS:-$(dirname "$repo_root")}"
 kujo_bin="${KUJO_BIN:-$repos_root/kujo/target/release/kujo}"
 
 test -x "$kujo_bin"
@@ -11,7 +11,7 @@ test -x "$repos_root/howl/bin/howl"
 
 cd "$repo_root"
 
-test_root="$(mktemp -d /tmp/kujo-workflows-videoops.XXXXXX)"
+test_root="$(mktemp -d "${TMPDIR:-/tmp}/kujo-workflows-videoops.XXXXXX")"
 trap 'rm -rf -- "$test_root"' EXIT
 
 for source in \

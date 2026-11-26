@@ -18,7 +18,7 @@ for required in "$KUJO" "$SPEC" "$SCOUT" "$SCENT" "$LENS" "$CASEFILE" "$PACKWRIT
   test -e "$required" || { echo "missing relationship dependency: $required" >&2; exit 1; }
 done
 
-TMP="$(mktemp -d /tmp/kujo-skill-relationships.XXXXXX)"
+TMP="$(mktemp -d "${TMPDIR:-/tmp}/kujo-skill-relationships.XXXXXX")"
 trap 'rm -rf "$TMP"' EXIT
 
 expect_failure() {

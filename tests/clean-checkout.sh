@@ -4,7 +4,7 @@ set -euo pipefail
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repo_root"
 
-test_root="$(mktemp -d)"
+test_root="$(mktemp -d "${TMPDIR:-/tmp}/kujo-workflows-XXXXXX")"
 trap 'rm -rf -- "$test_root"' EXIT
 
 checkout="$test_root/kujo-workflows"
