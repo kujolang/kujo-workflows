@@ -5,9 +5,10 @@ import argparse
 import hashlib
 import json
 import os
-import shutil
+import re
 import subprocess
 import sys
+import tempfile
 import threading
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -15,11 +16,21 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit
 
-ROOT=Path(__file__).resolve().parents[1]; REPOS=ROOT.parent
+ROOT=Path(__file__).resolve().parents[1]
+REPOS=Path(os.environ.get("KUJO_REPOS", ROOT.parent)).resolve()
 PERMS={"OBSERVE":0,"PROPOSE":1,"ACT":2}
 
 def now(): return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00","Z")
-def dump(path,value): path.parent.mkdir(parents=True,exist_ok=True); path.write_text(json.dumps(value,indent=2,sort_keys=True)+"\n",encoding="utf-8")
+def dump(path,value):
+    path.parent.mkdir(parents=True,exist_ok=True)
+    fd,name=tempfile.mkstemp(prefix=f".{path.name}-",dir=path.parent)
+    try:
+        with os.fdopen(fd,"w",encoding="utf-8") as output:
+            json.dump(value,output,indent=2,sort_keys=True)
+            output.write("\n")
+        os.replace(name,path)
+    finally:
+        Path(name).unlink(missing_ok=True)
 def load(path): return json.loads(path.read_text(encoding="utf-8"))
 
 def tool_prefix(repo:str,legacy:str,launcher:str)->list[str]|None:
@@ -155,8 +166,16 @@ def execute(args:argparse.Namespace)->int:
     else: narrowed=False
     stamp=datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ"); out=Path(args.out).resolve() if args.out else workflow_dir/".runs"/stamp
     if out.exists() and not args.resume: raise RuntimeError(f"output already exists; use --resume: {out}")
+    state_path=out/"state.json"
+    identity={"workflow":args.workflow,"run_id":out.name,"permission":permission,"fixture":args.fixture}
+    if state_path.exists():
+        state=load(state_path)
+        saved_profile=out/"profile.json"
+        if any(state.get(key)!=value for key,value in identity.items()) or not saved_profile.is_file() or load(saved_profile)!=profile:
+            raise RuntimeError("resume requires the original workflow, target profile, execution mode and permission")
+    else:
+        state={"schema":"webops.workflow-state/v1",**identity,"status":"running","started_at":now(),"steps":[]}
     out.mkdir(parents=True,exist_ok=True); (out/"steps").mkdir(exist_ok=True); (out/"logs").mkdir(exist_ok=True); (out/"history").mkdir(exist_ok=True)
-    state_path=out/"state.json"; state=load(state_path) if state_path.exists() else {"schema":"webops.workflow-state/v1","workflow":args.workflow,"run_id":out.name,"status":"running","permission":permission,"fixture":args.fixture,"started_at":now(),"steps":[]}
     completed={x["step"] for x in state["steps"] if x["status"]=="completed"}
     dump(out/"profile.json",profile); capabilities=capability_receipt(profile,args.fixture); dump(out/"capabilities.json",capabilities)
     server_context=Server() if args.fixture else None
@@ -263,7 +282,8 @@ def parser():
 
 def main():
     args=parser().parse_args()
-    if not (ROOT/args.workflow/"workflow.json").is_file(): print(f"WebOps workflow not found: {args.workflow}",file=sys.stderr); return 2
+    if not re.fullmatch(r"webops-[a-z0-9]+(?:-[a-z0-9]+)*",args.workflow) or not (ROOT/args.workflow/"workflow.json").is_file():
+        print("WebOps workflow not found",file=sys.stderr); return 2
     try: return execute(args)
     except (RuntimeError,OSError,ValueError,json.JSONDecodeError) as exc: print(f"WebOps workflow: {str(exc)[:500]}",file=sys.stderr); return 1
 

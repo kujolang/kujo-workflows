@@ -33,6 +33,11 @@ class WebOpsWorkflowTests(unittest.TestCase):
                 result=subprocess.run(["bash",str(folder/"scripts/run.sh"),"--fixture","--out",str(out)],cwd=ROOT,text=True,capture_output=True); self.assertEqual(0,result.returncode,result.stderr)
             ids1={x["id"] for x in json.loads((first/"findings.json").read_text())["findings"]}; ids2={x["id"] for x in json.loads((second/"findings.json").read_text())["findings"]}; self.assertEqual(ids1,ids2)
             resume=subprocess.run(["bash",str(folder/"scripts/run.sh"),"--fixture","--out",str(first),"--resume"],cwd=ROOT,text=True,capture_output=True); self.assertEqual(0,resume.returncode,resume.stderr)
+            before=(first/"state.json").read_bytes()
+            changed=subprocess.run(["bash",str(folder/"scripts/run.sh"),"--fixture","--out",str(first),"--resume","--permission","ACT"],cwd=ROOT,text=True,capture_output=True)
+            self.assertNotEqual(0,changed.returncode)
+            self.assertIn("resume requires the original",changed.stderr)
+            self.assertEqual(before,(first/"state.json").read_bytes())
 
     def test_live_mode_never_substitutes_search_fixtures(self):
         with tempfile.TemporaryDirectory() as tmp:
