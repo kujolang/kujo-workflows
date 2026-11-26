@@ -2,7 +2,7 @@
   "name": "webops-dashboard-charts",
   "private": true,
   "scripts": {
-    "build:charts": "esbuild charts.tsx --bundle --minify --format=iife --global-name=WebOpsDitherCharts --outfile=../public/assets/dither-charts.js && tailwindcss -i dither-kit.css -o ../public/assets/dither-charts.css --minify"
+    "build:charts": "esbuild charts.tsx --bundle --minify --jsx=automatic --format=iife --global-name=WebOpsDitherCharts --outfile=../public/assets/dither-charts.js && tailwindcss -i dither-kit.css -o ../public/assets/dither-charts.css --minify"
   },
   "dependencies": {
     "@types/react": "^19.1.8",
@@ -24,6 +24,6 @@
     "typescript": "^5.8.3"
   },
   "engines": {
-    "node": ">=22.23.4 <23 || >=24.22.1 <25 || >=26.12.1"
+    "node": ">=22.23.5 <23 || >=24.22.3 <25 || >=26.13.1"
   }
 }
