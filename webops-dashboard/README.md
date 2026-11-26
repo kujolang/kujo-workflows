@@ -12,7 +12,7 @@ python3 webops-dashboard/dashboard.py sync
 python3 webops-dashboard/dashboard.py serve --open
 ```
 
-The server binds to `127.0.0.1` by default. Its **Run report** form accepts an
+The server listens on loopback and accepts browser requests from its own origin. Its **Run report** form accepts an
 HTTP(S) website, an allow-listed WebOps workflow, and `OBSERVE` or `PROPOSE`.
 The browser never grants `ACT`; production changes remain outside this control
 surface.
@@ -24,6 +24,7 @@ python3 webops-dashboard/dashboard.py import-run webops-weekly-site-health/.runs
 ```
 
 Local state is stored under `.webops/dashboard/` and is intentionally ignored.
+Each report retains a separate request profile and run packet.
 Use `--db` to choose another SQLite file. The database uses indexed relational
 tables for sites, workflow manifests, agent contracts, runs, steps, findings,
 and capability receipts. `PRAGMA optimize` runs after synchronization.

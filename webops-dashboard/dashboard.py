@@ -8,14 +8,16 @@ import re
 import sqlite3
 import subprocess
 import sys
+import tempfile
 import threading
 import webbrowser
+from contextlib import closing
 from datetime import datetime, timezone
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
-from urllib.parse import parse_qs, urlsplit
+from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 APP = Path(__file__).resolve().parent
@@ -23,6 +25,18 @@ PUBLIC = APP / "public"
 DEFAULT_DB = ROOT / ".webops" / "dashboard" / "webops.sqlite3"
 AGENTS_CATALOG = ROOT.parent / "kujo-agents" / "webops" / "webops-catalog.json"
 WORKFLOW_GLOB = "webops-*"
+MAX_REQUEST_BYTES = 10_000
+MAX_ACTIVE_REPORTS = 2
+LATEST_FINDINGS = """
+    WITH ranked AS (
+      SELECT f.*,r.workflow_id,r.completed_at,s.url,
+             ROW_NUMBER() OVER (
+               PARTITION BY r.site_id,f.finding_id
+               ORDER BY r.completed_at DESC,r.workflow_id,r.key
+             ) rank
+      FROM findings f JOIN runs r ON r.key=f.run_key JOIN sites s ON s.id=r.site_id
+    )
+"""
 
 SCHEMA = """
 PRAGMA foreign_keys = ON;
@@ -82,12 +96,15 @@ def read_json(path: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def connect(path: Path) -> sqlite3.Connection:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    db = sqlite3.connect(path, timeout=30)
+def connect(path: Path, *, readonly: bool = False) -> sqlite3.Connection:
+    if readonly:
+        db = sqlite3.connect(path.resolve().as_uri() + "?mode=ro", uri=True, timeout=10)
+    else:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        db = sqlite3.connect(path, timeout=30)
+        db.executescript(SCHEMA)
+        db.execute("PRAGMA journal_mode = WAL")
     db.row_factory = sqlite3.Row
-    db.executescript(SCHEMA)
-    db.execute("PRAGMA journal_mode = WAL")
     return db
 
 
@@ -139,33 +156,33 @@ def import_run(db: sqlite3.Connection, run_dir: Path) -> bool:
     workflow_id = receipt["workflow"]
     run_id = receipt["run_id"]
     key = f"{workflow_id}:{run_id}"
-    db.execute(
-        "INSERT INTO sites VALUES(?,?,?,?) ON CONFLICT(id) DO UPDATE SET "
-        "url=excluded.url,repository=excluded.repository,platform=excluded.platform",
-        (site["id"], site["url"], site.get("repository"), site.get("platform")),
-    )
-    db.execute("DELETE FROM runs WHERE key=?", (key,))
-    db.execute(
-        "INSERT INTO runs VALUES(?,?,?,?,?,?,?,?,?,?,?)",
-        (key, run_id, workflow_id, site["id"], state.get("started_at"),
-         receipt.get("completed_at", state.get("completed_at")), receipt["verdict"],
-         receipt["permission"], int(receipt.get("fixture", False)), str(run_dir.resolve()), utc_now()),
-    )
-    db.executemany(
-        "INSERT INTO steps VALUES(?,?,?,?,?)",
-        [(key, item["index"], item["step"], item["status"], item.get("detail", ""))
-         for item in state.get("steps", [])],
-    )
-    db.executemany(
-        "INSERT INTO findings VALUES(?,?,?,?,?,?,?,?,?)",
-        [(key, item["id"], item["agent"], item["check"], item["target"], item["state"],
-          item["severity"], item.get("first_seen"), item.get("last_seen")) for item in finding_rows],
-    )
-    db.executemany(
-        "INSERT OR REPLACE INTO capabilities VALUES(?,?,?,?)",
-        [(key, item["capability"], int(bool(item["available"])), item.get("source", "unknown")) for item in caps],
-    )
-    db.commit()
+    with db:
+        db.execute(
+            "INSERT INTO sites VALUES(?,?,?,?) ON CONFLICT(id) DO UPDATE SET "
+            "url=excluded.url,repository=excluded.repository,platform=excluded.platform",
+            (site["id"], site["url"], site.get("repository"), site.get("platform")),
+        )
+        db.execute("DELETE FROM runs WHERE key=?", (key,))
+        db.execute(
+            "INSERT INTO runs VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+            (key, run_id, workflow_id, site["id"], state.get("started_at"),
+             receipt.get("completed_at", state.get("completed_at")), receipt["verdict"],
+             receipt["permission"], int(receipt.get("fixture", False)), str(run_dir.resolve()), utc_now()),
+        )
+        db.executemany(
+            "INSERT INTO steps VALUES(?,?,?,?,?)",
+            [(key, item["index"], item["step"], item["status"], item.get("detail", ""))
+             for item in state.get("steps", [])],
+        )
+        db.executemany(
+            "INSERT INTO findings VALUES(?,?,?,?,?,?,?,?,?)",
+            [(key, item["id"], item["agent"], item["check"], item["target"], item["state"],
+              item["severity"], item.get("first_seen"), item.get("last_seen")) for item in finding_rows],
+        )
+        db.executemany(
+            "INSERT OR REPLACE INTO capabilities VALUES(?,?,?,?)",
+            [(key, item["capability"], int(bool(item["available"])), item.get("source", "unknown")) for item in caps],
+        )
     return True
 
 
@@ -188,9 +205,9 @@ def query_rows(db: sqlite3.Connection, sql: str, params: tuple[Any, ...] = ()) -
 
 def api_payload(db: sqlite3.Connection, endpoint: str) -> Any:
     if endpoint == "summary":
-        result = dict(db.execute("""
+        result = dict(db.execute(LATEST_FINDINGS + """
             SELECT (SELECT COUNT(*) FROM runs) runs,
-                   (SELECT COUNT(*) FROM (SELECT DISTINCT r.site_id,f.finding_id FROM findings f JOIN runs r ON r.key=f.run_key WHERE f.state!='RESOLVED')) findings,
+                   (SELECT COUNT(*) FROM ranked WHERE rank=1 AND state!='RESOLVED') findings,
                    (SELECT COUNT(*) FROM workflows) workflows,
                    (SELECT COUNT(*) FROM agents) agents,
                    (SELECT COUNT(*) FROM steps WHERE status='approval-required') approvals
@@ -206,12 +223,7 @@ def api_payload(db: sqlite3.Connection, endpoint: str) -> Any:
             GROUP BY r.key ORDER BY r.completed_at DESC LIMIT 200
         """)
     if endpoint == "findings":
-        return query_rows(db, """
-            WITH ranked AS (
-              SELECT f.*,r.workflow_id,r.completed_at,s.url,
-                     ROW_NUMBER() OVER (PARTITION BY r.site_id,f.finding_id ORDER BY r.completed_at DESC,r.workflow_id) rank
-              FROM findings f JOIN runs r ON r.key=f.run_key JOIN sites s ON s.id=r.site_id
-            )
+        return query_rows(db, LATEST_FINDINGS + """
             SELECT * FROM ranked WHERE rank=1
             ORDER BY CASE state WHEN 'NEW' THEN 0 WHEN 'REOPENED' THEN 1 WHEN 'PERSISTENT' THEN 2 ELSE 3 END,
                      CASE severity WHEN 'error' THEN 0 WHEN 'warning' THEN 1 ELSE 2 END,
@@ -219,40 +231,62 @@ def api_payload(db: sqlite3.Connection, endpoint: str) -> Any:
         """)
     if endpoint == "workflows":
         return query_rows(db, """
-            SELECT w.id,w.purpose,w.readiness,w.default_permission,COUNT(DISTINCT wa.agent_name) agents,
-                   COUNT(DISTINCT r.key) runs,MAX(r.completed_at) last_run
-            FROM workflows w LEFT JOIN workflow_agents wa ON wa.workflow_id=w.id
-            LEFT JOIN runs r ON r.workflow_id=w.id GROUP BY w.id ORDER BY w.id
+            WITH roster AS (SELECT workflow_id,COUNT(*) agents FROM workflow_agents GROUP BY workflow_id),
+                 history AS (SELECT workflow_id,COUNT(*) runs,MAX(completed_at) last_run FROM runs GROUP BY workflow_id)
+            SELECT w.id,w.purpose,w.readiness,w.default_permission,
+                   COALESCE(roster.agents,0) agents,COALESCE(history.runs,0) runs,history.last_run
+            FROM workflows w LEFT JOIN roster ON roster.workflow_id=w.id
+            LEFT JOIN history ON history.workflow_id=w.id ORDER BY w.id
         """)
     if endpoint == "agents":
         return query_rows(db, "SELECT * FROM agents ORDER BY category,name")
     if endpoint == "charts":
         return {
-            "severity": query_rows(db, """WITH latest AS (
-                SELECT f.*,ROW_NUMBER() OVER (PARTITION BY r.site_id,f.finding_id ORDER BY r.completed_at DESC) rank
-                FROM findings f JOIN runs r ON r.key=f.run_key)
-                SELECT severity name,COUNT(*) value FROM latest WHERE rank=1 AND state!='RESOLVED' GROUP BY severity ORDER BY value DESC"""),
+            "severity": query_rows(db, LATEST_FINDINGS + """
+                SELECT severity name,COUNT(*) value FROM ranked WHERE rank=1 AND state!='RESOLVED'
+                GROUP BY severity ORDER BY value DESC,severity"""),
             "coverage": query_rows(db, "SELECT workflow_id label,COUNT(*) runs FROM runs GROUP BY workflow_id ORDER BY runs DESC,workflow_id LIMIT 10"),
-            "trend": query_rows(db, "SELECT substr(r.completed_at,1,10) label,COUNT(DISTINCT f.finding_id) findings,COUNT(DISTINCT CASE WHEN f.severity='error' THEN f.finding_id END) errors FROM findings f JOIN runs r ON r.key=f.run_key GROUP BY substr(r.completed_at,1,10) ORDER BY label LIMIT 30"),
+            "trend": query_rows(db, """
+                WITH daily AS (
+                  SELECT substr(r.completed_at,1,10) label,COUNT(DISTINCT f.finding_id) findings,
+                         COUNT(DISTINCT CASE WHEN f.severity='error' THEN f.finding_id END) errors
+                  FROM findings f JOIN runs r ON r.key=f.run_key
+                  GROUP BY substr(r.completed_at,1,10) ORDER BY label DESC LIMIT 30
+                )
+                SELECT * FROM daily ORDER BY label
+            """),
             "steps": query_rows(db, "SELECT status name,COUNT(*) value FROM steps GROUP BY status ORDER BY value DESC"),
         }
     raise KeyError(endpoint)
 
 
 def run_report(db_path: Path, body: dict[str, Any]) -> dict[str, Any]:
-    workflow = str(body.get("workflow", ""))
-    target = str(body.get("target", "")).strip()
-    permission = str(body.get("permission", "OBSERVE"))
+    workflow = body.get("workflow", "")
+    target = body.get("target", "")
+    permission = body.get("permission", "OBSERVE")
+    if not all(isinstance(value, str) for value in (workflow, target, permission)):
+        raise ValueError("Workflow, target and permission must be strings")
+    target = target.strip()
     allowed = {item[1]["id"] for item in workflow_manifests()}
-    parsed = urlsplit(target)
     if workflow not in allowed or permission not in {"OBSERVE", "PROPOSE"}:
         raise ValueError("Unsupported workflow or permission")
-    if parsed.scheme not in {"http", "https"} or not parsed.hostname:
-        raise ValueError("Target must be a complete HTTP(S) URL")
+    try:
+        parsed = urlsplit(target)
+        if (len(target) > 2048 or any(ord(char) <= 32 or ord(char) == 127 for char in target)
+                or parsed.scheme not in {"http", "https"} or not parsed.hostname
+                or parsed.username is not None or parsed.password is not None
+                or "\\" in target or parsed.fragment or parsed.port == 0):
+            raise ValueError
+    except ValueError:
+        raise ValueError("Target must be a complete HTTP(S) URL without credentials or a fragment") from None
     slug = re.sub(r"[^a-z0-9.-]+", "-", parsed.hostname.lower()).strip("-")
-    state_root = db_path.parent
-    profile_path = state_root / "profiles" / f"{slug}.json"
-    profile_path.parent.mkdir(parents=True, exist_ok=True)
+    if not slug:
+        raise ValueError("Target must have a recognizable hostname")
+    runs = db_path.parent / "runs"
+    runs.mkdir(parents=True, exist_ok=True)
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    sandbox = Path(tempfile.mkdtemp(prefix=f"{stamp}-{workflow}-", dir=runs))
+    profile_path = sandbox / "request-profile.json"
     profile = {
         "schema": "webops.site-profile/v1",
         "site": {"id": slug, "url": target, "platform": "live-website"},
@@ -260,21 +294,37 @@ def run_report(db_path: Path, body: dict[str, Any]) -> dict[str, Any]:
         "integrations": {}, "permissions": {"default": permission}, "credential_references": {},
     }
     profile_path.write_text(json.dumps(profile, indent=2) + "\n", encoding="utf-8")
-    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    out = state_root / "runs" / f"{stamp}-{workflow}"
+    out = sandbox / sandbox.name
     command = [sys.executable, str(ROOT / "scripts" / "webops_workflow.py"), "--workflow", workflow,
                "--live", "--site-profile", str(profile_path), "--permission", permission, "--out", str(out)]
-    result = subprocess.run(command, cwd=ROOT, text=True, capture_output=True)
+    try:
+        result = subprocess.run(command, cwd=ROOT, text=True, capture_output=True, timeout=900)
+    except subprocess.TimeoutExpired:
+        raise RuntimeError("WebOps report timed out") from None
     if result.returncode:
-        raise RuntimeError((result.stderr or result.stdout or "WebOps run failed")[-1000:])
-    with connect(db_path) as db:
+        raise RuntimeError("WebOps report failed. Inspect the local run logs.")
+    with closing(connect(db_path)) as db:
         sync_catalogs(db)
-        import_run(db, out)
+        if not import_run(db, out):
+            raise RuntimeError("WebOps report did not produce a complete result")
     return {"ok": True, "run": out.name, "result": json.loads(result.stdout)}
 
 
 class Handler(BaseHTTPRequestHandler):
     db_path: Path
+    allowed_hosts: frozenset[str]
+    report_slots: threading.BoundedSemaphore
+
+    def setup(self) -> None:
+        super().setup()
+        self.connection.settimeout(15)
+
+    def request_host(self) -> str | None:
+        hosts = self.headers.get_all("Host", [])
+        if len(hosts) == 1 and hosts[0].lower() in self.allowed_hosts:
+            return hosts[0].lower()
+        self.send_json({"error": "Unrecognized local host"}, HTTPStatus.BAD_REQUEST)
+        return None
 
     def log_message(self, format: str, *args: Any) -> None:
         sys.stderr.write("webops-dashboard: " + (format % args) + "\n")
@@ -285,14 +335,17 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(data)))
         self.send_header("Cache-Control", "no-store")
+        self.send_header("X-Content-Type-Options", "nosniff")
         self.end_headers()
         self.wfile.write(data)
 
     def do_GET(self) -> None:
+        if not self.request_host():
+            return
         path = urlsplit(self.path).path
         if path.startswith("/api/"):
             try:
-                with connect(self.db_path) as db:
+                with closing(connect(self.db_path, readonly=True)) as db:
                     self.send_json(api_payload(db, path.removeprefix("/api/")))
             except KeyError:
                 self.send_json({"error": "Not found"}, HTTPStatus.NOT_FOUND)
@@ -312,14 +365,49 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers(); self.wfile.write(data)
 
     def do_POST(self) -> None:
+        host = self.request_host()
+        if not host:
+            return
         if urlsplit(self.path).path != "/api/run":
             self.send_json({"error": "Not found"}, HTTPStatus.NOT_FOUND); return
-        length = min(int(self.headers.get("Content-Length", "0")), 10000)
+        origins = self.headers.get_all("Origin", [])
+        if origins and origins != [f"http://{host}"]:
+            self.send_json({"error": "Reports must come from the local dashboard"}, HTTPStatus.FORBIDDEN)
+            return
+        if len(self.headers.get_all("Content-Type", [])) != 1 or self.headers.get_content_type() != "application/json":
+            self.send_json({"error": "Expected an application/json request"}, HTTPStatus.UNSUPPORTED_MEDIA_TYPE)
+            return
+        lengths = self.headers.get_all("Content-Length", [])
+        if self.headers.get_all("Transfer-Encoding") or len(lengths) != 1 or not re.fullmatch(r"[0-9]{1,9}", lengths[0]):
+            self.send_json({"error": "A valid Content-Length is required"}, HTTPStatus.BAD_REQUEST)
+            return
+        length = int(lengths[0])
+        if length > MAX_REQUEST_BYTES:
+            self.send_json({"error": "Request body is too large"}, HTTPStatus.REQUEST_ENTITY_TOO_LARGE)
+            return
         try:
-            body = json.loads(self.rfile.read(length))
-            self.send_json(run_report(self.db_path, body), HTTPStatus.CREATED)
-        except (ValueError, RuntimeError, json.JSONDecodeError) as exc:
+            raw = self.rfile.read(length)
+            if len(raw) != length:
+                raise ValueError
+            body = json.loads(raw)
+            if not isinstance(body, dict):
+                raise ValueError
+        except (ValueError, RecursionError, OSError):
+            self.send_json({"error": "Expected a complete JSON object"}, HTTPStatus.BAD_REQUEST)
+            return
+        if not self.report_slots.acquire(blocking=False):
+            self.send_json({"error": "The local report queue is full"}, HTTPStatus.TOO_MANY_REQUESTS)
+            return
+        try:
+            receipt = run_report(self.db_path, body)
+        except (ValueError, RuntimeError) as exc:
             self.send_json({"error": str(exc)}, HTTPStatus.BAD_REQUEST)
+        except (OSError, sqlite3.Error):
+            self.send_json({"error": "WebOps report could not be stored"}, HTTPStatus.INTERNAL_SERVER_ERROR)
+        else:
+            self.send_json(receipt, HTTPStatus.CREATED)
+        finally:
+            self.report_slots.release()
 
 
 def command_sync(args: argparse.Namespace) -> int:
@@ -345,11 +433,19 @@ def command_import(args: argparse.Namespace) -> int:
 
 
 def command_serve(args: argparse.Namespace) -> int:
+    if args.host not in {"127.0.0.1", "localhost"}:
+        raise SystemExit("The WebOps dashboard must listen on 127.0.0.1 or localhost.")
     db_path = Path(args.db).resolve()
     with connect(db_path) as db:
         sync_catalogs(db)
-    handler = type("WebOpsHandler", (Handler,), {"db_path": db_path})
-    server = ThreadingHTTPServer((args.host, args.port), handler)
+    handler = type("WebOpsHandler", (Handler,), {
+        "db_path": db_path, "report_slots": threading.BoundedSemaphore(MAX_ACTIVE_REPORTS),
+    })
+    server = ThreadingHTTPServer(("127.0.0.1", args.port), handler)
+    port = server.server_port
+    handler.allowed_hosts = frozenset(
+        host if port == 80 else f"{host}:{port}" for host in ("127.0.0.1", "localhost")
+    )
     url = f"http://{args.host}:{server.server_port}/"
     print(url, flush=True)
     if args.open:

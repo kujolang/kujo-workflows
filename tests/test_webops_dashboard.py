@@ -3,9 +3,14 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import http.client
+import shutil
+import sqlite3
 import tempfile
+import threading
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 MODULE_PATH = ROOT / "webops-dashboard" / "dashboard.py"
@@ -58,6 +63,78 @@ class WebOpsDashboardTests(unittest.TestCase):
             with dashboard.connect(root / "webops.sqlite3") as db:
                 dashboard.sync_catalogs(db)
                 self.assertFalse(dashboard.import_run(db, incomplete))
+
+    def test_invalid_reimport_preserves_previous_run(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            run = self.make_run(root)
+            with dashboard.connect(root / "webops.sqlite3") as db:
+                dashboard.sync_catalogs(db)
+                dashboard.import_run(db, run)
+                finding_path = run / "findings.json"
+                entry = json.loads(finding_path.read_text())["findings"][0]
+                finding_path.write_text(json.dumps({"findings": [entry, entry]}))
+                with self.assertRaises(sqlite3.IntegrityError):
+                    dashboard.import_run(db, run)
+                self.assertEqual(1, dashboard.api_payload(db, "summary")["runs"])
+                self.assertEqual(1, dashboard.api_payload(db, "summary")["findings"])
+
+    def test_summary_counts_the_latest_state_for_each_finding(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            original = self.make_run(root)
+            later = root / "later"
+            shutil.copytree(original, later)
+            receipt = json.loads((later / "run-receipt.json").read_text())
+            receipt.update(run_id="run-resolved", completed_at="2026-08-14T12:01:00Z")
+            (later / "run-receipt.json").write_text(json.dumps(receipt))
+            findings = json.loads((later / "findings.json").read_text())
+            findings["findings"][0]["state"] = "RESOLVED"
+            (later / "findings.json").write_text(json.dumps(findings))
+            with dashboard.connect(root / "webops.sqlite3") as db:
+                dashboard.sync_catalogs(db)
+                dashboard.import_run(db, original)
+                dashboard.import_run(db, later)
+                self.assertEqual(0, dashboard.api_payload(db, "summary")["findings"])
+                self.assertEqual("RESOLVED", dashboard.api_payload(db, "findings")[0]["state"])
+                self.assertEqual([], dashboard.api_payload(db, "charts")["severity"])
+
+    def test_report_accepts_local_json_and_checks_request_boundaries(self):
+        handler = type("FixtureHandler", (dashboard.Handler,), {
+            "db_path": Path("unused.sqlite3"),
+            "report_slots": threading.BoundedSemaphore(1),
+            "log_message": lambda *_: None,
+        })
+        with dashboard.ThreadingHTTPServer(("127.0.0.1", 0), handler) as server:
+            authority = f"127.0.0.1:{server.server_port}"
+            handler.allowed_hosts = frozenset({authority})
+            worker = threading.Thread(target=server.serve_forever, daemon=True)
+            worker.start()
+
+            def request(body, **headers):
+                conn = http.client.HTTPConnection("127.0.0.1", server.server_port, timeout=3)
+                try:
+                    conn.request("POST", "/api/run", body=body, headers={"Content-Type": "application/json", **headers})
+                    reply = conn.getresponse()
+                    return reply.status, json.loads(reply.read())
+                finally:
+                    conn.close()
+
+            try:
+                with patch.object(dashboard, "run_report", return_value={"ok": True}) as report:
+                    self.assertEqual(400, request("{}", Host="unrecognized.example")[0])
+                    self.assertEqual(403, request("{}", Origin="https://other.example")[0])
+                    self.assertEqual(415, request("{}", **{"Content-Type": "text/plain"})[0])
+                    self.assertEqual(413, request(" " * 10001)[0])
+                    self.assertEqual(400, request("[]")[0])
+                    with handler.report_slots:
+                        self.assertEqual(429, request("{}")[0])
+                    report.assert_not_called()
+                    self.assertEqual((201, {"ok": True}), request("{}", Origin=f"http://{authority}"))
+                    report.assert_called_once_with(Path("unused.sqlite3"), {})
+            finally:
+                server.shutdown()
+                worker.join(timeout=3)
 
     def test_dashboard_fetch_map_does_not_forward_array_callback_arguments(self):
         source = (ROOT / "webops-dashboard" / "public" / "assets" / "dashboard.js").read_text()
